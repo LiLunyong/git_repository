@@ -1,4 +1,5 @@
 Flight_UCOS/USER/DebugConfig/
+Flight_UCOS/USER/.vscode/
+Flight_UCOS/OBJ/
 
-
-
+.vscode/
