@@ -1,15 +1,4 @@
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'G:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'FLY'
-compiling main.c...
-main.c(276): warning:  #177-D: variable "err"  was declared but never referenced
-  	OS_ERR err;
-main.c(398): warning:  #550-D: variable "res"  was set but never used
-  	FRESULT res;
-main.c(602): warning:  #870-D: invalid multibyte character sequence
-          printf("SPL06初始化失�?!\r\n\r\n");
-main.c: 3 warnings, 0 errors
-linking...
-Program Size: Code=81352 RO-data=179124 RW-data=540 ZI-data=1228228  
-FromELF: creating hex file...
-"..\OBJ\fly.axf" - 0 Error(s), 3 Warning(s).
-Build Time Elapsed:  00:00:02
+"..\OBJ\fly.axf" - 0 Error(s), 0 Warning(s).
+Build Time Elapsed:  00:00:01
