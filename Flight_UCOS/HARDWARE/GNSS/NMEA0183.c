@@ -13,7 +13,7 @@ static double string_to_float(const char* pstr, unsigned char* b);
 static int sring_to_int(const char* pstr, unsigned char* b); 
 static int make_date_time(gps_data* pdata, unsigned int date, unsigned int time);
 
-/* GPSÊı¾İ½âÎö */ 
+/* GPSæ•°æ®è§£æ */ 
 unsigned char nmea_decode(NMEA0183* nmea, char c)
 {
     unsigned char valid_sentence = 0;
@@ -22,7 +22,7 @@ unsigned char nmea_decode(NMEA0183* nmea, char c)
 
     switch (c) 
 	{
-	    case ',':  /* ×Ö¶ÎÓò·Ö¸î·ûºÅ */ 
+	    case ',':  /* å­—æ®µåŸŸåˆ†å‰²ç¬¦å· */ 
 	        nmea->gpsParse.parity ^= c;
 	        /* no break */
 	    case '\r':
@@ -35,10 +35,10 @@ unsigned char nmea_decode(NMEA0183* nmea, char c)
 	        }
 	        ++nmea->gpsParse.term_number;
 	        nmea->gpsParse.term_offset = 0;
-	        nmea->gpsParse.is_checksum_term = (c == '*');   /* ºóÃæÁ½¸ö×Ö½ÚÎªĞ£Ñé×Ö¶Î */ 
+	        nmea->gpsParse.is_checksum_term = (c == '*');   /* åé¢ä¸¤ä¸ªå­—èŠ‚ä¸ºæ ¡éªŒå­—æ®µ */ 
 	        return valid_sentence;
 	
-	    case '$': /* ×Ö¶ÎĞÅÏ¢¿ªÊ¼ */ 
+	    case '$': /* å­—æ®µä¿¡æ¯å¼€å§‹ */ 
 	        nmea->gpsParse.term_number = nmea->gpsParse.term_offset = 0;
 	        nmea->gpsParse.parity = 0;
 	        nmea->gpsParse.sentence_type = GPS_SENTENCE_OTHER;
@@ -47,7 +47,7 @@ unsigned char nmea_decode(NMEA0183* nmea, char c)
 	        return valid_sentence;
     }
 
-    /* ±£´æ×Ö¶ÎÓòÊı¾İ */
+    /* ä¿å­˜å­—æ®µåŸŸæ•°æ® */
     if (nmea->gpsParse.term_offset < sizeof(nmea->gpsParse.term) - 1)
         nmea->gpsParse.term[nmea->gpsParse.term_offset++] = c;
     if (!nmea->gpsParse.is_checksum_term)
@@ -56,7 +56,7 @@ unsigned char nmea_decode(NMEA0183* nmea, char c)
     return valid_sentence;
 }
 
-/* µ¥¸öÊ®Áù½øÖÆ×Ö·û×ª»»ÎªÊ®½øÖÆ */
+/* å•ä¸ªåå…­è¿›åˆ¶å­—ç¬¦è½¬æ¢ä¸ºåè¿›åˆ¶ */
 static short int from_hex(char a)
 {
     if (a >= 'A' && a <= 'F')
@@ -67,7 +67,7 @@ static short int from_hex(char a)
         return a - '0';
 }
 
-/* ´¦Àíµ¥¸ö×Ö¶ÎÓòÊı¾İ */
+/* å¤„ç†å•ä¸ªå­—æ®µåŸŸæ•°æ® */
 static unsigned char nmea_term_complete(gps_nmea* pnmea, gps_data* pdata)
 {
 	if((void*)0==pnmea || (void*)0==pdata) return 0;
@@ -76,7 +76,7 @@ static unsigned char nmea_term_complete(gps_nmea* pnmea, gps_data* pdata)
 	{
         unsigned char checksum = 16 * from_hex(pnmea->term[0]) + from_hex(pnmea->term[1]);
         
-        /* ¼ìÑéĞÅÏ¢¶ÎÊÇ·ñÍêÕûÎŞ´í£¬Èç¹ûĞ£ÑéÍ¨¹ı£¬Ôò½«½âÎöµÃµ½µÄÊı¾İ±£´æ£¬²¢Ìá¹©¸øÓÃ»§µ÷ÓÃ*/
+        /* æ£€éªŒä¿¡æ¯æ®µæ˜¯å¦å®Œæ•´æ— é”™ï¼Œå¦‚æœæ ¡éªŒé€šè¿‡ï¼Œåˆ™å°†è§£æå¾—åˆ°çš„æ•°æ®ä¿å­˜ï¼Œå¹¶æä¾›ç»™ç”¨æˆ·è°ƒç”¨*/
         if (checksum == pnmea->parity) 
 		{
             if (pnmea->gps_data_good) 
@@ -276,7 +276,7 @@ static unsigned char nmea_term_complete(gps_nmea* pnmea, gps_data* pdata)
     return 0;
 }
 
-/* ¶à´Î·½ */
+/* å¤šæ¬¡æ–¹ */
 static int int_pow(int value, unsigned int count)
 {
 	int v = 1;
@@ -295,7 +295,7 @@ static double double_pow(double value, unsigned int count)
 	return v;
 }
 
-/* ¼ì²é×Ö·û´®ÊÇ·ñÎªÊı×Ö×Ö·û´®£¬ÊÇ·µ»Ø1£¬·ñÔò·µ»Ø0 */ 
+/* æ£€æŸ¥å­—ç¬¦ä¸²æ˜¯å¦ä¸ºæ•°å­—å­—ç¬¦ä¸²ï¼Œæ˜¯è¿”å›1ï¼Œå¦åˆ™è¿”å›0 */ 
 static unsigned char string_check_digital(const char* pc)
 {
 	const char* p;
@@ -310,13 +310,13 @@ static unsigned char string_check_digital(const char* pc)
 	return 1;	
 } 
 
-/* Êı×Ö×Ö·û´®´¦Àíº¯Êı,Ê¶±ğ·ûºÅ²¢ÇÒ²»¼ì²éÒç³ö
-*  Èç¹ûÊÇĞ¡Êı£¬ÔòÖ»·µ»ØÕûÊı²¿·Ö,Èç¹û×ª»»³ö´í£¬·µ»Ø0 
-*  ´«Èë²ÎÊı£º Ô­Ê¼×Ö·û´®£¬ ×ª»»³É¹¦±êÖ¾ 0-´íÎó  1-ÕıÈ· 
+/* æ•°å­—å­—ç¬¦ä¸²å¤„ç†å‡½æ•°,è¯†åˆ«ç¬¦å·å¹¶ä¸”ä¸æ£€æŸ¥æº¢å‡º
+*  å¦‚æœæ˜¯å°æ•°ï¼Œåˆ™åªè¿”å›æ•´æ•°éƒ¨åˆ†,å¦‚æœè½¬æ¢å‡ºé”™ï¼Œè¿”å›0 
+*  ä¼ å…¥å‚æ•°ï¼š åŸå§‹å­—ç¬¦ä¸²ï¼Œ è½¬æ¢æˆåŠŸæ ‡å¿— 0-é”™è¯¯  1-æ­£ç¡® 
 */
 static int sring_to_int(const char* pstr, unsigned char* b)
 {
-	char nega = 1;    /* ¸ºÊıÎª1£¬ ÕıÊıÎª1 */ 
+	char nega = 1;    /* è´Ÿæ•°ä¸º1ï¼Œ æ­£æ•°ä¸º1 */ 
 	const char* psrc = (void*)0;
 	int value = 0;
 	
@@ -333,7 +333,7 @@ static int sring_to_int(const char* pstr, unsigned char* b)
 	}
 	
 	psrc = pstr;
-	if('-'==*psrc)  /* ·ûºÅÎ» */ 
+	if('-'==*psrc)  /* ç¬¦å·ä½ */ 
 	{
 		nega = -1;
 		++psrc;
@@ -351,14 +351,14 @@ static int sring_to_int(const char* pstr, unsigned char* b)
 	return value;
 } 
 
-/* ×Ö·û´®×ª»»³ÉĞ¡Êı */
+/* å­—ç¬¦ä¸²è½¬æ¢æˆå°æ•° */
 static double string_to_float(const char* pstr, unsigned char* b) 
 {
-	char nega = 1;    /* ¸ºÊıÎª1£¬ ÕıÊıÎª1 */ 
+	char nega = 1;    /* è´Ÿæ•°ä¸º1ï¼Œ æ­£æ•°ä¸º1 */ 
 	const char* psrc = (void*)0;
 	double value = 0.0;
-	double lvalue = 0.0; /* Ğ¡ÊıµãºóÃæÊı×Ö */ 
-	unsigned char dotflag = 0;  /* Ğ¡Êıµã±ê¼Ç  1ÎªÖ®Ç°³öÏÖ¹ıĞ¡Êıµã */ 
+	double lvalue = 0.0; /* å°æ•°ç‚¹åé¢æ•°å­— */ 
+	unsigned char dotflag = 0;  /* å°æ•°ç‚¹æ ‡è®°  1ä¸ºä¹‹å‰å‡ºç°è¿‡å°æ•°ç‚¹ */ 
 	unsigned char j = 0;
 	
 	if( (void*)0==pstr ) 
@@ -374,7 +374,7 @@ static double string_to_float(const char* pstr, unsigned char* b)
 		return 0;
 	}
 	
-	if('-'==*psrc)  /* ·ûºÅÎ» */ 
+	if('-'==*psrc)  /* ç¬¦å·ä½ */ 
 	{
 		nega = -1;
 		++psrc;
@@ -407,9 +407,9 @@ static double string_to_float(const char* pstr, unsigned char* b)
 	return value;
 }
 
-/* ¸¡µãÊı×ª»»Îª×Ö·û´®£¬°üÀ¨ÕûÊı×ª»»Îª×Ö·û´® 
-*  intgrÖ¸¶¨ÕûÊıÎ»¸öÊı£¬decÖ¸¶¨Ğ¡ÊıÎ»¸öÊı 
-*  ×Ô¶¯È¥³ıÇ°ÃæµÄ0£¬Ğ¡ÊıµãºóÃæµÄ0²»»áÉáÈ¥ 
+/* æµ®ç‚¹æ•°è½¬æ¢ä¸ºå­—ç¬¦ä¸²ï¼ŒåŒ…æ‹¬æ•´æ•°è½¬æ¢ä¸ºå­—ç¬¦ä¸² 
+*  intgræŒ‡å®šæ•´æ•°ä½ä¸ªæ•°ï¼ŒdecæŒ‡å®šå°æ•°ä½ä¸ªæ•° 
+*  è‡ªåŠ¨å»é™¤å‰é¢çš„0ï¼Œå°æ•°ç‚¹åé¢çš„0ä¸ä¼šèˆå» 
 */ 
 static unsigned char float_to_string(double value, char* pdest, unsigned int intgr, unsigned int dec)
 {
@@ -457,7 +457,7 @@ static unsigned char float_to_string(double value, char* pdest, unsigned int int
 	if( !zeroflag ) *pstr++ = '0';
 		
 		
-	/* Èç¹ûĞ¡ÊıÎ»ÊıÎª0£¬Ôò·µ»ØÕûÊı²¿·Ö */
+	/* å¦‚æœå°æ•°ä½æ•°ä¸º0ï¼Œåˆ™è¿”å›æ•´æ•°éƒ¨åˆ† */
 	if(0==dec)
 	{
 		*pstr = '\0';
@@ -480,13 +480,13 @@ static unsigned char float_to_string(double value, char* pdest, unsigned int int
 } 
 
 
-/* ÕûÊı×ª»»³É×Ö·û´®£¬ÄÚ²¿ÆäÊµµ÷ÓÃÁË float_to_string */
+/* æ•´æ•°è½¬æ¢æˆå­—ç¬¦ä¸²ï¼Œå†…éƒ¨å…¶å®è°ƒç”¨äº† float_to_string */
 static unsigned char int_to_string(int value, char* pdest, unsigned int intgr) 
 {
 	return float_to_string((double)value, pdest, intgr,0);
 }
 
-/* Ê±¼ä´¦Àí  ´«Èë²ÎÊıÎªÈÕÔÂÄêºÍºÁÃë*/ 
+/* æ—¶é—´å¤„ç†  ä¼ å…¥å‚æ•°ä¸ºæ—¥æœˆå¹´å’Œæ¯«ç§’*/ 
 static int make_date_time(gps_data* pdata, unsigned int date, unsigned int time)
 {
 	

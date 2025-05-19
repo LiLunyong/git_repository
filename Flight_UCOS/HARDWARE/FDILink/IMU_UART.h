@@ -18,13 +18,13 @@ extern  FDILink_Status_t	_FDILink;
 void Initial_UART3(unsigned long baudrate);
 void DMA_UART3_RX_init(void);
 
-int fdiComSetConfig(void);											//×¼±¸½øÈëÅäÖÃÄ£Ê½		
-int fdiComGetParam(char* paramName);								//¶ÁÈ¡²ÎÊı
-int fdiComSetConfigPacketSentMsg(char* msg, int freq);				//ÅäÖÃ·¢ËÍµÄÊı¾İ°üÄÚÈİ¼°ÆµÂÊ
+int fdiComSetConfig(void);											//å‡†å¤‡è¿›å…¥é…ç½®æ¨¡å¼		
+int fdiComGetParam(char* paramName);								//è¯»å–å‚æ•°
+int fdiComSetConfigPacketSentMsg(char* msg, int freq);				//é…ç½®å‘é€çš„æ•°æ®åŒ…å†…å®¹åŠé¢‘ç‡
 int fdiComSetConfigMsg(void);
-int fdiSetSave(void);												//±£´æÅäÖÃ
-int fdiSetDeconfig(void);											//ÍË³öÅäÖÃÄ£Ê½
-int fdiSetReboot(void);												//ÖØÆôÉè±¸
+int fdiSetSave(void);												//ä¿å­˜é…ç½®
+int fdiSetDeconfig(void);											//é€€å‡ºé…ç½®æ¨¡å¼
+int fdiSetReboot(void);												//é‡å¯è®¾å¤‡
 
 #endif
 

@@ -1,32 +1,32 @@
 #include "wdg.h"
 //////////////////////////////////////////////////////////////////////////////////	 
-//STM32F4¹¤³ÌÄ£°å-¿âº¯Êý°æ±¾									  
+//STM32F4å·¥ç¨‹æ¨¡æ¿-åº“å‡½æ•°ç‰ˆæœ¬									  
 ////////////////////////////////////////////////////////////////////////////////// 
 
 
 
-//³õÊ¼»¯¶ÀÁ¢¿´ÃÅ¹·
-//prer:·ÖÆµÊý:0~7(Ö»ÓÐµÍ3Î»ÓÐÐ§!)
-//rlr:×Ô¶¯ÖØ×°ÔØÖµ,0~0XFFF.
-//·ÖÆµÒò×Ó=4*2^prer.µ«×î´óÖµÖ»ÄÜÊÇ256!
-//rlr:ÖØ×°ÔØ¼Ä´æÆ÷Öµ:µÍ11Î»ÓÐÐ§.
-//Ê±¼ä¼ÆËã(´ó¸Å):Tout=((4*2^prer)*rlr)/32 (ms).
+//åˆå§‹åŒ–ç‹¬ç«‹çœ‹é—¨ç‹—
+//prer:åˆ†é¢‘æ•°:0~7(åªæœ‰ä½Ž3ä½æœ‰æ•ˆ!)
+//rlr:è‡ªåŠ¨é‡è£…è½½å€¼,0~0XFFF.
+//åˆ†é¢‘å› å­=4*2^prer.ä½†æœ€å¤§å€¼åªèƒ½æ˜¯256!
+//rlr:é‡è£…è½½å¯„å­˜å™¨å€¼:ä½Ž11ä½æœ‰æ•ˆ.
+//æ—¶é—´è®¡ç®—(å¤§æ¦‚):Tout=((4*2^prer)*rlr)/32 (ms).
 void IWDG_Init(u8 prer,u16 rlr)
 {
-	IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable); //Ê¹ÄÜ¶ÔIWDG->PR IWDG->RLRµÄÐ´
+	IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable); //ä½¿èƒ½å¯¹IWDG->PR IWDG->RLRçš„å†™
 	
-	IWDG_SetPrescaler(prer); //ÉèÖÃIWDG·ÖÆµÏµÊý
+	IWDG_SetPrescaler(prer); //è®¾ç½®IWDGåˆ†é¢‘ç³»æ•°
 
-	IWDG_SetReload(rlr);   //ÉèÖÃIWDG×°ÔØÖµ
+	IWDG_SetReload(rlr);   //è®¾ç½®IWDGè£…è½½å€¼
 
 	IWDG_ReloadCounter(); //reload
 	
-	IWDG_Enable();       //Ê¹ÄÜ¿´ÃÅ¹·
+	IWDG_Enable();       //ä½¿èƒ½çœ‹é—¨ç‹—
 }
 
 
 
-//Î¹¶ÀÁ¢¿´ÃÅ¹·
+//å–‚ç‹¬ç«‹çœ‹é—¨ç‹—
 void IWDG_Feed(void)
 {
 	IWDG_ReloadCounter();//reload

@@ -17,12 +17,12 @@
 
 
 
-//*******************************************×ËÌ¬½âËã**********************************************//
+//*******************************************å§¿æ€è§£ç®—**********************************************//
 extern volatile float twoKp;			// 2 * proportional gain (Kp)
 extern volatile float twoKi;			// 2 * integral gain (Ki)
 extern volatile float q0, q1, q2, q3;	// quaternion of sensor frame relative to auxiliary frame
-extern volatile float AHRS_Roll, AHRS_Pitc, AHRS_Yawh;   // Æ«º½½Ç£¬¸©Ñö½Ç£¬·­¹ö½Ç   µ¥Î»£º¶È
-extern volatile float C_nb_11, C_nb_12, C_nb_13, C_nb_21, C_nb_22, C_nb_23, C_nb_31, C_nb_32, C_nb_33;		// ×ø±êÏµĞı×ª¾ØÕó
+extern volatile float AHRS_Roll, AHRS_Pitc, AHRS_Yawh;   // åèˆªè§’ï¼Œä¿¯ä»°è§’ï¼Œç¿»æ»šè§’   å•ä½ï¼šåº¦
+extern volatile float C_nb_11, C_nb_12, C_nb_13, C_nb_21, C_nb_22, C_nb_23, C_nb_31, C_nb_32, C_nb_33;		// åæ ‡ç³»æ—‹è½¬çŸ©é˜µ
 
 void MahonyAHRSupdate(float ax, float ay, float az, float gx, float gy, float gz, float mx, float my, float mz);
 void MahonyAHRSupdateIMU(float ax, float ay, float az, float gx, float gy, float gz);
@@ -31,15 +31,15 @@ void MahonyAHRSupdateIMU(float ax, float ay, float az, float gx, float gy, float
 
 
 
-//*******************************************¸ß¶ÈÈÚºÏ**********************************************//
+//*******************************************é«˜åº¦èåˆ**********************************************//
 typedef struct {
-    float x[2];         // ×´Ì¬ÏòÁ¿ [¸ß¶È; ËÙ¶È]
-    float P[2][2];      // ×´Ì¬Ğ­·½²î
-    float F[2][2];      // ×´Ì¬×ªÒÆ¾ØÕó
-    float G[2];         // ¿ØÖÆÊäÈë¾ØÕó
-    float Q[2][2];      // ¹ı³ÌÔëÉùĞ­·½²î
-    float H[2];         // ¹Û²â¾ØÕó£¨1¡Á2£©
-    float R;            // ¹Û²âÔëÉùĞ­·½²î
+    float x[2];         // çŠ¶æ€å‘é‡ [é«˜åº¦; é€Ÿåº¦]
+    float P[2][2];      // çŠ¶æ€åæ–¹å·®
+    float F[2][2];      // çŠ¶æ€è½¬ç§»çŸ©é˜µ
+    float G[2];         // æ§åˆ¶è¾“å…¥çŸ©é˜µ
+    float Q[2][2];      // è¿‡ç¨‹å™ªå£°åæ–¹å·®
+    float H[2];         // è§‚æµ‹çŸ©é˜µï¼ˆ1Ã—2ï¼‰
+    float R;            // è§‚æµ‹å™ªå£°åæ–¹å·®
 } KalmanAlt;
 
 void kalman_init(KalmanAlt *kf, float dt, float var_accel, float var_alt);
@@ -51,37 +51,37 @@ void kalman_update(KalmanAlt *kf, float z);
 
 
 
-//*******************************************PID¿ØÖÆ**********************************************//
-// PID½á¹¹Ìå¶¨Òå
+//*******************************************PIDæ§åˆ¶**********************************************//
+// PIDç»“æ„ä½“å®šä¹‰
 typedef struct PID
 {
-	float P;	//²ÎÊı
+	float P;	//å‚æ•°
 	float I;
 	float D;
 
-	float Error;	//±ÈÀıÏî
-	float Integral;	//»ı·ÖÏî
-	float Differ;	//Î¢·ÖÏî
+	float Error;	//æ¯”ä¾‹é¡¹
+	float Integral;	//ç§¯åˆ†é¡¹
+	float Differ;	//å¾®åˆ†é¡¹
 	
-	float PreError;	//ÉÏÒ»´ÎÎó²î
-	float I_limit;	//»ı·Ö·ÖÀë
-	float I_range;	//»ı·ÖÏŞ·ù
-	uint8_t I_limit_flag;	//»ı·Ö·ÖÀë±êÖ¾
+	float PreError;	//ä¸Šä¸€æ¬¡è¯¯å·®
+	float I_limit;	//ç§¯åˆ†åˆ†ç¦»
+	float I_range;	//ç§¯åˆ†é™å¹…
+	uint8_t I_limit_flag;	//ç§¯åˆ†åˆ†ç¦»æ ‡å¿—
 	
-	float Pout;		//±ÈÀıÏîÊä³ö
-	float Iout;		//»ı·ÖÏîÊä³ö
-	float Dout;		//Î¢·ÖÏîÊä³ö
-	float OutPut;	//PID¿ØÖÆÆ÷×ÜÊä³ö
+	float Pout;		//æ¯”ä¾‹é¡¹è¾“å‡º
+	float Iout;		//ç§¯åˆ†é¡¹è¾“å‡º
+	float Dout;		//å¾®åˆ†é¡¹è¾“å‡º
+	float OutPut;	//PIDæ§åˆ¶å™¨æ€»è¾“å‡º
 	
 }PID_TYPE;
 
-extern PID_TYPE 	PID_ROL_Angle;	//½Ç¶È»·PID
+extern PID_TYPE 	PID_ROL_Angle;	//è§’åº¦ç¯PID
 extern PID_TYPE 	PID_PIT_Angle;
 extern PID_TYPE 	PID_YAW_Angle;
-extern PID_TYPE 	PID_ROL_Rate;	//½ÇËÙ¶È»·PID
+extern PID_TYPE 	PID_ROL_Rate;	//è§’é€Ÿåº¦ç¯PID
 extern PID_TYPE 	PID_PIT_Rate;
 extern PID_TYPE 	PID_YAW_Rate;
-extern PID_TYPE 	PID_Server_Posi;	//¶æ»úPID
+extern PID_TYPE 	PID_Server_Posi;	//èˆµæœºPID
 
 extern uint8_t  	aircraft_take_off;
 
@@ -93,16 +93,16 @@ void PID_Param_Init(void);
 
 
 
-//*******************************************¿¨¶ûÂüÂË²¨**********************************************//
-// ¶¨Òå¿¨¶ûÂü½á¹¹Ìå
+//*******************************************å¡å°”æ›¼æ»¤æ³¢**********************************************//
+// å®šä¹‰å¡å°”æ›¼ç»“æ„ä½“
 typedef struct
 {
-    float LastP; // ÉÏ´Î¹ÀËãĞ­·½²î ³õÊ¼»¯ÖµÎª0.02
-    float Now_P; // µ±Ç°¹ÀËãĞ­·½²î ³õÊ¼»¯ÖµÎª0
-    float out;   // ¿¨¶ûÂüÂË²¨Æ÷Êä³ö ³õÊ¼»¯ÖµÎª0
-    float Kg;    // ¿¨¶ûÂüÔöÒæ ³õÊ¼»¯ÖµÎª0
-    float Q;     // ¹ı³ÌÔëÉùĞ­·½²î ³õÊ¼»¯ÖµÎª0.001
-    float R;     // ¹Û²âÔëÉùĞ­·½²î ³õÊ¼»¯ÖµÎª0.543
+    float LastP; // ä¸Šæ¬¡ä¼°ç®—åæ–¹å·® åˆå§‹åŒ–å€¼ä¸º0.02
+    float Now_P; // å½“å‰ä¼°ç®—åæ–¹å·® åˆå§‹åŒ–å€¼ä¸º0
+    float out;   // å¡å°”æ›¼æ»¤æ³¢å™¨è¾“å‡º åˆå§‹åŒ–å€¼ä¸º0
+    float Kg;    // å¡å°”æ›¼å¢ç›Š åˆå§‹åŒ–å€¼ä¸º0
+    float Q;     // è¿‡ç¨‹å™ªå£°åæ–¹å·® åˆå§‹åŒ–å€¼ä¸º0.001
+    float R;     // è§‚æµ‹å™ªå£°åæ–¹å·® åˆå§‹åŒ–å€¼ä¸º0.543
 } KFP;           // Kalman Filter parameter
 
 float kalmanFilter(KFP *kfp, float input);
@@ -111,7 +111,7 @@ float kalmanFilter(KFP *kfp, float input);
 
 
 
-//*******************************************¶¨Ê±Æ÷ÖĞ¶Ï**********************************************//
+//*******************************************å®šæ—¶å™¨ä¸­æ–­**********************************************//
 void TIM2_Getsample_Init(u16 arr, u16 psc);
 
 
@@ -121,35 +121,35 @@ void TIM2_Getsample_Init(u16 arr, u16 psc);
 
 
 
-//*******************************************Ö®Ç°µÄ²»ÓÃÁË**********************************************//
-//// ×ËÌ¬½âËã½á¹¹Ìå¶¨Òå
+//*******************************************ä¹‹å‰çš„ä¸ç”¨äº†**********************************************//
+//// å§¿æ€è§£ç®—ç»“æ„ä½“å®šä¹‰
 //typedef struct Att_Algo_Param
 //{
-//	// Ëã·¨²ÎÊı
-//	float Kp;	// Kp±ÈÀıÔöÒæ ¾ö¶¨ÁË¼ÓËÙ¶È¼ÆµÄÊÕÁ²ËÙ¶È 	// proportional gain governs rate of convergence toaccelerometer/magnetometer
-//	float Ki;  	// Ki»ı·ÖÔöÒæ ¾ö¶¨ÁËÍÓÂİÒÇÆ«²îµÄÊÕÁ²ËÙ¶È	// integral gain governs rate of convergenceof gyroscope biases
-//	double dt;   		// ²ÉÑùÊ±¼ä
-//	double half_dt;   	// ²ÉÑùÊ±¼äµÄÒ»°ë
+//	// ç®—æ³•å‚æ•°
+//	float Kp;	// Kpæ¯”ä¾‹å¢ç›Š å†³å®šäº†åŠ é€Ÿåº¦è®¡çš„æ”¶æ•›é€Ÿåº¦ 	// proportional gain governs rate of convergence toaccelerometer/magnetometer
+//	float Ki;  	// Kiç§¯åˆ†å¢ç›Š å†³å®šäº†é™€èºä»ªåå·®çš„æ”¶æ•›é€Ÿåº¦	// integral gain governs rate of convergenceof gyroscope biases
+//	double dt;   		// é‡‡æ ·æ—¶é—´
+//	double half_dt;   	// é‡‡æ ·æ—¶é—´çš„ä¸€åŠ
 //	
-//    // ×´Ì¬±äÁ¿
-//	double norm;    	// ËÄÔªÊıµÄ¹éÒ»»¯ÓÃµ½µÄÖĞ¼äÖµ
-//	double q[4];		// ËÄÔªÊı
-//	double q_last[4]; 	// ÒòÎª¼ÆËã»ú¼ÆËãÊÇ´®ĞĞµÄ£¬ËãÁËq[0]ÔÙÖ±½ÓËãq[1]»áÓÃµ½×îĞÂµÄq[0],²»ÄÜÕâÑù£¡ËùÒÔÒªÁí´æ£¡Õû³É²¢ĞĞµÄ
-//	double w_new[3];  	// ²ÉÑùÊ±¿ÌµÄ½ÇËÙ¶È
-//	double w_last[3]; 	// ÉÏÒ»Ê±¿ÌµÄ½ÇËÙ¶È
+//    // çŠ¶æ€å˜é‡
+//	double norm;    	// å››å…ƒæ•°çš„å½’ä¸€åŒ–ç”¨åˆ°çš„ä¸­é—´å€¼
+//	double q[4];		// å››å…ƒæ•°
+//	double q_last[4]; 	// å› ä¸ºè®¡ç®—æœºè®¡ç®—æ˜¯ä¸²è¡Œçš„ï¼Œç®—äº†q[0]å†ç›´æ¥ç®—q[1]ä¼šç”¨åˆ°æœ€æ–°çš„q[0],ä¸èƒ½è¿™æ ·ï¼æ‰€ä»¥è¦å¦å­˜ï¼æ•´æˆå¹¶è¡Œçš„
+//	double w_new[3];  	// é‡‡æ ·æ—¶åˆ»çš„è§’é€Ÿåº¦
+//	double w_last[3]; 	// ä¸Šä¸€æ—¶åˆ»çš„è§’é€Ÿåº¦
 //	
-//    // ÖĞ¼ä¼ÆËã½á¹û
-//	double k10, k11, k12, k13; 	// Áú¸ñ¿âËşËã·¨ÓÃµ½µÄÖĞ¼äÖµ
+//    // ä¸­é—´è®¡ç®—ç»“æœ
+//	double k10, k11, k12, k13; 	// é¾™æ ¼åº“å¡”ç®—æ³•ç”¨åˆ°çš„ä¸­é—´å€¼
 //	double k20, k21, k22, k23;
 //	double k30, k31, k32, k33;
 //	double k40, k41, k42, k43;
-//	double vx, vy, vz; 			// ÕâĞ©¶¼ÊÇ×ËÌ¬½âËãÎó²î¼ÆËãµÄÖµ£¬ÍøÉÏÓĞËµÃ÷
+//	double vx, vy, vz; 			// è¿™äº›éƒ½æ˜¯å§¿æ€è§£ç®—è¯¯å·®è®¡ç®—çš„å€¼ï¼Œç½‘ä¸Šæœ‰è¯´æ˜
 //	double ex, ey, ez;
 //	double axf, ayf, azf;
 //	double exInt, eyInt, ezInt;
 //	
-//	// Êä³ö½á¹û
-//	double q2Roll, q2Pitc, q2Yawh;   // Æ«º½½Ç£¬¸©Ñö½Ç£¬·­¹ö½Ç
+//	// è¾“å‡ºç»“æœ
+//	double q2Roll, q2Pitc, q2Yawh;   // åèˆªè§’ï¼Œä¿¯ä»°è§’ï¼Œç¿»æ»šè§’
 
 //}Attitude_Algorithm_Param;
 
@@ -160,11 +160,11 @@ void TIM2_Getsample_Init(u16 arr, u16 psc);
 
 
 
-//		// ×ËÌ¬½âËã
+//		// å§¿æ€è§£ç®—
 //		Attitude_Algorithm_Cal(&Att_Algo_Param, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z);
-//		// ×ËÌ¬½âËãºóµÃµ½µÄ½Ç¶ÈÖµ
-//		roll_deg = Att_Algo_Param.q2Roll;			// ½Ç¶È       // ´«¸ĞÆ÷²âÁ¿Öµ 
-//		pitch_deg = Att_Algo_Param.q2Pitc;			// µ¥Î» ¶È
+//		// å§¿æ€è§£ç®—åå¾—åˆ°çš„è§’åº¦å€¼
+//		roll_deg = Att_Algo_Param.q2Roll;			// è§’åº¦       // ä¼ æ„Ÿå™¨æµ‹é‡å€¼ 
+//		pitch_deg = Att_Algo_Param.q2Pitc;			// å•ä½ åº¦
 //		yaw_deg = Att_Algo_Param.q2Yawh;
 
 

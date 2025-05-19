@@ -1,0 +1,30 @@
+{
+    "files.associations": {
+        "sdio_sdcard.h": "c",
+        "stm32f4xx.h": "c",
+        "sys.h": "c",
+        "includes.h": "c",
+        "distance.h": "c",
+        "usart.h": "c",
+        "delay.h": "c",
+        "string.h": "c",
+        "exfuns.h": "c",
+        "fattester.h": "c",
+        "diskio.h": "c",
+        "bsp.h": "c",
+        "control.h": "c",
+        "ano_tc.h": "c",
+        "led.h": "c",
+        "pwm.h": "c",
+        "stm32f4xx_conf.h": "c",
+        "wdg.h": "c",
+        "iic.h": "c",
+        "spl06_001.h": "c",
+        "adc.h": "c",
+        "elrs.h": "c",
+        "imu_uart.h": "c",
+        "fdilink.h": "c",
+        "gnss.h": "c",
+        "nmea0183.h": "c"
+    }
+}

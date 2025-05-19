@@ -3,7 +3,7 @@
 
 #include "stm32f4xx.h"
 #include "sys.h"
-/***************I2C GPIO∂®“Â******************/
+/***************I2C GPIOÂÆö‰πâ******************/
 #define IIC_GPIO GPIOB
 #define SCL_PIN GPIO_Pin_6
 #define SDA_PIN GPIO_Pin_7
@@ -11,7 +11,7 @@
 
 #define IIC_SCL PBout(6) // SCL
 #define IIC_SDA PBout(7) // SDA
-#define SDA_read PBin(7) // ∂¡»°SDA
+#define SDA_read PBin(7) // ËØªÂèñSDA
 
 void I2c_delay(void);
 void IIC_Init(void);

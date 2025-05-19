@@ -4,7 +4,7 @@
 
 
 
-extern u16 distance;		 //(µ•Œª cm)
+extern u16 distance;		 //(Âçï‰Ωç cm)
 
 
 

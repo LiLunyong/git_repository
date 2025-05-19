@@ -1,9 +1,9 @@
 /***********************************************************************
- * desined by ZINĞ¡µê
+ * desined by ZINå°åº—
  * @param[in]
  * @param[out]
  * @return
-   ÌÔ±¦µØÖ·£ºhttps://shop297229812.taobao.com/shop/view_shop.htm?mytmenu=mdianpu&user_number_id=2419305772
+   æ·˜å®åœ°å€ï¼šhttps://shop297229812.taobao.com/shop/view_shop.htm?mytmenu=mdianpu&user_number_id=2419305772
  **********************************************************************/
 #include "spl06_001.h"
 #include "IIC.h"
@@ -18,15 +18,15 @@
 #undef DISABLE
 #define DISABLE 0
 
-// ¼Ä´æÆ÷¶¨Òå
+// å¯„å­˜å™¨å®šä¹‰
 #define PRESSURE_REG 0X00
 #define TEMP_REG 0X03
-#define PRS_CFG_REG 0x06  // ÆøÑ¹²âÁ¿ËÙÂÊÅäÖÃ
-#define TMP_CFG_REG 0x07  // ÎÂ¶È²âÁ¿ËÙ¶ÈÅäÖÃ
-#define MEAS_CFG_REG 0x08 // ²âÁ¿ÅäÖÃÓë´«¸ĞÆ÷ÅäÖÃ
-#define CFG_REG 0x09      // ÖĞ¶Ï/FIFO/SPIÏßÊıµÈÅäÖÃ
-#define INT_STS_REG 0X0A  // ÖĞ¶Ï×´Ì¬±êÖ¾Î»
-#define FIFO_STS_REG 0X0B // FIFO×´Ì¬
+#define PRS_CFG_REG 0x06  // æ°”å‹æµ‹é‡é€Ÿç‡é…ç½®
+#define TMP_CFG_REG 0x07  // æ¸©åº¦æµ‹é‡é€Ÿåº¦é…ç½®
+#define MEAS_CFG_REG 0x08 // æµ‹é‡é…ç½®ä¸ä¼ æ„Ÿå™¨é…ç½®
+#define CFG_REG 0x09      // ä¸­æ–­/FIFO/SPIçº¿æ•°ç­‰é…ç½®
+#define INT_STS_REG 0X0A  // ä¸­æ–­çŠ¶æ€æ ‡å¿—ä½
+#define FIFO_STS_REG 0X0B // FIFOçŠ¶æ€
 #define RESET_REG 0X0C
 #define ID_REG 0x0D
 #define COEF_REG 0x10
@@ -36,10 +36,10 @@
 #define int32 int
 #define uint8 unsigned char
 
-#define HW_ADR 0x77 // SDO HIGH OR NC//µ±SDOÀ­¸ß»òÕß¸¡¿ÕÊ¹ÓÃµÄI2CµØÖ· 0x77
+#define HW_ADR 0x77 // SDO HIGH OR NC//å½“SDOæ‹‰é«˜æˆ–è€…æµ®ç©ºä½¿ç”¨çš„I2Cåœ°å€ 0x77
 
 static struct
-{ // ÄÚ²¿³ö³§Ğ£×¼Êı¾İ
+{ // å†…éƒ¨å‡ºå‚æ ¡å‡†æ•°æ®
     int16 c0;
     int16 c1;
     int32 c00;
@@ -54,13 +54,13 @@ static struct
 struct
 {
     uint8 chip_id;           /**<chip id*/
-    int32 i32rawPressure;    // Ô­Ê¼ÆøÑ¹Êı¾İ
-    int32 i32rawTemperature; // Ô­Ê¼ÎÂ¶ÈÊı¾İ
-    int32 i32kP;             // ÆøÑ¹²¹³¥²ÎÊı
-    int32 i32kT;             // ÎÂ¶È²¹³¥²ÎÊı
+    int32 i32rawPressure;    // åŸå§‹æ°”å‹æ•°æ®
+    int32 i32rawTemperature; // åŸå§‹æ¸©åº¦æ•°æ®
+    int32 i32kP;             // æ°”å‹è¡¥å¿å‚æ•°
+    int32 i32kT;             // æ¸©åº¦è¡¥å¿å‚æ•°
 } spl06;
 
-// I2CÅäÖÃ
+// I2Cé…ç½®
 #define spl0601_write(ADDR, REG, DATA) IIC_Write_1Byte(ADDR, REG, DATA)
 
 uint8 spl0601_read(unsigned char hwadr, unsigned char regadr)
@@ -71,14 +71,14 @@ uint8 spl0601_read(unsigned char hwadr, unsigned char regadr)
     return reg_data;
 }
 
-// Ê²Ã´ÊÇ¹ı²ÉÑù£¬¾ÍÊÇ²ÉÑù¶à×éÈ¡Ò»´ÎÊı¾İ£¬±ÈÈçÎÂ¶È²ÉÑùÆµÂÊ10HZ£¬ÉèÖÃ¹ı²ÉÑùÎª8£¬¾ÍÊÇÃ¿¸öÎÂ¶È¶ÁÈ¡¶¼ÊÇ8×éÈ¡Æ½¾ù£¬ÄÚ²¿Êµ¼Ê×öÁË80HZµÄÊı¾İ²É¼¯£¬ºóÌ¨Ä£Ê½ÎŞ¹ı²ÉÑù
+// ä»€ä¹ˆæ˜¯è¿‡é‡‡æ ·ï¼Œå°±æ˜¯é‡‡æ ·å¤šç»„å–ä¸€æ¬¡æ•°æ®ï¼Œæ¯”å¦‚æ¸©åº¦é‡‡æ ·é¢‘ç‡10HZï¼Œè®¾ç½®è¿‡é‡‡æ ·ä¸º8ï¼Œå°±æ˜¯æ¯ä¸ªæ¸©åº¦è¯»å–éƒ½æ˜¯8ç»„å–å¹³å‡ï¼Œå†…éƒ¨å®é™…åšäº†80HZçš„æ•°æ®é‡‡é›†ï¼Œåå°æ¨¡å¼æ— è¿‡é‡‡æ ·
 /***********************************************************************
- * ÆøÑ¹²ÉÑùÂÊÅäÖÃ
- * @param[in] ºóÌ¨Ä£Ê½background_rate²ÉÑùÆµÂÊN´Î/Ã¿Ãë£¨½ö¹©ºóÌ¨Ä£Ê½Ê¹ÓÃ,ÃüÁîÄ£Ê½²ÉÑùÆµÂÊÓÉÓÃ»§×Ô¼º¾ö¶¨£¬×îĞ¡¼ä¸ôÈ¡¾öÓÚ¹ı²ÉÑùËùĞèÊ±¼ä,²»Í¬µÄ¹ı²ÉÑùÊ±¼ä¿ÉÒÔÓĞ²»Í¬µÄ¹¦ºÄ£©£¬oversamply¹ı²ÉÑù´ÎÊı
+ * æ°”å‹é‡‡æ ·ç‡é…ç½®
+ * @param[in] åå°æ¨¡å¼background_rateé‡‡æ ·é¢‘ç‡Næ¬¡/æ¯ç§’ï¼ˆä»…ä¾›åå°æ¨¡å¼ä½¿ç”¨,å‘½ä»¤æ¨¡å¼é‡‡æ ·é¢‘ç‡ç”±ç”¨æˆ·è‡ªå·±å†³å®šï¼Œæœ€å°é—´éš”å–å†³äºè¿‡é‡‡æ ·æ‰€éœ€æ—¶é—´,ä¸åŒçš„è¿‡é‡‡æ ·æ—¶é—´å¯ä»¥æœ‰ä¸åŒçš„åŠŸè€—ï¼‰ï¼Œoversamplyè¿‡é‡‡æ ·æ¬¡æ•°
  * @param[out]
  * @return
  **********************************************************************/
-#define PRESSURE_RATE_1_TIMES 0 // ²ÉÑùÂÊ
+#define PRESSURE_RATE_1_TIMES 0 // é‡‡æ ·ç‡
 #define PRESSURE_RATE_2_TIMES 1
 #define PRESSURE_RATE_4_TIMES 2
 #define PRESSURE_RATE_8_TIMES 3
@@ -92,12 +92,12 @@ void spl06_pressure_rate_config(u8 background_rate, u8 oversamply)
     u8 data;
 
     data = (background_rate << 4) | oversamply;
-    if (oversamply > PRESSURE_RATE_8_TIMES) // ¹ı²ÉÑù´ÎÊı´óÓÚEMPERATURE_RATE_8_TIMES£¬Ó¦µ±ÔÊĞíÊı¾İ±»ĞÂµÄÊı¾İ¸²¸Ç£¬ÄÚ²¿ÓµÓĞÆøÑ¹ºÍÎÂ¶È¹²32¼¶µÄFIFO£¬ÔÚ´óÓÚ8´Î£¨Ò²¾ÍÊÇ´óÓÚ»òµÈÓÚ16´Î¹ı²ÉÑù£©µÄÊ±ºòĞèÒª±»ĞÂµÄÊı¾İ¸²¸Ç£¬·ñÔòÊı¾İ¾Í»á¶ªÊ§
+    if (oversamply > PRESSURE_RATE_8_TIMES) // è¿‡é‡‡æ ·æ¬¡æ•°å¤§äºEMPERATURE_RATE_8_TIMESï¼Œåº”å½“å…è®¸æ•°æ®è¢«æ–°çš„æ•°æ®è¦†ç›–ï¼Œå†…éƒ¨æ‹¥æœ‰æ°”å‹å’Œæ¸©åº¦å…±32çº§çš„FIFOï¼Œåœ¨å¤§äº8æ¬¡ï¼ˆä¹Ÿå°±æ˜¯å¤§äºæˆ–ç­‰äº16æ¬¡è¿‡é‡‡æ ·ï¼‰çš„æ—¶å€™éœ€è¦è¢«æ–°çš„æ•°æ®è¦†ç›–ï¼Œå¦åˆ™æ•°æ®å°±ä¼šä¸¢å¤±
     {
         u8 data;
-        data = spl0601_read(HW_ADR, CFG_REG); // ¶ÁÈ¡Ô­¼Ä´æÆ÷Öµ
-        data |= 0X04;                         // P-SHIFTÎ»ÖÃ1
-        spl0601_write(HW_ADR, CFG_REG, data); // ÖØĞÂĞ´»Ø¼Ä´æÆ÷
+        data = spl0601_read(HW_ADR, CFG_REG); // è¯»å–åŸå¯„å­˜å™¨å€¼
+        data |= 0X04;                         // P-SHIFTä½ç½®1
+        spl0601_write(HW_ADR, CFG_REG, data); // é‡æ–°å†™å›å¯„å­˜å™¨
     }
     switch (oversamply)
     {
@@ -127,16 +127,16 @@ void spl06_pressure_rate_config(u8 background_rate, u8 oversamply)
         spl06.i32kP = 524288;
         break;
     }
-    spl0601_write(HW_ADR, PRS_CFG_REG, data); // Ğ´ÈëÅäÖÃ
+    spl0601_write(HW_ADR, PRS_CFG_REG, data); // å†™å…¥é…ç½®
 }
 
 /***********************************************************************
- * ÎÂ¶È²ÉÑùÂÊÅäÖÃ
- * @param[in] background_rate²ÉÑùÆµÂÊN´Î/Ã¿Ãë£¨½ö¹©ºóÌ¨Ä£Ê½Ê¹ÓÃ,ÃüÁîÄ£Ê½²ÉÑùÆµÂÊÓÉÓÃ»§×Ô¼º¾ö¶¨£¬×îĞ¡¼ä¸ôÈ¡¾öÓÚ¹ı²ÉÑùËùĞèÊ±¼ä£©£¬oversamply¹ı²ÉÑù´ÎÊı extÎÂ¶È¼ÆÑ¡Ôñ
+ * æ¸©åº¦é‡‡æ ·ç‡é…ç½®
+ * @param[in] background_rateé‡‡æ ·é¢‘ç‡Næ¬¡/æ¯ç§’ï¼ˆä»…ä¾›åå°æ¨¡å¼ä½¿ç”¨,å‘½ä»¤æ¨¡å¼é‡‡æ ·é¢‘ç‡ç”±ç”¨æˆ·è‡ªå·±å†³å®šï¼Œæœ€å°é—´éš”å–å†³äºè¿‡é‡‡æ ·æ‰€éœ€æ—¶é—´ï¼‰ï¼Œoversamplyè¿‡é‡‡æ ·æ¬¡æ•° extæ¸©åº¦è®¡é€‰æ‹©
  * @param[out]
  * @return
  **********************************************************************/
-#define TEMPERATURE_RATE_1_TIMES 0 // ²ÉÑùÂÊ
+#define TEMPERATURE_RATE_1_TIMES 0 // é‡‡æ ·ç‡
 #define TEMPERATURE_RATE_2_TIMES 1
 #define TEMPERATURE_RATE_4_TIMES 2
 #define TEMPERATURE_RATE_8_TIMES 3
@@ -144,19 +144,19 @@ void spl06_pressure_rate_config(u8 background_rate, u8 oversamply)
 #define TEMPERATURE_RATE_32_TIMES 5
 #define TEMPERATURE_RATE_64_TIMES 6
 #define TEMPERATURE_RATE_128_TIMES 7
-#define TEMPERATURE_RATE_TMP_EXT_INTERNAL 0 // ¼¯³ÉµçÂ·ÉÏµÄÎÂ¶È¼Æ
-#define TEMPERATURE_RATE_TMP_EXT_EXTERNAL 1 // ´«¸ĞÆ÷MEMSÆøÑ¹Ğ¾Æ¬ÉÏÎÂ¶È¼Æ
+#define TEMPERATURE_RATE_TMP_EXT_INTERNAL 0 // é›†æˆç”µè·¯ä¸Šçš„æ¸©åº¦è®¡
+#define TEMPERATURE_RATE_TMP_EXT_EXTERNAL 1 // ä¼ æ„Ÿå™¨MEMSæ°”å‹èŠ¯ç‰‡ä¸Šæ¸©åº¦è®¡
 void spl06_temperature_rate_config(u8 background_rate, u8 oversamply, u8 ext)
 {
     u8 data;
 
     data = (ext << 7) | (background_rate << 4) | oversamply;
-    if (oversamply > TEMPERATURE_RATE_8_TIMES) // ¹ı²ÉÑù´ÎÊı´óÓÚEMPERATURE_RATE_8_TIMES£¬Ó¦µ±ÔÊĞíÊı¾İ±»ĞÂµÄÊı¾İ¸²¸Ç
+    if (oversamply > TEMPERATURE_RATE_8_TIMES) // è¿‡é‡‡æ ·æ¬¡æ•°å¤§äºEMPERATURE_RATE_8_TIMESï¼Œåº”å½“å…è®¸æ•°æ®è¢«æ–°çš„æ•°æ®è¦†ç›–
     {
         u8 data;
-        data = spl0601_read(HW_ADR, CFG_REG); // ¶ÁÈ¡Ô­¼Ä´æÆ÷Öµ
-        data |= 0X08;                         // T-SHIFTÎ»ÖÃ1
-        spl0601_write(HW_ADR, CFG_REG, data); // ÖØĞÂĞ´»Ø¼Ä´æÆ÷
+        data = spl0601_read(HW_ADR, CFG_REG); // è¯»å–åŸå¯„å­˜å™¨å€¼
+        data |= 0X08;                         // T-SHIFTä½ç½®1
+        spl0601_write(HW_ADR, CFG_REG, data); // é‡æ–°å†™å›å¯„å­˜å™¨
     }
     switch (oversamply)
     {
@@ -186,68 +186,68 @@ void spl06_temperature_rate_config(u8 background_rate, u8 oversamply, u8 ext)
         spl06.i32kT = 524288;
         break;
     }
-    spl0601_write(HW_ADR, TMP_CFG_REG, data); // Ğ´ÈëÅäÖÃ
+    spl0601_write(HW_ADR, TMP_CFG_REG, data); // å†™å…¥é…ç½®
 }
 /***********************************************************************
- * ´«¸ĞÆ÷²âÁ¿Ä£Ê½ÅäÖÃÓë×´Ì¬¶ÁÈ¡
+ * ä¼ æ„Ÿå™¨æµ‹é‡æ¨¡å¼é…ç½®ä¸çŠ¶æ€è¯»å–
  * @param[in]
  * @param[out]
  * @return
  **********************************************************************/
-#define MEAS_CFG_COEF_RDY 0X80                    // ´«¸ĞÆ÷ÄÚ²¿Ğ£×¼Öµ¿É¶Á£¬ÔÚÆô¶¯ºó
-#define MEAS_CFG_SENSOR_RDY 0X40                  // ´«¸ĞÆ÷ÒÑ³õÊ¼»¯Íê³É£¬ÔÚÆô¶¯ºó
-#define MEAS_CFG_TMP_RDY 0x20                     // ÎÂ¶ÈÖµÒÑ¾­×¼±¸¾ÍĞ÷£¬¿ÉÒÔ½øĞĞ¶ÁÈ¡£¬¸Ã±êÖ¾Î»¶ÁÈ¡ºó×Ô¶¯Çå0
-#define MEAS_CFG_PRS_RDY 0x10                     // ÆøÑ¹ÖµÒÑ¾­×¼±¸¾ÍĞ÷£¬¿ÉÒÔ½øĞĞ¶ÁÈ¡£¬¸Ã±êÖ¾Î»
-#define MEAS_CFG_MEAS_CTR_STANDBY 0               // Ä£Ê½ÅäÖÃ ¹ÒÆğÄ£Ê½
-#define MEAS_CFG_MEAS_CTR_COMMAND_PRS 0x01        // Ä£Ê½ÅäÖÃ ÃüÁîÄ£Ê½ÏÂÆô¶¯ÆøÑ¹²É¼¯
-#define MEAS_CFG_MEAS_CTR_COMMAND_TMP 0x02        // Ä£Ê½ÅäÖÃ ÃüÁîÄ£Ê½ÏÂÆô¶¯ÎÂ¶È²É¼¯
-#define MEAS_CFG_MEAS_CTR_BACKGROUND_PRS 0x05     // Ä£Ê½ÅäÖÃ ºóÌ¨Ä£Ê½Ö»¶ÁÈ¡ÆøÑ¹Öµ
-#define MEAS_CFG_MEAS_CTR_BACKGROUND_TMP 0X06     // Ä£Ê½ÅäÖÃ ºóÌ¨Ä£Ê½Ö»¶ÁÈ¡ÎÂ¶ÈÖµ
-#define MEAS_CFG_MEAS_CTR_BACKGROUND_PSR_TMP 0X07 // Ä£Ê½ÅäÖÃ ºóÌ¨Ä£Ê½Í¬Ê±¶ÁÈ¡ÎÂ¶ÈÖµºÍÆøÑ¹Öµ
-// »ñÈ¡´«¸ĞÆ÷Êı¾İ¾ÍÎ»×´Ì¬//´«¸ĞÆ÷¾ÍĞ÷×´Ì¬
+#define MEAS_CFG_COEF_RDY 0X80                    // ä¼ æ„Ÿå™¨å†…éƒ¨æ ¡å‡†å€¼å¯è¯»ï¼Œåœ¨å¯åŠ¨å
+#define MEAS_CFG_SENSOR_RDY 0X40                  // ä¼ æ„Ÿå™¨å·²åˆå§‹åŒ–å®Œæˆï¼Œåœ¨å¯åŠ¨å
+#define MEAS_CFG_TMP_RDY 0x20                     // æ¸©åº¦å€¼å·²ç»å‡†å¤‡å°±ç»ªï¼Œå¯ä»¥è¿›è¡Œè¯»å–ï¼Œè¯¥æ ‡å¿—ä½è¯»å–åè‡ªåŠ¨æ¸…0
+#define MEAS_CFG_PRS_RDY 0x10                     // æ°”å‹å€¼å·²ç»å‡†å¤‡å°±ç»ªï¼Œå¯ä»¥è¿›è¡Œè¯»å–ï¼Œè¯¥æ ‡å¿—ä½
+#define MEAS_CFG_MEAS_CTR_STANDBY 0               // æ¨¡å¼é…ç½® æŒ‚èµ·æ¨¡å¼
+#define MEAS_CFG_MEAS_CTR_COMMAND_PRS 0x01        // æ¨¡å¼é…ç½® å‘½ä»¤æ¨¡å¼ä¸‹å¯åŠ¨æ°”å‹é‡‡é›†
+#define MEAS_CFG_MEAS_CTR_COMMAND_TMP 0x02        // æ¨¡å¼é…ç½® å‘½ä»¤æ¨¡å¼ä¸‹å¯åŠ¨æ¸©åº¦é‡‡é›†
+#define MEAS_CFG_MEAS_CTR_BACKGROUND_PRS 0x05     // æ¨¡å¼é…ç½® åå°æ¨¡å¼åªè¯»å–æ°”å‹å€¼
+#define MEAS_CFG_MEAS_CTR_BACKGROUND_TMP 0X06     // æ¨¡å¼é…ç½® åå°æ¨¡å¼åªè¯»å–æ¸©åº¦å€¼
+#define MEAS_CFG_MEAS_CTR_BACKGROUND_PSR_TMP 0X07 // æ¨¡å¼é…ç½® åå°æ¨¡å¼åŒæ—¶è¯»å–æ¸©åº¦å€¼å’Œæ°”å‹å€¼
+// è·å–ä¼ æ„Ÿå™¨æ•°æ®å°±ä½çŠ¶æ€//ä¼ æ„Ÿå™¨å°±ç»ªçŠ¶æ€
 u8 spl06_get_measure_status(void)
 {
     return spl0601_read(HW_ADR, MEAS_CFG_REG);
 }
-// ÉèÖÃ¶ÁÈ¡Ä£Ê½+¶ÁÈ¡·½Ê½
-void spl06_set_measure_mode(u8 mode) // ²ÎÊıÎªÄ£Ê½Öµ
+// è®¾ç½®è¯»å–æ¨¡å¼+è¯»å–æ–¹å¼
+void spl06_set_measure_mode(u8 mode) // å‚æ•°ä¸ºæ¨¡å¼å€¼
 {
     spl0601_write(HW_ADR, MEAS_CFG_REG, mode);
 }
-// Æô¶¯ÃüÁîÄ£Ê½¶ÁÈ¡ÎÂ¶ÈÖµ
+// å¯åŠ¨å‘½ä»¤æ¨¡å¼è¯»å–æ¸©åº¦å€¼
 void spl06_start_temperature(void)
 {
     spl0601_write(HW_ADR, MEAS_CFG_REG, MEAS_CFG_MEAS_CTR_COMMAND_TMP);
 }
-// Æô¶¯ÃüÁîÄ£Ê½¶ÁÈ¡ÆøÑ¹Öµ
+// å¯åŠ¨å‘½ä»¤æ¨¡å¼è¯»å–æ°”å‹å€¼
 void spl06_start_pressure(void)
 {
     spl0601_write(HW_ADR, MEAS_CFG_REG, MEAS_CFG_MEAS_CTR_COMMAND_PRS);
 }
-// ½øÈë´ı»úÄ£Ê½£¬½øÈëºóÍ£Ö¹²É¼¯Êı¾İÖ±µ½ÔÙ´ÎÇĞ»»Ä£Ê½
+// è¿›å…¥å¾…æœºæ¨¡å¼ï¼Œè¿›å…¥ååœæ­¢é‡‡é›†æ•°æ®ç›´åˆ°å†æ¬¡åˆ‡æ¢æ¨¡å¼
 void spl06_enter_standby(void)
 {
     spl0601_write(HW_ADR, MEAS_CFG_REG, MEAS_CFG_MEAS_CTR_STANDBY);
 }
 
 /***********************************************************************
- * ÖĞ¶ÏÓëFIFOÅäÖÃ¡¢SPIÄ£Ê½ÅäÖÃ
+ * ä¸­æ–­ä¸FIFOé…ç½®ã€SPIæ¨¡å¼é…ç½®
  * @param[in]
  * @param[out]
  * @return
  **********************************************************************/
-#define CFG_INT_LEVEL_ACTIVE_LOW 0  // ÖĞ¶ÏµÍµçÆ½ÓĞĞ§
-#define CFG_INT_LEVEL_ACTIVE_HIGH 1 // ÖĞ¶Ï¸ßµçÆ½ÓĞĞ§
-#define CFG_INT_FIFO 0X40           // µ±FIFOÂúÊ¹ÄÜÖĞ¶Ï
-#define CFG_INT_PRS 0X20            // µ±ÆøÑ¹¼Æ¶ÁÈ¡Íê±ÏÊ¹ÄÜÖĞ¶Ï
-#define CFG_INT_TMP 0X10            // µ±ÎÂ¶È¶ÁÈ¡Íê±ÏÊ¹ÄÜÖĞ¶Ï
-#define CFG_T_SHIFT 0X08            // ÔÊĞíÊı¾İ±»¸²¸Ç£¬¿ÉÒÔ½øĞĞÏÂÒ»±Ê²É¼¯
-#define CFG_P_SHIFT 0X04            // ÔÊĞíÊı¾İ±»¸²¸Ç£¬¿ÉÒÔ½øĞĞÏÂÒ»±Ê²É¼¯
-#define CFG_FIF 0X02                // Ê¹ÄÜFIFO
-#define CFG_SPI_3_WIRE 1            // 3ÏßSPI
-#define CFG_SPI_4_WIRE 0            // 4ÏßSPI
+#define CFG_INT_LEVEL_ACTIVE_LOW 0  // ä¸­æ–­ä½ç”µå¹³æœ‰æ•ˆ
+#define CFG_INT_LEVEL_ACTIVE_HIGH 1 // ä¸­æ–­é«˜ç”µå¹³æœ‰æ•ˆ
+#define CFG_INT_FIFO 0X40           // å½“FIFOæ»¡ä½¿èƒ½ä¸­æ–­
+#define CFG_INT_PRS 0X20            // å½“æ°”å‹è®¡è¯»å–å®Œæ¯•ä½¿èƒ½ä¸­æ–­
+#define CFG_INT_TMP 0X10            // å½“æ¸©åº¦è¯»å–å®Œæ¯•ä½¿èƒ½ä¸­æ–­
+#define CFG_T_SHIFT 0X08            // å…è®¸æ•°æ®è¢«è¦†ç›–ï¼Œå¯ä»¥è¿›è¡Œä¸‹ä¸€ç¬”é‡‡é›†
+#define CFG_P_SHIFT 0X04            // å…è®¸æ•°æ®è¢«è¦†ç›–ï¼Œå¯ä»¥è¿›è¡Œä¸‹ä¸€ç¬”é‡‡é›†
+#define CFG_FIF 0X02                // ä½¿èƒ½FIFO
+#define CFG_SPI_3_WIRE 1            // 3çº¿SPI
+#define CFG_SPI_4_WIRE 0            // 4çº¿SPI
 
-void spl06_set_interrupt(u8 interrupt, u8 type) // ÉèÖÃÖĞ¶ÏÊ¹ÄÜ
+void spl06_set_interrupt(u8 interrupt, u8 type) // è®¾ç½®ä¸­æ–­ä½¿èƒ½
 {
     u8 data;
     data = spl0601_read(HW_ADR, CFG_REG);
@@ -258,65 +258,65 @@ void spl06_set_interrupt(u8 interrupt, u8 type) // ÉèÖÃÖĞ¶ÏÊ¹ÄÜ
     spl0601_write(HW_ADR, CFG_REG, data);
 }
 
-void spl06_set_spi_wire(u8 wire) // ÉèÖÃSPIÏßÊı //3Ïß/4ÏßSPI¶ÁÈ¡Êı¾İ
+void spl06_set_spi_wire(u8 wire) // è®¾ç½®SPIçº¿æ•° //3çº¿/4çº¿SPIè¯»å–æ•°æ®
 {
     u8 data;
     data = spl0601_read(HW_ADR, CFG_REG);
-    data &= 0xf7; // SPIÏßÅäÖÃËùÔÚÎ»Çå0
+    data &= 0xf7; // SPIçº¿é…ç½®æ‰€åœ¨ä½æ¸…0
     data |= wire;
     spl0601_write(HW_ADR, CFG_REG, data);
 }
 
-void spl06_set_intrupt_level(u8 level) // ÉèÖÃÖĞ¶ÏÓĞĞ§µçÆ½//INT¸ßµçÆ½ÓĞĞ§»òÕßµÍµçÆ½ÓĞĞ§//levelÎª0ÔòµÍµçÆ½ÓĞĞ§,Îª1Ôò¸ßµçÆ½ÓĞĞ§
+void spl06_set_intrupt_level(u8 level) // è®¾ç½®ä¸­æ–­æœ‰æ•ˆç”µå¹³//INTé«˜ç”µå¹³æœ‰æ•ˆæˆ–è€…ä½ç”µå¹³æœ‰æ•ˆ//levelä¸º0åˆ™ä½ç”µå¹³æœ‰æ•ˆ,ä¸º1åˆ™é«˜ç”µå¹³æœ‰æ•ˆ
 {
     u8 data;
     data = spl0601_read(HW_ADR, CFG_REG);
-    data &= 0x7f; // ÖĞ¶ÏµçÆ½ÓĞĞ§Î»Çå0
+    data &= 0x7f; // ä¸­æ–­ç”µå¹³æœ‰æ•ˆä½æ¸…0
     data |= level << 7;
     spl0601_write(HW_ADR, CFG_REG, data);
 }
 
 /***********************************************************************
- * ÖĞ¶Ï×´Ì¬»ñÈ¡¡£ÓÉÓ²¼şÖÃ1£¬²¢·¢ÉúÏà¹ØÒı½ÅÖĞ¶Ï£¬¶ÁÈ¡¸Ã¼Ä´æÆ÷×Ô¶¯Çå0
+ * ä¸­æ–­çŠ¶æ€è·å–ã€‚ç”±ç¡¬ä»¶ç½®1ï¼Œå¹¶å‘ç”Ÿç›¸å…³å¼•è„šä¸­æ–­ï¼Œè¯»å–è¯¥å¯„å­˜å™¨è‡ªåŠ¨æ¸…0
  * @param[in]
  * @param[out]
  * @return
  **********************************************************************/
-#define INT_STS_FIFO_FULL 0X04 // FIFOÂúÖĞ¶Ï×´Ì¬
-#define INT_STS_FIFO_TMP 0X02  // ÎÂ¶È²âÁ¿Íê³É±êÖ¾Î»
-#define INT_STS_FIFO_PRS 0X01  // ÆøÑ¹²âÁ¿Íê³É±êÖ¾Î»
+#define INT_STS_FIFO_FULL 0X04 // FIFOæ»¡ä¸­æ–­çŠ¶æ€
+#define INT_STS_FIFO_TMP 0X02  // æ¸©åº¦æµ‹é‡å®Œæˆæ ‡å¿—ä½
+#define INT_STS_FIFO_PRS 0X01  // æ°”å‹æµ‹é‡å®Œæˆæ ‡å¿—ä½
 
-u8 spl06_get_int_status(void) // ¶ÁÈ¡´«¸ĞÆ÷×´Ì¬
+u8 spl06_get_int_status(void) // è¯»å–ä¼ æ„Ÿå™¨çŠ¶æ€
 {
     return spl0601_read(HW_ADR, INT_STS_REG);
 }
 
 /***********************************************************************
- * FIFO×´Ì¬»ñÈ¡¡£
+ * FIFOçŠ¶æ€è·å–ã€‚
  * @param[in]
  * @param[out]
  * @return
  **********************************************************************/
-#define FIFO_STS_FULL 0X02  // FIFOÂú
-#define FIFO_STS_EMPTY 0X01 // FIFO¿ÕÂú
+#define FIFO_STS_FULL 0X02  // FIFOæ»¡
+#define FIFO_STS_EMPTY 0X01 // FIFOç©ºæ»¡
 u8 spl06_get_fifo_status(void)
 {
     return spl0601_read(HW_ADR, FIFO_STS_REG);
 }
 /***********************************************************************
- *¸´Î»
+ *å¤ä½
  * @param[in]
  * @param[out]
  * @return
  **********************************************************************/
-#define RESET_FIFO_FLUSH 0X80 // FIFOÇå0
-#define RESET_SOFT 0X09       // Èí¼ş¸´Î»
+#define RESET_FIFO_FLUSH 0X80 // FIFOæ¸…0
+#define RESET_SOFT 0X09       // è½¯ä»¶å¤ä½
 
-void spl06_soft_reset(void) // Èí¼ş¸´Î»
+void spl06_soft_reset(void) // è½¯ä»¶å¤ä½
 {
     spl0601_write(HW_ADR, RESET_REG, RESET_SOFT);
 }
-void spl06_reset_fifo(void) // Èí¼şÇåFIFO
+void spl06_reset_fifo(void) // è½¯ä»¶æ¸…FIFO
 {
     spl0601_write(HW_ADR, RESET_REG, RESET_FIFO_FLUSH);
 }
@@ -326,19 +326,19 @@ void spl06_reset_fifo(void) // Èí¼şÇåFIFO
  * @param[out]
  * @return
  **********************************************************************/
-#define PRODUCT_ID 0X10    // ²úÆ·ID
-u8 spl06_get_chip_id(void) // »ñÈ¡²úÆ·ID//»ñÈ¡²úÆ·°æ±¾//ÓÉÓÚ°æ±¾ÔÚ²»Í¬µÄ´«¸ĞÆ÷ÓĞ²»Í¬£¬±¾Àú³ÌÖ»ÅĞ¶ÏIDÀ´Ê¶±ğSPL06
+#define PRODUCT_ID 0X10    // äº§å“ID
+u8 spl06_get_chip_id(void) // è·å–äº§å“ID//è·å–äº§å“ç‰ˆæœ¬//ç”±äºç‰ˆæœ¬åœ¨ä¸åŒçš„ä¼ æ„Ÿå™¨æœ‰ä¸åŒï¼Œæœ¬å†ç¨‹åªåˆ¤æ–­IDæ¥è¯†åˆ«SPL06
 {
     return spl0601_read(HW_ADR, ID_REG);
 }
 
 /***********************************************************************
- * »ñÈ¡ÆøÑ¹¼ÆÄÚ²¿µÄĞ£×¼²ÎÊı
+ * è·å–æ°”å‹è®¡å†…éƒ¨çš„æ ¡å‡†å‚æ•°
  * @param[in]
  * @param[out]
  * @return
  **********************************************************************/
-void spl0601_get_calib_param(void) // ÄÚ²¿Ğ£×¼Öµ//ÆøÑ¹¼Æ½âËãÒÔ¼°ÎÂ²¹Ê¹ÓÃ//ÓÉÄÚ²¿³ö³§Éè¶¨
+void spl0601_get_calib_param(void) // å†…éƒ¨æ ¡å‡†å€¼//æ°”å‹è®¡è§£ç®—ä»¥åŠæ¸©è¡¥ä½¿ç”¨//ç”±å†…éƒ¨å‡ºå‚è®¾å®š
 {
     unsigned long h;
     unsigned long m;
@@ -378,7 +378,7 @@ void spl0601_get_calib_param(void) // ÄÚ²¿Ğ£×¼Öµ//ÆøÑ¹¼Æ½âËãÒÔ¼°ÎÂ²¹Ê¹ÓÃ//ÓÉÄÚ²¿
     spl06_calib_param.c30 = (int16)h << 8 | l;
 }
 /***********************************************************************
- * ³õÊ¼»¯
+ * åˆå§‹åŒ–
  * @param[in]
  * @param[out]
  * @return
@@ -386,33 +386,33 @@ void spl0601_get_calib_param(void) // ÄÚ²¿Ğ£×¼Öµ//ÆøÑ¹¼Æ½âËãÒÔ¼°ÎÂ²¹Ê¹ÓÃ//ÓÉÄÚ²¿
 u8 spl0601_init(void)
 {
     u8 spl06_start_status;
-    // µÈ´ıÄÚ²¿Ğ£×¼Êı¾İ¿ÉÓÃ
+    // ç­‰å¾…å†…éƒ¨æ ¡å‡†æ•°æ®å¯ç”¨
     do
-        spl06_start_status = spl06_get_measure_status(); // ¶ÁÈ¡ÆøÑ¹¼ÆÆô¶¯×´Ì¬
+        spl06_start_status = spl06_get_measure_status(); // è¯»å–æ°”å‹è®¡å¯åŠ¨çŠ¶æ€
     while ((spl06_start_status & MEAS_CFG_COEF_RDY) != MEAS_CFG_COEF_RDY);
 //	LED_PC13 = !LED_PC13;
-    // ¶ÁÈ¡ÄÚ²¿Ğ£×¼Öµ
+    // è¯»å–å†…éƒ¨æ ¡å‡†å€¼
     spl0601_get_calib_param();
-    // µÈ´ı´«¸ĞÆ÷ÄÚ²¿³õÊ¼»¯Íê³É
+    // ç­‰å¾…ä¼ æ„Ÿå™¨å†…éƒ¨åˆå§‹åŒ–å®Œæˆ
     do
-        spl06_start_status = spl06_get_measure_status(); // ¶ÁÈ¡ÆøÑ¹¼ÆÆô¶¯×´Ì¬
+        spl06_start_status = spl06_get_measure_status(); // è¯»å–æ°”å‹è®¡å¯åŠ¨çŠ¶æ€
     while ((spl06_start_status & MEAS_CFG_SENSOR_RDY) != MEAS_CFG_SENSOR_RDY);
-    // ¶ÁÈ¡CHIP ID
+    // è¯»å–CHIP ID
     spl06.chip_id = spl06_get_chip_id();
-    // ÅĞ¶Ï¶ÁÈ¡µÄIDÊÇ·ñÕıÈ·£¬ÕâÀïÖ»ÅĞ¶Ï¸ß4Î»µÄID£¬²»ÅĞ¶ÏµÍ4Î»µÄ°æ±¾ºÅ
+    // åˆ¤æ–­è¯»å–çš„IDæ˜¯å¦æ­£ç¡®ï¼Œè¿™é‡Œåªåˆ¤æ–­é«˜4ä½çš„IDï¼Œä¸åˆ¤æ–­ä½4ä½çš„ç‰ˆæœ¬å·
     if ((spl06.chip_id & 0xf0) != PRODUCT_ID)
-        return FAILED; // Èç¹ûID¶ÁÈ¡Ê§°Ü£¬Ôò·µ»ØÊ§°Ü
-    // ºóÌ¨Êı¾İ²ÉÑùËÙÂÊ128HZ ¹ı²ÉÑùÂÊ32´Î
+        return FAILED; // å¦‚æœIDè¯»å–å¤±è´¥ï¼Œåˆ™è¿”å›å¤±è´¥
+    // åå°æ•°æ®é‡‡æ ·é€Ÿç‡128HZ è¿‡é‡‡æ ·ç‡32æ¬¡
     spl06_pressure_rate_config(PRESSURE_RATE_128_TIMES, PRESSURE_RATE_32_TIMES);
-    // ºóÌ¨Êı¾İ²ÉÑùËÙÂÊ32HZ ¹ı²ÉÑùÂÊ8´Î//ÉèÖÃ´«¸ĞÆ÷ÉÏµÄÎÂ¶È¼Æ×÷ÎªÎÂ¶È²É¼¯
+    // åå°æ•°æ®é‡‡æ ·é€Ÿç‡32HZ è¿‡é‡‡æ ·ç‡8æ¬¡//è®¾ç½®ä¼ æ„Ÿå™¨ä¸Šçš„æ¸©åº¦è®¡ä½œä¸ºæ¸©åº¦é‡‡é›†
     spl06_temperature_rate_config(TEMPERATURE_RATE_32_TIMES, TEMPERATURE_RATE_8_TIMES, TEMPERATURE_RATE_TMP_EXT_EXTERNAL);
-    // Æô¶¯ºóÌ¨¶ÁÈ¡Êı¾İ
+    // å¯åŠ¨åå°è¯»å–æ•°æ®
     spl06_set_measure_mode(MEAS_CFG_MEAS_CTR_BACKGROUND_PSR_TMP);
-    return SUCCESS; // ³õÊ¼»¯³É¹¦
+    return SUCCESS; // åˆå§‹åŒ–æˆåŠŸ
 }
 
 /***********************************************************************
- * »ñÈ¡Ô­Ê¼ÎÂ¶ÈÖµ
+ * è·å–åŸå§‹æ¸©åº¦å€¼
  * @param[in]
  * @param[out]
  * @return
@@ -430,7 +430,7 @@ void spl0601_get_raw_temp(void)
 }
 
 /***********************************************************************
- * »ñÈ¡Ô­Ê¼ÆøÑ¹Öµ
+ * è·å–åŸå§‹æ°”å‹å€¼
  * @param[in]
  * @param[out]
  * @return
@@ -448,7 +448,7 @@ void spl0601_get_raw_pressure(void)
 }
 
 /***********************************************************************
- * ÎÂ¶È½âËãÖµ
+ * æ¸©åº¦è§£ç®—å€¼
  * @param[in]
  * @param[out]
  * @return
@@ -464,7 +464,7 @@ float spl0601_get_temperature(void)
 }
 
 /***********************************************************************
- * ÆøÑ¹½âËã²¢½øĞĞÎÂ¶È²¹³¥
+ * æ°”å‹è§£ç®—å¹¶è¿›è¡Œæ¸©åº¦è¡¥å¿
  * @param[in]
  * @param[out]
  * @return
@@ -487,24 +487,24 @@ float spl0601_get_pressure(void)
 }
 
 /***********************************************************************
- * »ñÈ¡ÎÂ¶ÈÖµ
+ * è·å–æ¸©åº¦å€¼
  * @param[in]
  * @param[out]
  * @return
  **********************************************************************/
 float user_spl0601_get_temperature()
 {
-    spl0601_get_raw_temp();           // ¶ÁÈ¡ÎÂ¶ÈÔ­Ê¼Öµ
-    return spl0601_get_temperature(); // ÎÂ¶È½âËãºóµÄÖµ
+    spl0601_get_raw_temp();           // è¯»å–æ¸©åº¦åŸå§‹å€¼
+    return spl0601_get_temperature(); // æ¸©åº¦è§£ç®—åçš„å€¼
 }
 /***********************************************************************
- * »ñÈ¡ÆøÑ¹¼ÆÎÂ¶È²¹³¥Öµ
+ * è·å–æ°”å‹è®¡æ¸©åº¦è¡¥å¿å€¼
  * @param[in]
  * @param[out]
  * @return
  **********************************************************************/
 float user_spl0601_get_presure()
 {
-    spl0601_get_raw_pressure();    // ¶ÁÈ¡ÆøÑ¹ÖµÔ­Ê¼Öµ
-    return spl0601_get_pressure(); // ÆøÑ¹½âËã²¢¾­¹ıÎÂ¶È²¹³¥ºóµÄÆøÑ¹Öµ
+    spl0601_get_raw_pressure();    // è¯»å–æ°”å‹å€¼åŸå§‹å€¼
+    return spl0601_get_pressure(); // æ°”å‹è§£ç®—å¹¶ç»è¿‡æ¸©åº¦è¡¥å¿åçš„æ°”å‹å€¼
 }

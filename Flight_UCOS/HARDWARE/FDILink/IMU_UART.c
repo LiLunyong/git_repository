@@ -3,7 +3,7 @@
 #include "usart.h"
 #include "led.h"
 #include <stdlib.h>
-#include "includes.h"					//ucos Ê¹ÓÃ	  
+#include "includes.h"					//ucos ä½¿ç”¨	  
 
 
 static FDILink_Status_t	_FDILink;
@@ -21,20 +21,20 @@ void Initial_UART3(unsigned long baudrate)
     USART_InitTypeDef USART_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);  // Ê¹ÄÜGPIOAÊ±ÖÓ   							AHB1!!!!!!!!!!!!!!!!!!!!
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE); // Ê¹ÄÜUSART2Ê±ÖÓRCC_APB1PeriphClockCmd   	APB1!!!!!!!!!!!!!!!!!!!!
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);  // ä½¿èƒ½GPIOAæ—¶é’Ÿ   							AHB1!!!!!!!!!!!!!!!!!!!!
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE); // ä½¿èƒ½USART2æ—¶é’ŸRCC_APB1PeriphClockCmd   	APB1!!!!!!!!!!!!!!!!!!!!
 
-    // ´®¿Ú1¶ÔÓ¦Òı½Å¸´ÓÃÓ³Éä
-    GPIO_PinAFConfig(GPIOB, GPIO_PinSource10, GPIO_AF_USART3); // GPIOB10¸´ÓÃÎªUSART3
-    GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_USART3); // GPIOB11¸´ÓÃÎªUSART3
+    // ä¸²å£1å¯¹åº”å¼•è„šå¤ç”¨æ˜ å°„
+    GPIO_PinAFConfig(GPIOB, GPIO_PinSource10, GPIO_AF_USART3); // GPIOB10å¤ç”¨ä¸ºUSART3
+    GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_USART3); // GPIOB11å¤ç”¨ä¸ºUSART3
 
-    // USART1¶Ë¿ÚÅäÖÃ
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11; // GPIOB10ÓëGPIOB11
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;           // ¸´ÓÃ¹¦ÄÜ
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;      // ËÙ¶È50MHz
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;         // ÍÆÍì¸´ÓÃÊä³ö
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;           // ÉÏÀ­
-    GPIO_Init(GPIOB, &GPIO_InitStructure);                 // ³õÊ¼»¯ B10 B11
+    // USART1ç«¯å£é…ç½®
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11; // GPIOB10ä¸GPIOB11
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;           // å¤ç”¨åŠŸèƒ½
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;      // é€Ÿåº¦50MHz
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;         // æ¨æŒ½å¤ç”¨è¾“å‡º
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;           // ä¸Šæ‹‰
+    GPIO_Init(GPIOB, &GPIO_InitStructure);                 // åˆå§‹åŒ– B10 B11
 
     USART_InitStructure.USART_BaudRate = baudrate;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
@@ -44,9 +44,9 @@ void Initial_UART3(unsigned long baudrate)
     USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
     USART_Init(USART3, &USART_InitStructure);
 	
-    USART_ITConfig(USART3, USART_IT_TXE, DISABLE);		// USART3 ·¢ËÍÖĞ¶Ï
+    USART_ITConfig(USART3, USART_IT_TXE, DISABLE);		// USART3 å‘é€ä¸­æ–­
     USART_ITConfig(USART3, USART_IT_RXNE, DISABLE);
-    USART_ITConfig(USART3, USART_IT_IDLE, ENABLE);		// ¿ªÆô USART3 ×ÜÏß¿ÕÏĞÖĞ¶Ï
+    USART_ITConfig(USART3, USART_IT_IDLE, ENABLE);		// å¼€å¯ USART3 æ€»çº¿ç©ºé—²ä¸­æ–­
     USART_ClearFlag(USART3, USART_FLAG_TC);
     USART_Cmd(USART3, ENABLE);
 	
@@ -56,7 +56,7 @@ void Initial_UART3(unsigned long baudrate)
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 	
-	DMA_UART3_RX_init();					// Ë³±ã³õÊ¼»¯DMA
+	DMA_UART3_RX_init();					// é¡ºä¾¿åˆå§‹åŒ–DMA
 }
 
 
@@ -65,20 +65,20 @@ void DMA_UART3_RX_init(void)
 	DMA_InitTypeDef DMA_InitStructure;
 
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1,ENABLE);
-	DMA_DeInit(DMA1_Stream1);   //½«DMAµÄÍ¨µÀ1¼Ä´æÆ÷ÖØÉèÎªÈ±Ê¡Öµ
+	DMA_DeInit(DMA1_Stream1);   //å°†DMAçš„é€šé“1å¯„å­˜å™¨é‡è®¾ä¸ºç¼ºçœå€¼
 	while (DMA_GetCmdStatus(DMA1_Stream1) != DISABLE){}
 
 	DMA_InitStructure.DMA_Channel = DMA_Channel_4;
-	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&USART3->DR; //ÍâÉè»ùµØÖ·
-	DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&DataA_IMU; //´æ´¢Æ÷»ùµØÖ·
-	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory; //ÍâÉè×÷ÎªÀ´Ô´
-	DMA_InitStructure.DMA_BufferSize = SIZEBUFF_IMU;    //»º³åÇø´óĞ¡
-	DMA_InitStructure.DMA_PeripheralInc =  DMA_PeripheralInc_Disable; //ÍâÉèÔöÁ¿Ä£Ê½
-	DMA_InitStructure.DMA_MemoryInc =  DMA_MemoryInc_Enable; //´æ´¢Æ÷ÔöÁ¿Ä£Ê½
-	DMA_InitStructure.DMA_PeripheralDataSize =  DMA_PeripheralDataSize_Byte;  //ÍâÉè´«Êä´óĞ¡
-	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;//´æ´¢Æ÷´«Êä´óĞ¡
-	DMA_InitStructure.DMA_Mode =  DMA_Mode_Circular; //DMAÄ£Ê½
-	DMA_InitStructure.DMA_Priority =  DMA_Priority_Medium;  //Í¨µÀÓÅÏÈ¼¶
+	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&USART3->DR; //å¤–è®¾åŸºåœ°å€
+	DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&DataA_IMU; //å­˜å‚¨å™¨åŸºåœ°å€
+	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory; //å¤–è®¾ä½œä¸ºæ¥æº
+	DMA_InitStructure.DMA_BufferSize = SIZEBUFF_IMU;    //ç¼“å†²åŒºå¤§å°
+	DMA_InitStructure.DMA_PeripheralInc =  DMA_PeripheralInc_Disable; //å¤–è®¾å¢é‡æ¨¡å¼
+	DMA_InitStructure.DMA_MemoryInc =  DMA_MemoryInc_Enable; //å­˜å‚¨å™¨å¢é‡æ¨¡å¼
+	DMA_InitStructure.DMA_PeripheralDataSize =  DMA_PeripheralDataSize_Byte;  //å¤–è®¾ä¼ è¾“å¤§å°
+	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;//å­˜å‚¨å™¨ä¼ è¾“å¤§å°
+	DMA_InitStructure.DMA_Mode =  DMA_Mode_Circular; //DMAæ¨¡å¼
+	DMA_InitStructure.DMA_Priority =  DMA_Priority_Medium;  //é€šé“ä¼˜å…ˆçº§
 	DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;         
 	DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
 	DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
@@ -86,15 +86,15 @@ void DMA_UART3_RX_init(void)
 	DMA_Init(DMA1_Stream1,&DMA_InitStructure);
 
 	USART_DMACmd(USART3, USART_DMAReq_Rx, ENABLE);
-	DMA_Cmd(DMA1_Stream1,ENABLE);    //Ê¹ÓÃusart3½øĞĞÊı¾İ½ÓÊÕ
+	DMA_Cmd(DMA1_Stream1,ENABLE);    //ä½¿ç”¨usart3è¿›è¡Œæ•°æ®æ¥æ”¶
 }
 
 
 void USART3_IRQHandler(void)
 {
 
-	//½øÈëÖĞ¶Ï
-	OSIntEnter();  	  		//UCOS²Ù×÷ÏµÍ³£¬ÖĞ¶ÏÊ±£¬±ØĞëµÄ**********************************************      
+	//è¿›å…¥ä¸­æ–­
+	OSIntEnter();  	  		//UCOSæ“ä½œç³»ç»Ÿï¼Œä¸­æ–­æ—¶ï¼Œå¿…é¡»çš„**********************************************      
 
 	
     if (USART_GetITStatus(USART3, USART_IT_IDLE) != RESET)
@@ -102,25 +102,25 @@ void USART3_IRQHandler(void)
 		uint16_t length;
 //		int i=0;
 		
-		volatile uint32_t temp;		///////////////////////////////// ±ØĞë¶ÁÈ¡£¬·ñÔòÃ»·¨ÔÙ´Î½øÖĞ¶Ï£¬¾Í±ÀÀ£ÁË
+		volatile uint32_t temp;		///////////////////////////////// å¿…é¡»è¯»å–ï¼Œå¦åˆ™æ²¡æ³•å†æ¬¡è¿›ä¸­æ–­ï¼Œå°±å´©æºƒäº†
 		temp = USART3->SR;			/////////////////////////////////
 		temp = USART3->DR;			/////////////////////////////////
-		(void)temp;  // ·ÀÖ¹Î´Ê¹ÓÃ¾¯¸æ   //
+		(void)temp;  // é˜²æ­¢æœªä½¿ç”¨è­¦å‘Š   //
 
-		//Èí¼şĞòÁĞÇå³ıIDLE±êÖ¾Î»
+		//è½¯ä»¶åºåˆ—æ¸…é™¤IDLEæ ‡å¿—ä½
 		DMA_Cmd(DMA1_Stream1,DISABLE);
 		
 		
-        // »ñÈ¡½ÓÊÕÊı¾İ³¤¶È
+        // è·å–æ¥æ”¶æ•°æ®é•¿åº¦
         length = SIZEBUFF_IMU - DMA_GetCurrDataCounter(DMA1_Stream1); 
 //		UsartSendByte(USART1, (uint8_t)length);
 //		if((DataA_IMU[0]== 0xFC) && (DataA_IMU[1]== 0x58) && (DataA_IMU[length - 1]== 0xFD) && (length == 56))
 //		{
 //			LED_PC13 = !LED_PC13;
 //			fdiComProtocolReceive(&_FDILink, DataA_IMU, length);
-////			//Èç¹ûÃ¿´ÎÖĞ¶ÏÈ«²¿´òÓ¡£¬¿ÉÄÜÊÇÒòÎª²¨ÌØÂÊÎÊÌâ£¬Âı£¬µ¼ÖÂÖ»ÏÔÊ¾0x58µÄÖ¡£¬0x59µÄÖ¡²»ÏÔÊ¾
+////			//å¦‚æœæ¯æ¬¡ä¸­æ–­å…¨éƒ¨æ‰“å°ï¼Œå¯èƒ½æ˜¯å› ä¸ºæ³¢ç‰¹ç‡é—®é¢˜ï¼Œæ…¢ï¼Œå¯¼è‡´åªæ˜¾ç¤º0x58çš„å¸§ï¼Œ0x59çš„å¸§ä¸æ˜¾ç¤º
 ////			for(i=0; i<length; i++){
-////				UsartSendByte(USART1, DataA_IMU[i]);	//´«µ½ÉÏÎ»»ú¿´¿´
+////				UsartSendByte(USART1, DataA_IMU[i]);	//ä¼ åˆ°ä¸Šä½æœºçœ‹çœ‹
 ////			}
 //		}
 		if((DataA_IMU[0]== 0xFC) && (DataA_IMU[length - 1]== 0xFD) && (DataA_IMU[1]== 0x40) && (length == 64))
@@ -135,29 +135,29 @@ void USART3_IRQHandler(void)
 		}
 		
 		
-		//´¦ÀíÍêÖØĞÂ¿ªÆôDMA½ÓÊÕ
+		//å¤„ç†å®Œé‡æ–°å¼€å¯DMAæ¥æ”¶
 		DMA_ClearFlag(DMA1_Stream1, DMA_FLAG_TCIF1 | DMA_FLAG_HTIF1 | DMA_FLAG_TEIF1 | DMA_FLAG_DMEIF1 | DMA_FLAG_FEIF1);
-		DMA_SetCurrDataCounter(DMA1_Stream1, SIZEBUFF_IMU); //ÖØÉè³¤¶ÈÏëµ±ÓÚÖØÖÃ½ÓÊÕÊı×éÏÂ±êÎª0
+		DMA_SetCurrDataCounter(DMA1_Stream1, SIZEBUFF_IMU); //é‡è®¾é•¿åº¦æƒ³å½“äºé‡ç½®æ¥æ”¶æ•°ç»„ä¸‹æ ‡ä¸º0
 		DMA_Cmd(DMA1_Stream1,ENABLE);
 		
-        USART_ClearITPendingBit(USART3, USART_IT_IDLE);        // Çå³ı¿ÕÏĞÖĞ¶Ï
+        USART_ClearITPendingBit(USART3, USART_IT_IDLE);        // æ¸…é™¤ç©ºé—²ä¸­æ–­
 
 	
     }
 	
-//	// ´®¿Ú×ª·¢
+//	// ä¸²å£è½¬å‘
 //	if (USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)
 //    {
 //		u8 Res;
-//		Res = USART_ReceiveData(USART3);	// Èç¹ûĞèÒªÖ´ĞĞ×ª·¢£¬ÄÇ¾Í±ØĞëÏÈÆÁ±Î DMA_UART3_RX_init();
+//		Res = USART_ReceiveData(USART3);	// å¦‚æœéœ€è¦æ‰§è¡Œè½¬å‘ï¼Œé‚£å°±å¿…é¡»å…ˆå±è”½ DMA_UART3_RX_init();
 //		UsartSendByte(USART1, Res);
 //		
-//        USART_ClearITPendingBit(USART3, USART_IT_RXNE);        // Çå³ı½ÓÊÕÖĞ¶Ï
+//        USART_ClearITPendingBit(USART3, USART_IT_RXNE);        // æ¸…é™¤æ¥æ”¶ä¸­æ–­
 //    }
 	
 	
-	//ÍË³öÖĞ¶Ï
-	OSIntExit();  	  		//UCOS²Ù×÷ÏµÍ³£¬ÖĞ¶ÏÊ±£¬±ØĞëµÄ**********************************************    
+	//é€€å‡ºä¸­æ–­
+	OSIntExit();  	  		//UCOSæ“ä½œç³»ç»Ÿï¼Œä¸­æ–­æ—¶ï¼Œå¿…é¡»çš„**********************************************    
 
 }
 
@@ -165,8 +165,8 @@ void USART3_IRQHandler(void)
 
 
 
-/***********************************ÅäÖÃIMUËùĞèµÄº¯Êı**************************************/
-/* ½øÈëÅäÖÃÄ£Ê½ */
+/***********************************é…ç½®IMUæ‰€éœ€çš„å‡½æ•°**************************************/
+/* è¿›å…¥é…ç½®æ¨¡å¼ */
 int fdiComSetConfig(void)
 {
 	int i=0, j=0;
@@ -184,7 +184,7 @@ int fdiComSetConfig(void)
 }
 
 
-/* ¶ÁÈ¡²ÎÊı£¬paramNameÎªĞèÒª»ñÈ¡µÄ²ÎÊıÃû³Æ
+/* è¯»å–å‚æ•°ï¼ŒparamNameä¸ºéœ€è¦è·å–çš„å‚æ•°åç§°
  *	\param[in]	paramName - Parameter name to be obtained.*/
 int fdiComGetParam(char* paramName)
 {
@@ -193,7 +193,7 @@ int fdiComGetParam(char* paramName)
 	sprintf(send_buff, "#fparam get %s\r\n", paramName);
 	
 	for(i=0; i<strlen(send_buff); i++){
-		UsartSendByte(USART3, send_buff[i]);	//·¢ËÍµ½Ö¸¶¨´°¿Ú
+		UsartSendByte(USART3, send_buff[i]);	//å‘é€åˆ°æŒ‡å®šçª—å£
 	}
 	delay_ms(1000);	//LED_PC13 = !LED_PC13;
 	delay_ms(1000);
@@ -202,7 +202,7 @@ int fdiComGetParam(char* paramName)
 }
 
 
-/*  ÅäÖÃ·¢ËÍµÄÊı¾İÄÚÈİ£¬msgÎª2Î»16½øÖÆÊı×Ö±íÊ¾Êı¾İ°üID£¬freqÎªÉèÖÃÖ¸¶¨Êı¾İ°üµÄ·¢ËÍÆµÂÊ
+/*  é…ç½®å‘é€çš„æ•°æ®å†…å®¹ï¼Œmsgä¸º2ä½16è¿›åˆ¶æ•°å­—è¡¨ç¤ºæ•°æ®åŒ…IDï¼Œfreqä¸ºè®¾ç½®æŒ‡å®šæ•°æ®åŒ…çš„å‘é€é¢‘ç‡
  *	Configure the data content to be sent.
  *	\param[in]	msg - Represents the packet ID; freq - Packet transmit frequency. */
 int fdiComSetConfigPacketSentMsg(char* msg, int freq)
@@ -212,7 +212,7 @@ int fdiComSetConfigPacketSentMsg(char* msg, int freq)
 	sprintf(send_buff, "#fmsg %s %d\r\n", msg, freq);
 	
 	for(i=0; i<strlen(send_buff); i++){
-		UsartSendByte(USART3, send_buff[i]);	//·¢ËÍµ½Ö¸¶¨´°¿Ú
+		UsartSendByte(USART3, send_buff[i]);	//å‘é€åˆ°æŒ‡å®šçª—å£
 	}
 	delay_ms(1000);	//LED_PC13 = !LED_PC13;
 	delay_ms(1000);
@@ -227,7 +227,7 @@ int fdiComSetConfigMsg(void)
 	sprintf(send_buff, "#fmsg\r\n");
 	
 	for(i=0; i<strlen(send_buff); i++){
-		UsartSendByte(USART3, send_buff[i]);	//·¢ËÍµ½Ö¸¶¨´°¿Ú
+		UsartSendByte(USART3, send_buff[i]);	//å‘é€åˆ°æŒ‡å®šçª—å£
 	}
 	delay_ms(1000);	//LED_PC13 = !LED_PC13;
 	delay_ms(1000);
@@ -237,7 +237,7 @@ int fdiComSetConfigMsg(void)
 
 
 
-/* ±£´æÒÑĞŞ¸ÄµÄÅäÖÃ£¨ÖØÒªµÄÊı¾İ¸üĞÂĞèÒª±£´æ£©*/
+/* ä¿å­˜å·²ä¿®æ”¹çš„é…ç½®ï¼ˆé‡è¦çš„æ•°æ®æ›´æ–°éœ€è¦ä¿å­˜ï¼‰*/
 int fdiSetSave(void)
 {
 	int i=0;
@@ -245,7 +245,7 @@ int fdiSetSave(void)
 	sprintf(send_buff, "#fsave\r\n");
 	
 	for(i=0; i<strlen(send_buff); i++){
-		UsartSendByte(USART3, send_buff[i]);	//·¢ËÍµ½Ö¸¶¨´°¿Ú
+		UsartSendByte(USART3, send_buff[i]);	//å‘é€åˆ°æŒ‡å®šçª—å£
 	}
 	delay_ms(1000);	//LED_PC13 = !LED_PC13;
 	delay_ms(1000);
@@ -255,7 +255,7 @@ int fdiSetSave(void)
 
 
 
-/* ÍË³öÅäÖÃÄ£Ê½ */
+/* é€€å‡ºé…ç½®æ¨¡å¼ */
 int fdiSetDeconfig(void)
 {
 	int i=0;
@@ -263,7 +263,7 @@ int fdiSetDeconfig(void)
 	sprintf(send_buff, "#fdeconfig\r\n");
 	
 	for(i=0; i<strlen(send_buff); i++){
-		UsartSendByte(USART3, send_buff[i]);	//·¢ËÍµ½Ö¸¶¨´°¿Ú
+		UsartSendByte(USART3, send_buff[i]);	//å‘é€åˆ°æŒ‡å®šçª—å£
 	}
 	delay_ms(1000);	//LED_PC13 = !LED_PC13;
 	delay_ms(1000);
@@ -273,7 +273,7 @@ int fdiSetDeconfig(void)
 
 
 
-/* ÖØÆôÉè±¸£¨ÖØÒªÊı¾İµÄ¸üĞÂĞèÒªÖØÆôÉè±¸£©
+/* é‡å¯è®¾å¤‡ï¼ˆé‡è¦æ•°æ®çš„æ›´æ–°éœ€è¦é‡å¯è®¾å¤‡ï¼‰
  *	Restart the device (the device needs to be restarted for the update of important data).*/
 int fdiSetReboot(void)
 {
@@ -283,7 +283,7 @@ int fdiSetReboot(void)
 	sprintf(send_buff, "#freboot\r\n");
 		
 	for(i=0; i<strlen(send_buff); i++){
-		UsartSendByte(USART3, send_buff[i]);	//·¢ËÍµ½Ö¸¶¨´°¿Ú
+		UsartSendByte(USART3, send_buff[i]);	//å‘é€åˆ°æŒ‡å®šçª—å£
 	}
 	delay_ms(1000);	//LED_PC13 = !LED_PC13;
 	delay_ms(1000);
@@ -292,7 +292,7 @@ int fdiSetReboot(void)
 	sprintf(send_buff, "y\r\n");
 		
 	for(i=0; i<strlen(send_buff); i++){
-		UsartSendByte(USART3, send_buff[i]);	//·¢ËÍµ½Ö¸¶¨´°¿Ú
+		UsartSendByte(USART3, send_buff[i]);	//å‘é€åˆ°æŒ‡å®šçª—å£
 	}
 	delay_ms(1000);	//LED_PC13 = !LED_PC13;
 
@@ -309,9 +309,9 @@ int fdiSetReboot(void)
 //		int len1 = 56;
 //		int len2 = 64;
 		
-//		if(length > 40)		// ´óÓÚÖ¸¶¨³¤¶È²Å´¦Àí£¬²»È»¶¼ÓĞÎÊÌâ
+//		if(length > 40)		// å¤§äºæŒ‡å®šé•¿åº¦æ‰å¤„ç†ï¼Œä¸ç„¶éƒ½æœ‰é—®é¢˜
 //		{
-//			// Êı¾İ´¦Àí£¨ÓÃ»§×Ô¶¨ÒåĞ­Òé£©
+//			// æ•°æ®å¤„ç†ï¼ˆç”¨æˆ·è‡ªå®šä¹‰åè®®ï¼‰
 //			if((DataA_IMU[0]== 0xFC) && (DataA_IMU[length - 1]== 0xFD))
 //			{
 //				fdiComProtocolReceive(&_FDILink, DataA_IMU, length);
@@ -320,9 +320,9 @@ int fdiSetReboot(void)
 //		}
 		
 		
-//		if(length == 56)		// ´óÓÚÖ¸¶¨³¤¶È²Å´¦Àí£¬²»È»¶¼ÓĞÎÊÌâ
+//		if(length == 56)		// å¤§äºæŒ‡å®šé•¿åº¦æ‰å¤„ç†ï¼Œä¸ç„¶éƒ½æœ‰é—®é¢˜
 //		{
-//			// Êı¾İ´¦Àí£¨ÓÃ»§×Ô¶¨ÒåĞ­Òé£©
+//			// æ•°æ®å¤„ç†ï¼ˆç”¨æˆ·è‡ªå®šä¹‰åè®®ï¼‰
 //			if((DataA_IMU[0]== 0xFC) && (DataA_IMU[length - 1]== 0xFD))
 //			{
 //				fdiComProtocolReceive(&_FDILink, DataA_IMU, length);
@@ -330,19 +330,19 @@ int fdiSetReboot(void)
 //			}
 //		}
 			
-//		if(length == 120)		// µÈÓÚÖ¸¶¨³¤¶È²Å´¦Àí£¬²»È»¶¼ÓĞÎÊÌâ
+//		if(length == 120)		// ç­‰äºæŒ‡å®šé•¿åº¦æ‰å¤„ç†ï¼Œä¸ç„¶éƒ½æœ‰é—®é¢˜
 //		{
 //			if((DataA_IMU[0]== 0xFC) && (DataA_IMU[57]== 0x40) && (DataA_IMU[length - 1]== 0xFD))
 //			{
 //				LED_PC13 = !LED_PC13;
 //	//			for(i=0; i<length; i++){
-//	//				UsartSendByte(USART1, DataA_IMU[i]);	//´«µ½ÉÏÎ»»ú¿´¿´
+//	//				UsartSendByte(USART1, DataA_IMU[i]);	//ä¼ åˆ°ä¸Šä½æœºçœ‹çœ‹
 //	//			}
 //				
-//				memset(IMU_buf1, 0, sizeof(IMU_buf1)); // Çå¿ÕÊı×é
+//				memset(IMU_buf1, 0, sizeof(IMU_buf1)); // æ¸…ç©ºæ•°ç»„
 //				memset(IMU_buf2, 0, sizeof(IMU_buf1));
-//				memcpy(IMU_buf1, DataA_IMU, sizeof(int) * len1);	// Ç°°ë¶ÎÒ»´Î memcpy
-//				memcpy(IMU_buf2, DataA_IMU + len1, sizeof(int) * len2);	// ºó°ë¶ÎÒ»´Î memcpy
+//				memcpy(IMU_buf1, DataA_IMU, sizeof(int) * len1);	// å‰åŠæ®µä¸€æ¬¡ memcpy
+//				memcpy(IMU_buf2, DataA_IMU + len1, sizeof(int) * len2);	// ååŠæ®µä¸€æ¬¡ memcpy
 //				
 //				if((IMU_buf1[0]== 0xFC) && (IMU_buf1[len1 - 1]== 0xFD))
 //				{
@@ -359,16 +359,16 @@ int fdiSetReboot(void)
 //			}
 //		}
 		
-		//Èç¹ûÃ¿´ÎÖĞ¶ÏÈ«²¿´òÓ¡£¬¿ÉÄÜÊÇÒòÎª²¨ÌØÂÊÎÊÌâ£¬Âı£¬µ¼ÖÂÖ»ÏÔÊ¾0x58µÄÖ¡£¬0x59µÄÖ¡²»ÏÔÊ¾
+		//å¦‚æœæ¯æ¬¡ä¸­æ–­å…¨éƒ¨æ‰“å°ï¼Œå¯èƒ½æ˜¯å› ä¸ºæ³¢ç‰¹ç‡é—®é¢˜ï¼Œæ…¢ï¼Œå¯¼è‡´åªæ˜¾ç¤º0x58çš„å¸§ï¼Œ0x59çš„å¸§ä¸æ˜¾ç¤º
 //		for(i=0; i<length; i++){
-//			UsartSendByte(USART1, DataA_IMU[i]);	//´«µ½ÉÏÎ»»ú¿´¿´
+//			UsartSendByte(USART1, DataA_IMU[i]);	//ä¼ åˆ°ä¸Šä½æœºçœ‹çœ‹
 //		}
 		
 //		if((length >= 70))
 //		{
 //			LED_PC13 = !LED_PC13;
 //			for(i=0; i<length; i++){
-//					UsartSendByte(USART1, DataA_IMU[i]);	//´«µ½ÉÏÎ»»ú¿´¿´
+//					UsartSendByte(USART1, DataA_IMU[i]);	//ä¼ åˆ°ä¸Šä½æœºçœ‹çœ‹
 //				}
 //			
 //		}

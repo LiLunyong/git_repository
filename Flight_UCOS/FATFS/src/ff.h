@@ -241,8 +241,8 @@ TCHAR* f_gets (TCHAR* buff, int len, FIL* fp);						/* Get a string from the fil
 #define f_tell(fp) ((fp)->fptr)
 #define f_size(fp) ((fp)->fsize)
 
-FRESULT dir_sdi (DIR *dp,UINT idx);					//´Ë´¦Îª×ÔĞĞÌí¼ÓµÄ,ÓÃÓÚ·½±ã²éÕÒÉÏÒ»¸öÎÄ¼ş.
-void ff_enter(FATFS *fs);							//ÔÚdiskio.cÊµÏÖ
+FRESULT dir_sdi (DIR *dp,UINT idx);					//æ­¤å¤„ä¸ºè‡ªè¡Œæ·»åŠ çš„,ç”¨äºæ–¹ä¾¿æŸ¥æ‰¾ä¸Šä¸€ä¸ªæ–‡ä»¶.
+void ff_enter(FATFS *fs);							//åœ¨diskio.cå®ç°
 void ff_leave(FATFS* fs);
 #ifndef EOF
 #define EOF (-1)

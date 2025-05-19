@@ -3,12 +3,12 @@
 #include "led.h"
 #include "GNSS.h"	
 #include "NMEA0183.h"
-#include "includes.h"					//ucos ʹ��	  
+#include "includes.h"					//ucos 使用	  
 
 
 
-uint32_t SIZEBUFF_GNSS=2000;	//����������Ļ������յ����ݻ᲻ȫ
-uint8_t DataA_GNSS[2000];  		//ÿ����һ�����������ݣ��ͽ�һ�ο����ж�
+uint32_t SIZEBUFF_GNSS=2000;	//容量不够大的话，接收的数据会不全
+uint8_t DataA_GNSS[2000];  		//每接收一次完整的数据，就进一次空闲中断
 NMEA0183 gnss_nmea0183;
 
 
@@ -18,20 +18,20 @@ void Initial_UART4(unsigned long baudrate)
     USART_InitTypeDef USART_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE); // ʹ��GPIOAʱ��   						AHB1!!!!!!!!!!!!!!!!!!!!
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART4, ENABLE); // ʹ��UART4ʱ��RCC_APB1PeriphClockCmd   	APB1!!!!!!!!!!!!!!!!!!!!
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE); // 使能GPIOA时钟   						AHB1!!!!!!!!!!!!!!!!!!!!
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART4, ENABLE); // 使能UART4时钟RCC_APB1PeriphClockCmd   	APB1!!!!!!!!!!!!!!!!!!!!
 
-    // ����1��Ӧ���Ÿ���ӳ��
-    GPIO_PinAFConfig(GPIOA, GPIO_PinSource0, GPIO_AF_UART4); // GPIOA0����ΪUART4
-    GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_UART4); // GPIOA1����ΪUART4
+    // 串口1对应引脚复用映射
+    GPIO_PinAFConfig(GPIOA, GPIO_PinSource0, GPIO_AF_UART4); // GPIOA0复用为UART4
+    GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_UART4); // GPIOA1复用为UART4
 
-    // UART4�˿�����
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1; // GPIOA0��GPIOA1
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;           // ���ù���
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;      // �ٶ�50MHz
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;         // ���츴�����
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;           // ����
-    GPIO_Init(GPIOA, &GPIO_InitStructure);                 // ��ʼ��
+    // UART4端口配置
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1; // GPIOA0与GPIOA1
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;           // 复用功能
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;      // 速度50MHz
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;         // 推挽复用输出
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;           // 上拉
+    GPIO_Init(GPIOA, &GPIO_InitStructure);                 // 初始化
 
     USART_InitStructure.USART_BaudRate = baudrate;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
@@ -43,7 +43,7 @@ void Initial_UART4(unsigned long baudrate)
 	
     USART_ITConfig(UART4, USART_IT_TXE, DISABLE);
     USART_ITConfig(UART4, USART_IT_RXNE, DISABLE);
-    USART_ITConfig(UART4, USART_IT_IDLE, ENABLE);		// ���� UART4 ���߿����ж�
+    USART_ITConfig(UART4, USART_IT_IDLE, ENABLE);		// 开启 UART4 总线空闲中断
     USART_ClearFlag(UART4, USART_FLAG_TC);
     USART_Cmd(UART4, ENABLE);
 	
@@ -53,8 +53,8 @@ void Initial_UART4(unsigned long baudrate)
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 	
-	DMA_UART4_RX_init();			// ˳���ʼ��DMA
-	GPS_SEL_Init();					// ˳���ʼ������GPIO��ѡ�����ݵĴ��䷽��
+	DMA_UART4_RX_init();			// 顺便初始化DMA
+	GPS_SEL_Init();					// 顺便初始化单个GPIO（选择数据的传输方向）
 }
 
 
@@ -63,20 +63,20 @@ void DMA_UART4_RX_init(void)
 	DMA_InitTypeDef DMA_InitStructure;
 
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1,ENABLE);
-	DMA_DeInit(DMA1_Stream2);   //��DMA��ͨ��1�Ĵ�������Ϊȱʡֵ
+	DMA_DeInit(DMA1_Stream2);   //将DMA的通道1寄存器重设为缺省值
 	while (DMA_GetCmdStatus(DMA1_Stream2) != DISABLE){}
 
 	DMA_InitStructure.DMA_Channel = DMA_Channel_4;
-	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&UART4->DR; //�������ַ
-	DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&DataA_GNSS; //�洢������ַ
-	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory; //������Ϊ��Դ
-	DMA_InitStructure.DMA_BufferSize = SIZEBUFF_GNSS;    //��������С
-	DMA_InitStructure.DMA_PeripheralInc =  DMA_PeripheralInc_Disable; //��������ģʽ
-	DMA_InitStructure.DMA_MemoryInc =  DMA_MemoryInc_Enable; //�洢������ģʽ
-	DMA_InitStructure.DMA_PeripheralDataSize =  DMA_PeripheralDataSize_Byte;  //���贫���С
-	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;//�洢�������С
-	DMA_InitStructure.DMA_Mode =  DMA_Mode_Circular; //DMAģʽ
-	DMA_InitStructure.DMA_Priority =  DMA_Priority_Medium;  //ͨ�����ȼ�
+	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&UART4->DR; //外设基地址
+	DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&DataA_GNSS; //存储器基地址
+	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory; //外设作为来源
+	DMA_InitStructure.DMA_BufferSize = SIZEBUFF_GNSS;    //缓冲区大小
+	DMA_InitStructure.DMA_PeripheralInc =  DMA_PeripheralInc_Disable; //外设增量模式
+	DMA_InitStructure.DMA_MemoryInc =  DMA_MemoryInc_Enable; //存储器增量模式
+	DMA_InitStructure.DMA_PeripheralDataSize =  DMA_PeripheralDataSize_Byte;  //外设传输大小
+	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;//存储器传输大小
+	DMA_InitStructure.DMA_Mode =  DMA_Mode_Circular; //DMA模式
+	DMA_InitStructure.DMA_Priority =  DMA_Priority_Medium;  //通道优先级
 	DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;         
 	DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
 	DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
@@ -84,26 +84,26 @@ void DMA_UART4_RX_init(void)
 	DMA_Init(DMA1_Stream2,&DMA_InitStructure);
 
 	USART_DMACmd(UART4, USART_DMAReq_Rx, ENABLE);
-	DMA_Cmd(DMA1_Stream2,ENABLE);    //ʹ��usart4�������ݽ���
+	DMA_Cmd(DMA1_Stream2,ENABLE);    //使用usart4进行数据接收
 }
 
 
-// GPS_SEL IO��ʼ��
+// GPS_SEL IO初始化
 void GPS_SEL_Init(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE); // ʹ��GPIOCʱ��
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE); // 使能GPIOC时钟
 
-    // GPIO��ʼ������
+    // GPIO初始化设置
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;         // LED_PC0
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;      // ��ͨ���ģʽ
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;     // �������
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;      // 普通输出模式
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;     // 推挽输出
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz; // 100MHz
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;       // ����  ////////////////////������⣬�����������ܽ�ͨ
-    GPIO_Init(GPIOC, &GPIO_InitStructure);             // ��ʼ��GPIO
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;       // 上拉  ////////////////////这个问题，必须上拉才能接通
+    GPIO_Init(GPIOC, &GPIO_InitStructure);             // 初始化GPIO
 
-    GPIO_SetBits(GPIOC, GPIO_Pin_0); // ���øߣ���IMU��GPS�����ӣ�GPS��������������
+    GPIO_SetBits(GPIOC, GPIO_Pin_0); // 设置高，则IMU和GPS不连接，GPS传到主控来处理
 }
 
 
@@ -111,8 +111,8 @@ void GPS_SEL_Init(void)
 void UART4_IRQHandler(void)
 {
 
-	//�����ж�
-	OSIntEnter();  	  		//UCOS����ϵͳ���ж�ʱ�������**********************************************      
+	//进入中断
+	OSIntEnter();  	  		//UCOS操作系统，中断时，必须的**********************************************      
 
 	
     if (USART_GetITStatus(UART4, USART_IT_IDLE) != RESET)
@@ -120,46 +120,46 @@ void UART4_IRQHandler(void)
 		uint16_t length;
 		int i=0;
 		
-		volatile uint32_t temp;		///////////////////////////////// �����ȡ������û���ٴν��жϣ��ͱ�����
+		volatile uint32_t temp;		///////////////////////////////// 必须读取，否则没法再次进中断，就崩溃了
 		temp = UART4->SR;			/////////////////////////////////
 		temp = UART4->DR;			/////////////////////////////////
-		(void)temp;  // ��ֹδʹ�þ���   //
+		(void)temp;  // 防止未使用警告   //
 
-		//�����������IDLE��־λ
+		//软件序列清除IDLE标志位
 		DMA_Cmd(DMA1_Stream2,DISABLE);
 		
 		
-        // ��ȡ�������ݳ���
+        // 获取接收数据长度
         length = SIZEBUFF_GNSS - DMA_GetCurrDataCounter(DMA1_Stream2); 
-		// ���ݴ���
+		// 数据处理
 		for(i=0; i<length; ++i)
 		{
 			if(nmea_decode(&gnss_nmea0183, DataA_GNSS[i]))
 			{
-			  ///��������ɹ�  //ÿ����һ�����������ݣ��ͽ�һ�ο����ж�
+			  ///解析代码成功  //每接收一次完整的数据，就进一次空闲中断
 			}
 		}
 			
-//		//if (DataA_GNSS[0] == 0x24 && DataA_GNSS[1] == 0x47){ } //�ж��ǲ���$G��ͷ
+//		//if (DataA_GNSS[0] == 0x24 && DataA_GNSS[1] == 0x47){ } //判断是不是$G开头
 //		LED_PC13 = !LED_PC13;
 //		for(i=0; i<length; i++){
-//			UsartSendByte(USART1, DataA_GNSS[i]);	//������λ������
+//			UsartSendByte(USART1, DataA_GNSS[i]);	//传到上位机看看
 //		}
 		
 		
 		
-		//���������¿���DMA����
+		//处理完重新开启DMA接收
 		DMA_ClearFlag(DMA1_Stream2, DMA_FLAG_TCIF1 | DMA_FLAG_HTIF1 | DMA_FLAG_TEIF1 | DMA_FLAG_DMEIF1 | DMA_FLAG_FEIF1);
-		DMA_SetCurrDataCounter(DMA1_Stream2, SIZEBUFF_GNSS); //���賤���뵱�����ý��������±�Ϊ0
+		DMA_SetCurrDataCounter(DMA1_Stream2, SIZEBUFF_GNSS); //重设长度想当于重置接收数组下标为0
 		DMA_Cmd(DMA1_Stream2,ENABLE);
 		
-        USART_ClearITPendingBit(UART4, USART_IT_IDLE);        // ��������ж�
+        USART_ClearITPendingBit(UART4, USART_IT_IDLE);        // 清除空闲中断
 
     }
 
 	
-	//�˳��ж�
-	OSIntExit();  	  		//UCOS����ϵͳ���ж�ʱ�������**********************************************      
+	//退出中断
+	OSIntExit();  	  		//UCOS操作系统，中断时，必须的**********************************************      
 }
 
 

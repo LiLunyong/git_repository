@@ -5,7 +5,7 @@
 #include "sys.h" 
 
 
-struct COMM_RX_USART1 // ´®¿Ú1½ÓÊÕµÄËÄ¸ö×Ö½ÚÊı¾İÖ¸Áî
+struct COMM_RX_USART1 // ä¸²å£1æ¥æ”¶çš„å››ä¸ªå­—èŠ‚æ•°æ®æŒ‡ä»¤
 {
     unsigned char COMM1;
     unsigned char COMM2;

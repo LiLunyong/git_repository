@@ -50,7 +50,7 @@ const  CPU_CHAR  *os_cpu_c__c = "$Id: $";
 */
 
 #include  <os.h>
-#include "includes.h"   	//Ìí¼ÓÍ·ÎÄ¼ş   
+#include "includes.h"   	//æ·»åŠ å¤´æ–‡ä»¶   
 
 #ifdef __cplusplus
 extern  "C" {

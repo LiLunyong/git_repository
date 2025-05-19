@@ -2,20 +2,20 @@
 #define  APP_CFG_MODULE_PRESENT
 
 
-//任务开始优先级
+//浠诲姟寮�濮嬩紭鍏堢骇
 #define  APP_CFG_TASK_START_PRIO                           2u
 
-//任务堆栈大小
+//浠诲姟鍫嗘爤澶у皬
 #define  APP_CFG_TASK_START_STK_SIZE                     128u
 #define  APP_CFG_TASK_BLINKY_STK_SIZE                    128u
 
-//任务堆栈限度
+//浠诲姟鍫嗘爤闄愬害
 #define  APP_CFG_TASK_START_STK_SIZE_PCT_FULL             90u
 #define  APP_CFG_TASK_START_STK_SIZE_LIMIT       (APP_CFG_TASK_START_STK_SIZE     * (100u - APP_CFG_TASK_START_STK_SIZE_PCT_FULL))    / 100u
 
 #define  APP_CFG_TASK_BLINKY_STK_SIZE_LIMIT      (APP_CFG_TASK_BLINKY_STK_SIZE    * (100u - APP_CFG_TASK_START_STK_SIZE_PCT_FULL))    / 100u
 
-//追踪和调试选项
+//杩借釜鍜岃皟璇曢�夐」
 #ifndef  TRACE_LEVEL_OFF
 #define  TRACE_LEVEL_OFF                0
 #endif

@@ -1112,7 +1112,7 @@ DWORD clmt_clust (	/* <2:Error, >=2:Cluster number */
 /*-----------------------------------------------------------------------*/
 /* Directory handling - Set directory index                              */
 /*-----------------------------------------------------------------------*/
-//static //���ⲿ��������
+//static //让外部函数调用
 FRESULT dir_sdi (
 	DIR* dp,		/* Pointer to directory object */
 	UINT idx		/* Index of directory table */
@@ -2844,7 +2844,7 @@ FRESULT f_close (
 			unlock_fs(fs, FR_OK);		/* Unlock volume */
 #endif	
 		}
-		LEAVE_FF(fp->fs,res);			//FATFS�°汾��bug,����������,������ʹ��OS��ʱ��,���ܵ��¹ر��жϺ�,һֱ������,�Ӷ�����.
+		LEAVE_FF(fp->fs,res);			//FATFS新版本的bug,必须加上这句,否则在使用OS的时候,可能导致关闭中断后,一直不开启,从而假死.
 	}
 	return res;
 }
@@ -3227,7 +3227,7 @@ FRESULT f_closedir (
 		unlock_fs(fs, FR_OK);		/* Unlock volume */
 #endif
 	}
-	LEAVE_FF(dp->fs,res);		//FATFS�°汾��bug,����������,������ʹ��OS��ʱ��,���ܵ��¹ر��жϺ�,һֱ������,�Ӷ�����.
+	LEAVE_FF(dp->fs,res);		//FATFS新版本的bug,必须加上这句,否则在使用OS的时候,可能导致关闭中断后,一直不开启,从而假死.
 	//return res;
 }
 

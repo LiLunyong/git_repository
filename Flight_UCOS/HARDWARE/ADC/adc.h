@@ -4,17 +4,17 @@
 
 
 
-extern uint16_t ADC1_DMA_Size; 		//²ÉÑùµãÊı
-extern volatile uint16_t ADC_Value_Buffer[6000]; 	// DMAÄ¿±ê»º³åÇø
+extern uint16_t ADC1_DMA_Size; 		//é‡‡æ ·ç‚¹æ•°
+extern volatile uint16_t ADC_Value_Buffer[6000]; 	// DMAç›®æ ‡ç¼“å†²åŒº
 
 
-void Adc_Init(void); 				//ADCÍ¨µÀ³õÊ¼»¯
+void Adc_Init(void); 				//ADCé€šé“åˆå§‹åŒ–
 void ADC_DMA_Init(void);
 
 						   
-//void Adc_Init(void); 				//ADCÍ¨µÀ³õÊ¼»¯
-//u16  Get_Adc(u8 ch); 				//»ñµÃÄ³¸öÍ¨µÀÖµ 
-//u16 Get_Adc_Average(u8 ch,u8 times);//µÃµ½Ä³¸öÍ¨µÀ¸ø¶¨´ÎÊı²ÉÑùµÄÆ½¾ùÖµ  
+//void Adc_Init(void); 				//ADCé€šé“åˆå§‹åŒ–
+//u16  Get_Adc(u8 ch); 				//è·å¾—æŸä¸ªé€šé“å€¼ 
+//u16 Get_Adc_Average(u8 ch,u8 times);//å¾—åˆ°æŸä¸ªé€šé“ç»™å®šæ¬¡æ•°é‡‡æ ·çš„å¹³å‡å€¼  
 
 
 #endif 

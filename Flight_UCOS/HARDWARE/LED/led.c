@@ -1,22 +1,22 @@
 #include "led.h"
-#include "includes.h"					//ucos Ê¹ÓÃ	  
+#include "includes.h"					//ucos ä½¿ç”¨	  
 
 int LED_PD12_state = 1;
 
-//  LED IO³õÊ¼»¯
+//  LED IOåˆå§‹åŒ–
 void LED_Init(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOD | RCC_AHB1Periph_GPIOA, ENABLE); // Ê¹ÄÜGPIOAºÍGPIOCÊ±ÖÓ
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOD | RCC_AHB1Periph_GPIOA, ENABLE); // ä½¿èƒ½GPIOAå’ŒGPIOCæ—¶é’Ÿ
 
-    // GPIO³õÊ¼»¯ÉèÖÃ
+    // GPIOåˆå§‹åŒ–è®¾ç½®
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;         // LED_PC13
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;      // ÆÕÍ¨Êä³öÄ£Ê½
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;     // ÍÆÍìÊä³ö
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;      // æ™®é€šè¾“å‡ºæ¨¡å¼
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;     // æ¨æŒ½è¾“å‡º
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz; // 100MHz
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;       // ÉÏÀ­
-    GPIO_Init(GPIOC, &GPIO_InitStructure);             // ³õÊ¼»¯GPIO
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;       // ä¸Šæ‹‰
+    GPIO_Init(GPIOC, &GPIO_InitStructure);             // åˆå§‹åŒ–GPIO
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1; // LED_PA1
     GPIO_Init(GPIOA, &GPIO_InitStructure);
@@ -24,39 +24,39 @@ void LED_Init(void)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_12 | GPIO_Pin_13;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
 
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11; // °´¼ü1
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11; // æŒ‰é”®1
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
 
-    GPIO_SetBits(GPIOC, GPIO_Pin_13); // ÉèÖÃ¸ß£¬µÆÃğ
+    GPIO_SetBits(GPIOC, GPIO_Pin_13); // è®¾ç½®é«˜ï¼Œç¯ç­
     GPIO_SetBits(GPIOA, GPIO_Pin_1);
-    GPIO_SetBits(GPIOD, GPIO_Pin_10); // ·äÃùÆ÷
-    GPIO_SetBits(GPIOD, GPIO_Pin_12);   // ´ÅÁ¦¼ÆĞ£×¼
-    GPIO_SetBits(GPIOD, GPIO_Pin_13);   // SD¿¨×´Ì¬
+    GPIO_SetBits(GPIOD, GPIO_Pin_10); // èœ‚é¸£å™¨
+    GPIO_SetBits(GPIOD, GPIO_Pin_12);   // ç£åŠ›è®¡æ ¡å‡†
+    GPIO_SetBits(GPIOD, GPIO_Pin_13);   // SDå¡çŠ¶æ€
 }
-// °´¼ü´¦Àíº¯Êı
-// ·µ»Ø°´¼üÖµ
-// mode:0,²»Ö§³ÖÁ¬Ğø°´;1,Ö§³ÖÁ¬Ğø°´;
-// 0£¬Ã»ÓĞÈÎºÎ°´¼ü°´ÏÂ
-// 1£¬KEY°´ÏÂ
+// æŒ‰é”®å¤„ç†å‡½æ•°
+// è¿”å›æŒ‰é”®å€¼
+// mode:0,ä¸æ”¯æŒè¿ç»­æŒ‰;1,æ”¯æŒè¿ç»­æŒ‰;
+// 0ï¼Œæ²¡æœ‰ä»»ä½•æŒ‰é”®æŒ‰ä¸‹
+// 1ï¼ŒKEYæŒ‰ä¸‹
 u8 KEY_Scan(u8 mode)
 {
-    static u8 key_up = 1; // °´¼ü°´ËÉ¿ª±êÖ¾
+    static u8 key_up = 1; // æŒ‰é”®æŒ‰æ¾å¼€æ ‡å¿—
     if (mode)
-        key_up = 1; // Ö§³ÖÁ¬°´
+        key_up = 1; // æ”¯æŒè¿æŒ‰
     if (key_up && (KEY_PD11_in == 0))
     {
-        delay_ms(10); // È¥¶¶¶¯
+        delay_ms(10); // å»æŠ–åŠ¨
         key_up = 0;
         if (KEY_PD11_in == 0)
             return 1;
     }
     else if (KEY_PD11_in == 1)
         key_up = 1;
-    return 0; // ÎŞ°´¼ü°´ÏÂ
+    return 0; // æ— æŒ‰é”®æŒ‰ä¸‹
 }
 
-// Íâ²¿ÖĞ¶Ï³õÊ¼»¯³ÌĞò
+// å¤–éƒ¨ä¸­æ–­åˆå§‹åŒ–ç¨‹åº
 void EXTI11_Init(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
@@ -64,41 +64,41 @@ void EXTI11_Init(void)
 
     LED_Init();
 
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);         // Ê¹ÄÜSYSCFGÊ±ÖÓ
-    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource11); // PD11 Á¬½Óµ½ÖĞ¶ÏÏß11
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);         // ä½¿èƒ½SYSCFGæ—¶é’Ÿ
+    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource11); // PD11 è¿æ¥åˆ°ä¸­æ–­çº¿11
 
-    /* ÅäÖÃEXTI_Line11 */
+    /* é…ç½®EXTI_Line11 */
     EXTI_InitStructure.EXTI_Line = EXTI_Line11;
-    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;     // ÖĞ¶ÏÊÂ¼ş
-    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling; // ÏÂ½µÑØ´¥·¢
-    EXTI_InitStructure.EXTI_LineCmd = ENABLE;               // ÖĞ¶ÏÏßÊ¹ÄÜ
-    EXTI_Init(&EXTI_InitStructure);                         // ÅäÖÃ
+    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;     // ä¸­æ–­äº‹ä»¶
+    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling; // ä¸‹é™æ²¿è§¦å‘
+    EXTI_InitStructure.EXTI_LineCmd = ENABLE;               // ä¸­æ–­çº¿ä½¿èƒ½
+    EXTI_Init(&EXTI_InitStructure);                         // é…ç½®
 
-    NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;         // Íâ²¿ÖĞ¶Ï11
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x01; // ÇÀÕ¼ÓÅÏÈ¼¶1
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x02;        // ×ÓÓÅÏÈ¼¶2
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;              // Ê¹ÄÜÍâ²¿ÖĞ¶ÏÍ¨µÀ
-    NVIC_Init(&NVIC_InitStructure);                              // ÅäÖÃ
+    NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;         // å¤–éƒ¨ä¸­æ–­11
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x01; // æŠ¢å ä¼˜å…ˆçº§1
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x02;        // å­ä¼˜å…ˆçº§2
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;              // ä½¿èƒ½å¤–éƒ¨ä¸­æ–­é€šé“
+    NVIC_Init(&NVIC_InitStructure);                              // é…ç½®
 }
 
-// Íâ²¿ÖĞ¶Ï11·şÎñ³ÌĞò
+// å¤–éƒ¨ä¸­æ–­11æœåŠ¡ç¨‹åº
 void EXTI15_10_IRQHandler(void)
 {
-	//½øÈëÖĞ¶Ï
-	OSIntEnter();	  	//UCOS²Ù×÷ÏµÍ³£¬ÖĞ¶ÏÊ±£¬±ØĞëµÄ**********************************************
+	//è¿›å…¥ä¸­æ–­
+	OSIntEnter();	  	//UCOSæ“ä½œç³»ç»Ÿï¼Œä¸­æ–­æ—¶ï¼Œå¿…é¡»çš„**********************************************
 	
 	
     if (EXTI_GetITStatus(EXTI_Line11) != RESET)
     {
         if (KEY_Scan(0))
         {
-            LED_PD12 = !LED_PD12;             // ´ÅÁ¦¼ÆĞ£×¼ledÖ¸Ê¾  ×´Ì¬×ª»»£¬ ÕâÁ½³õÊ¼¶¼ÊÇ1
-            LED_PD12_state = !LED_PD12_state; // ledÖ¸Ê¾×´Ì¬
+            LED_PD12 = !LED_PD12;             // ç£åŠ›è®¡æ ¡å‡†ledæŒ‡ç¤º  çŠ¶æ€è½¬æ¢ï¼Œ è¿™ä¸¤åˆå§‹éƒ½æ˜¯1
+            LED_PD12_state = !LED_PD12_state; // ledæŒ‡ç¤ºçŠ¶æ€
         }
-        EXTI_ClearITPendingBit(EXTI_Line11); // Çå³ı±êÖ¾
+        EXTI_ClearITPendingBit(EXTI_Line11); // æ¸…é™¤æ ‡å¿—
     }
 	
 	
-	//ÍË³öÖĞ¶Ï
-	OSIntExit();	  	//UCOS²Ù×÷ÏµÍ³£¬ÖĞ¶ÏÊ±£¬±ØĞëµÄ**********************************************   
+	//é€€å‡ºä¸­æ–­
+	OSIntExit();	  	//UCOSæ“ä½œç³»ç»Ÿï¼Œä¸­æ–­æ—¶ï¼Œå¿…é¡»çš„**********************************************   
 }

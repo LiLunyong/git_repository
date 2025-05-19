@@ -1,14 +1,14 @@
 #include "ANO_TC.h"
 
-/**********ÎªÁËÄäÃûËÄÖáÉÏÎ»»úµÄÐ­Òé¶¨ÒåµÄ±äÁ¿****************************/
-// cupÎªÐ¡¶ËÄ£Ê½´æ´¢£¬Ò²¾ÍÊÇÔÚ´æ´¢µÄÊ±ºò£¬µÍÎ»±»´æÔÚ0×Ö½Ú£¬¸ßÎ»ÔÚ1×Ö½Ú
-#define BYTE0(dwTemp) (*(char *)(&dwTemp))		 // È¡³öintÐÍ±äÁ¿µÄµÍ×Ö½Ú
-#define BYTE1(dwTemp) (*((char *)(&dwTemp) + 1)) //	È¡´æ´¢ÔÚ´Ë±äÁ¿ÏÂÒ»ÄÚ´æ×Ö½ÚµÄÄÚÈÝ£¬¸ß×Ö½Ú
+/**********ä¸ºäº†åŒ¿åå››è½´ä¸Šä½æœºçš„åè®®å®šä¹‰çš„å˜é‡****************************/
+// cupä¸ºå°ç«¯æ¨¡å¼å­˜å‚¨ï¼Œä¹Ÿå°±æ˜¯åœ¨å­˜å‚¨çš„æ—¶å€™ï¼Œä½Žä½è¢«å­˜åœ¨0å­—èŠ‚ï¼Œé«˜ä½åœ¨1å­—èŠ‚
+#define BYTE0(dwTemp) (*(char *)(&dwTemp))		 // å–å‡ºintåž‹å˜é‡çš„ä½Žå­—èŠ‚
+#define BYTE1(dwTemp) (*((char *)(&dwTemp) + 1)) //	å–å­˜å‚¨åœ¨æ­¤å˜é‡ä¸‹ä¸€å†…å­˜å­—èŠ‚çš„å†…å®¹ï¼Œé«˜å­—èŠ‚
 #define BYTE2(dwTemp) (*((char *)(&dwTemp) + 2))
 #define BYTE3(dwTemp) (*((char *)(&dwTemp) + 3))
 
 
-// ANO_TC_Send01(ACCX,ACCY,ACCZ,GYROX,GYROY,GYROZ,1);//½Ç¼ÓËÙ¶È£¬½ÇËÙ¶È
+// ANO_TC_Send01(ACCX,ACCY,ACCZ,GYROX,GYROY,GYROZ,1);//è§’åŠ é€Ÿåº¦ï¼Œè§’é€Ÿåº¦
 void ANO_TC_Send01(s16 _accx, s16 _accy, s16 _accz, s16 _gyrx, s16 _gyry, s16 _gyrz, u8 sta)
 {
 	int i;
@@ -17,12 +17,12 @@ void ANO_TC_Send01(s16 _accx, s16 _accy, s16 _accz, s16 _gyrx, s16 _gyry, s16 _g
 	u8 _cnt = 0;
 	u8 BUFF[100];
 
-	BUFF[_cnt++] = 0xAA;		 // Ö¡Í·
-	BUFF[_cnt++] = 0xFF;		 // Ä¿±êµØÖ·
-	BUFF[_cnt++] = 0X01;		 // ¹¦ÄÜÂë
-	BUFF[_cnt++] = 13;			 // Êý¾Ý³¤¶È
-	BUFF[_cnt++] = BYTE0(_accx); // Êý¾ÝÄÚÈÝ,Ð¡¶ÎÄ£Ê½£¬µÍÎ»ÔÚÇ°
-	BUFF[_cnt++] = BYTE1(_accx); // ÐèÒª½«×Ö½Ú½øÐÐ²ð·Ö£¬µ÷ÓÃÉÏÃæµÄºê¶¨Òå¼´¿É¡£
+	BUFF[_cnt++] = 0xAA;		 // å¸§å¤´
+	BUFF[_cnt++] = 0xFF;		 // ç›®æ ‡åœ°å€
+	BUFF[_cnt++] = 0X01;		 // åŠŸèƒ½ç 
+	BUFF[_cnt++] = 13;			 // æ•°æ®é•¿åº¦
+	BUFF[_cnt++] = BYTE0(_accx); // æ•°æ®å†…å®¹,å°æ®µæ¨¡å¼ï¼Œä½Žä½åœ¨å‰
+	BUFF[_cnt++] = BYTE1(_accx); // éœ€è¦å°†å­—èŠ‚è¿›è¡Œæ‹†åˆ†ï¼Œè°ƒç”¨ä¸Šé¢çš„å®å®šä¹‰å³å¯ã€‚
 	BUFF[_cnt++] = BYTE0(_accy);
 	BUFF[_cnt++] = BYTE1(_accy);
 	BUFF[_cnt++] = BYTE0(_accz);
@@ -34,7 +34,7 @@ void ANO_TC_Send01(s16 _accx, s16 _accy, s16 _accz, s16 _gyrx, s16 _gyry, s16 _g
 	BUFF[_cnt++] = BYTE0(_gyrz);
 	BUFF[_cnt++] = BYTE1(_gyrz);
 	BUFF[_cnt++] = sta;
-	// SCºÍACµÄÐ£ÑéÖ±½Ó³­×îÉÏÃæÉÏÃæ¼ò½éµÄ¼´¿É
+	// SCå’ŒACçš„æ ¡éªŒç›´æŽ¥æŠ„æœ€ä¸Šé¢ä¸Šé¢ç®€ä»‹çš„å³å¯
 	for (i = 0; i < _cnt; i++)
 	{
 		sumcheck += BUFF[i];
@@ -44,11 +44,11 @@ void ANO_TC_Send01(s16 _accx, s16 _accy, s16 _accz, s16 _gyrx, s16 _gyry, s16 _g
 	BUFF[_cnt++] = addcheck;
 
 	for (i = 0; i < _cnt; i++)
-		UsartSendByte(USART1, BUFF[i]); // ´®¿ÚÖð¸ö·¢ËÍÊý¾Ý
+		UsartSendByte(USART1, BUFF[i]); // ä¸²å£é€ä¸ªå‘é€æ•°æ®
 }
 
-// ANO_TC_Send02(stcMag.h[0],stcMag.h[1],stcMag.h[2],Hight*100 ,stcMag.T,1,1);//ÂÞÅÌ¡¢ÆøÑ¹¡¢ÎÂ¶È´«¸ÐÆ÷Êý¾Ý
-void ANO_TC_Send02(s16 MAG_X, s16 MAG_Y, s16 MAG_Z, s32 ALT_BAR, s16 TMP, u8 BAR_STA, u8 MAG_STA) // ÂÞÅÌ¡¢ÆøÑ¹¡¢ÎÂ¶È´«¸ÐÆ÷Êý¾Ý
+// ANO_TC_Send02(stcMag.h[0],stcMag.h[1],stcMag.h[2],Hight*100 ,stcMag.T,1,1);//ç½—ç›˜ã€æ°”åŽ‹ã€æ¸©åº¦ä¼ æ„Ÿå™¨æ•°æ®
+void ANO_TC_Send02(s16 MAG_X, s16 MAG_Y, s16 MAG_Z, s32 ALT_BAR, s16 TMP, u8 BAR_STA, u8 MAG_STA) // ç½—ç›˜ã€æ°”åŽ‹ã€æ¸©åº¦ä¼ æ„Ÿå™¨æ•°æ®
 {
 	int i;
 	u8 sumcheck = 0;
@@ -56,12 +56,12 @@ void ANO_TC_Send02(s16 MAG_X, s16 MAG_Y, s16 MAG_Z, s32 ALT_BAR, s16 TMP, u8 BAR
 	u8 _cnt = 0;
 	u8 BUFF[100];
 
-	BUFF[_cnt++] = 0xAA;		 // Ö¡Í·
-	BUFF[_cnt++] = 0xFF;		 // Ä¿±êµØÖ·
-	BUFF[_cnt++] = 0X02;		 // ¹¦ÄÜÂë
-	BUFF[_cnt++] = 14;			 // Êý¾Ý³¤¶È
-	BUFF[_cnt++] = BYTE0(MAG_X); // Êý¾ÝÄÚÈÝ,Ð¡¶ÎÄ£Ê½£¬µÍÎ»ÔÚÇ°
-	BUFF[_cnt++] = BYTE1(MAG_X); // ÐèÒª½«×Ö½Ú½øÐÐ²ð·Ö£¬µ÷ÓÃÉÏÃæµÄºê¶¨Òå¼´¿É¡£
+	BUFF[_cnt++] = 0xAA;		 // å¸§å¤´
+	BUFF[_cnt++] = 0xFF;		 // ç›®æ ‡åœ°å€
+	BUFF[_cnt++] = 0X02;		 // åŠŸèƒ½ç 
+	BUFF[_cnt++] = 14;			 // æ•°æ®é•¿åº¦
+	BUFF[_cnt++] = BYTE0(MAG_X); // æ•°æ®å†…å®¹,å°æ®µæ¨¡å¼ï¼Œä½Žä½åœ¨å‰
+	BUFF[_cnt++] = BYTE1(MAG_X); // éœ€è¦å°†å­—èŠ‚è¿›è¡Œæ‹†åˆ†ï¼Œè°ƒç”¨ä¸Šé¢çš„å®å®šä¹‰å³å¯ã€‚
 	BUFF[_cnt++] = BYTE0(MAG_Y);
 	BUFF[_cnt++] = BYTE1(MAG_Y);
 	BUFF[_cnt++] = BYTE0(MAG_Z);
@@ -74,7 +74,7 @@ void ANO_TC_Send02(s16 MAG_X, s16 MAG_Y, s16 MAG_Z, s32 ALT_BAR, s16 TMP, u8 BAR
 	BUFF[_cnt++] = BYTE1(TMP);
 	BUFF[_cnt++] = BAR_STA;
 	BUFF[_cnt++] = MAG_STA;
-	// SCºÍACµÄÐ£ÑéÖ±½Ó³­×îÉÏÃæÉÏÃæ¼ò½éµÄ¼´¿É
+	// SCå’ŒACçš„æ ¡éªŒç›´æŽ¥æŠ„æœ€ä¸Šé¢ä¸Šé¢ç®€ä»‹çš„å³å¯
 	for (i = 0; i < _cnt; i++)
 	{
 		sumcheck += BUFF[i];
@@ -84,10 +84,10 @@ void ANO_TC_Send02(s16 MAG_X, s16 MAG_Y, s16 MAG_Z, s32 ALT_BAR, s16 TMP, u8 BAR
 	BUFF[_cnt++] = addcheck;
 
 	for (i = 0; i < _cnt; i++)
-		UsartSendByte(USART1, BUFF[i]); // ´®¿ÚÖð¸ö·¢ËÍÊý¾Ý
+		UsartSendByte(USART1, BUFF[i]); // ä¸²å£é€ä¸ªå‘é€æ•°æ®
 }
 
-// ANO_TC_Send03(ROLL*100,PITCH*(-100),YAW*(-100),1);Å·À­½Ç
+// ANO_TC_Send03(ROLL*100,PITCH*(-100),YAW*(-100),1);æ¬§æ‹‰è§’
 void ANO_TC_Send03(s16 ROL, s16 PIT, s16 YAW, u8 FUSION_STA)
 {
 	int i;
@@ -96,18 +96,18 @@ void ANO_TC_Send03(s16 ROL, s16 PIT, s16 YAW, u8 FUSION_STA)
 	u8 _cnt = 0;
 	u8 BUFF[100];
 
-	BUFF[_cnt++] = 0xAA;	   // Ö¡Í·
-	BUFF[_cnt++] = 0xFF;	   // Ä¿±êµØÖ·
-	BUFF[_cnt++] = 0X03;	   // ¹¦ÄÜÂë
-	BUFF[_cnt++] = 7;		   // Êý¾Ý³¤¶È
-	BUFF[_cnt++] = BYTE0(ROL); // Êý¾ÝÄÚÈÝ,Ð¡¶ÎÄ£Ê½£¬µÍÎ»ÔÚÇ°
-	BUFF[_cnt++] = BYTE1(ROL); // ÐèÒª½«×Ö½Ú½øÐÐ²ð·Ö£¬µ÷ÓÃÉÏÃæµÄºê¶¨Òå¼´¿É¡£
+	BUFF[_cnt++] = 0xAA;	   // å¸§å¤´
+	BUFF[_cnt++] = 0xFF;	   // ç›®æ ‡åœ°å€
+	BUFF[_cnt++] = 0X03;	   // åŠŸèƒ½ç 
+	BUFF[_cnt++] = 7;		   // æ•°æ®é•¿åº¦
+	BUFF[_cnt++] = BYTE0(ROL); // æ•°æ®å†…å®¹,å°æ®µæ¨¡å¼ï¼Œä½Žä½åœ¨å‰
+	BUFF[_cnt++] = BYTE1(ROL); // éœ€è¦å°†å­—èŠ‚è¿›è¡Œæ‹†åˆ†ï¼Œè°ƒç”¨ä¸Šé¢çš„å®å®šä¹‰å³å¯ã€‚
 	BUFF[_cnt++] = BYTE0(PIT);
 	BUFF[_cnt++] = BYTE1(PIT);
 	BUFF[_cnt++] = BYTE0(YAW);
 	BUFF[_cnt++] = BYTE1(YAW);
 	BUFF[_cnt++] = FUSION_STA;
-	// SCºÍACµÄÐ£ÑéÖ±½Ó³­×îÉÏÃæÉÏÃæ¼ò½éµÄ¼´¿É
+	// SCå’ŒACçš„æ ¡éªŒç›´æŽ¥æŠ„æœ€ä¸Šé¢ä¸Šé¢ç®€ä»‹çš„å³å¯
 	for (i = 0; i < _cnt; i++)
 	{
 		sumcheck += BUFF[i];
@@ -117,10 +117,10 @@ void ANO_TC_Send03(s16 ROL, s16 PIT, s16 YAW, u8 FUSION_STA)
 	BUFF[_cnt++] = addcheck;
 
 	for (i = 0; i < _cnt; i++)
-		UsartSendByte(USART1, BUFF[i]); // ´®¿ÚÖð¸ö·¢ËÍÊý¾Ý
+		UsartSendByte(USART1, BUFF[i]); // ä¸²å£é€ä¸ªå‘é€æ•°æ®
 }
 
-void ANO_TC_Send04(s16 V0, s16 V1, s16 V2, s16 V3, u8 FUSION_STA) // V0¡¢V1¡¢V2¡¢V3£ºËÄÔªÊý£¬´«ÊäÊ±À©´ó 10000 ±¶¡£FUSION_STA£ºÈÚºÏ×´Ì¬
+void ANO_TC_Send04(s16 V0, s16 V1, s16 V2, s16 V3, u8 FUSION_STA) // V0ã€V1ã€V2ã€V3ï¼šå››å…ƒæ•°ï¼Œä¼ è¾“æ—¶æ‰©å¤§ 10000 å€ã€‚FUSION_STAï¼šèžåˆçŠ¶æ€
 {
 	int i;
 	u8 sumcheck = 0;
@@ -128,12 +128,12 @@ void ANO_TC_Send04(s16 V0, s16 V1, s16 V2, s16 V3, u8 FUSION_STA) // V0¡¢V1¡¢V2¡
 	u8 _cnt = 0;
 	u8 BUFF[100];
 
-	BUFF[_cnt++] = 0xAA;	  // Ö¡Í·
-	BUFF[_cnt++] = 0xFF;	  // Ä¿±êµØÖ·
-	BUFF[_cnt++] = 0X04;	  // ¹¦ÄÜÂë
-	BUFF[_cnt++] = 9;		  // Êý¾Ý³¤¶È
-	BUFF[_cnt++] = BYTE0(V0); // Êý¾ÝÄÚÈÝ,Ð¡¶ÎÄ£Ê½£¬µÍÎ»ÔÚÇ°
-	BUFF[_cnt++] = BYTE1(V0); // ÐèÒª½«×Ö½Ú½øÐÐ²ð·Ö£¬µ÷ÓÃÉÏÃæµÄºê¶¨Òå¼´¿É¡£
+	BUFF[_cnt++] = 0xAA;	  // å¸§å¤´
+	BUFF[_cnt++] = 0xFF;	  // ç›®æ ‡åœ°å€
+	BUFF[_cnt++] = 0X04;	  // åŠŸèƒ½ç 
+	BUFF[_cnt++] = 9;		  // æ•°æ®é•¿åº¦
+	BUFF[_cnt++] = BYTE0(V0); // æ•°æ®å†…å®¹,å°æ®µæ¨¡å¼ï¼Œä½Žä½åœ¨å‰
+	BUFF[_cnt++] = BYTE1(V0); // éœ€è¦å°†å­—èŠ‚è¿›è¡Œæ‹†åˆ†ï¼Œè°ƒç”¨ä¸Šé¢çš„å®å®šä¹‰å³å¯ã€‚
 	BUFF[_cnt++] = BYTE0(V1);
 	BUFF[_cnt++] = BYTE1(V1);
 	BUFF[_cnt++] = BYTE0(V2);
@@ -141,7 +141,7 @@ void ANO_TC_Send04(s16 V0, s16 V1, s16 V2, s16 V3, u8 FUSION_STA) // V0¡¢V1¡¢V2¡
 	BUFF[_cnt++] = BYTE0(V3);
 	BUFF[_cnt++] = BYTE1(V3);
 	BUFF[_cnt++] = FUSION_STA;
-	// SCºÍACµÄÐ£ÑéÖ±½Ó³­×îÉÏÃæÉÏÃæ¼ò½éµÄ¼´¿É
+	// SCå’ŒACçš„æ ¡éªŒç›´æŽ¥æŠ„æœ€ä¸Šé¢ä¸Šé¢ç®€ä»‹çš„å³å¯
 	for (i = 0; i < _cnt; i++)
 	{
 		sumcheck += BUFF[i];
@@ -151,10 +151,10 @@ void ANO_TC_Send04(s16 V0, s16 V1, s16 V2, s16 V3, u8 FUSION_STA) // V0¡¢V1¡¢V2¡
 	BUFF[_cnt++] = addcheck;
 
 	for (i = 0; i < _cnt; i++)
-		UsartSendByte(USART1, BUFF[i]); // ´®¿ÚÖð¸ö·¢ËÍÊý¾Ý
+		UsartSendByte(USART1, BUFF[i]); // ä¸²å£é€ä¸ªå‘é€æ•°æ®
 }
 
-// ANO_TC_Send05(Hight*100,0,1);¸ß¶È    ANO_TC_Send05(44330*(1-pow(Pressure/101325,1/5.255)),0,1);//¸ß¶È
+// ANO_TC_Send05(Hight*100,0,1);é«˜åº¦    ANO_TC_Send05(44330*(1-pow(Pressure/101325,1/5.255)),0,1);//é«˜åº¦
 void ANO_TC_Send05(u32 ALT_FU, u32 ALT_ADD, u8 FUSION_STA)
 {
 	int i;
@@ -163,12 +163,12 @@ void ANO_TC_Send05(u32 ALT_FU, u32 ALT_ADD, u8 FUSION_STA)
 	u8 _cnt = 0;
 	u8 BUFF[100];
 
-	BUFF[_cnt++] = 0xAA;		  // Ö¡Í·
-	BUFF[_cnt++] = 0xFF;		  // Ä¿±êµØÖ·
-	BUFF[_cnt++] = 0X05;		  // ¹¦ÄÜÂë
-	BUFF[_cnt++] = 9;			  // Êý¾Ý³¤¶È
-	BUFF[_cnt++] = BYTE0(ALT_FU); // Êý¾ÝÄÚÈÝ,Ð¡¶ÎÄ£Ê½£¬µÍÎ»ÔÚÇ°
-	BUFF[_cnt++] = BYTE1(ALT_FU); // ÐèÒª½«×Ö½Ú½øÐÐ²ð·Ö£¬µ÷ÓÃÉÏÃæµÄºê¶¨Òå¼´¿É¡£
+	BUFF[_cnt++] = 0xAA;		  // å¸§å¤´
+	BUFF[_cnt++] = 0xFF;		  // ç›®æ ‡åœ°å€
+	BUFF[_cnt++] = 0X05;		  // åŠŸèƒ½ç 
+	BUFF[_cnt++] = 9;			  // æ•°æ®é•¿åº¦
+	BUFF[_cnt++] = BYTE0(ALT_FU); // æ•°æ®å†…å®¹,å°æ®µæ¨¡å¼ï¼Œä½Žä½åœ¨å‰
+	BUFF[_cnt++] = BYTE1(ALT_FU); // éœ€è¦å°†å­—èŠ‚è¿›è¡Œæ‹†åˆ†ï¼Œè°ƒç”¨ä¸Šé¢çš„å®å®šä¹‰å³å¯ã€‚
 	BUFF[_cnt++] = BYTE2(ALT_FU);
 	BUFF[_cnt++] = BYTE3(ALT_FU);
 	BUFF[_cnt++] = BYTE0(ALT_ADD);
@@ -176,7 +176,7 @@ void ANO_TC_Send05(u32 ALT_FU, u32 ALT_ADD, u8 FUSION_STA)
 	BUFF[_cnt++] = BYTE2(ALT_ADD);
 	BUFF[_cnt++] = BYTE3(ALT_ADD);
 	BUFF[_cnt++] = FUSION_STA;
-	// SCºÍACµÄÐ£ÑéÖ±½Ó³­×îÉÏÃæÉÏÃæ¼ò½éµÄ¼´¿É
+	// SCå’ŒACçš„æ ¡éªŒç›´æŽ¥æŠ„æœ€ä¸Šé¢ä¸Šé¢ç®€ä»‹çš„å³å¯
 	for (i = 0; i < _cnt; i++)
 	{
 		sumcheck += BUFF[i];
@@ -186,10 +186,10 @@ void ANO_TC_Send05(u32 ALT_FU, u32 ALT_ADD, u8 FUSION_STA)
 	BUFF[_cnt++] = addcheck;
 
 	for (i = 0; i < _cnt; i++)
-		UsartSendByte(USART1, BUFF[i]); // ´®¿ÚÖð¸ö·¢ËÍÊý¾Ý
+		UsartSendByte(USART1, BUFF[i]); // ä¸²å£é€ä¸ªå‘é€æ•°æ®
 }
 
-void ANO_TC_Send07(s16 SPEED_X, s16 SPEED_Y, s16 SPEED_Z) // SPEED_XYZ£ºÒÀ´ÎÎª XYZ ·½ÏòÉÏµÄËÙ¶È£¬µ¥Î» cm/s¡£
+void ANO_TC_Send07(s16 SPEED_X, s16 SPEED_Y, s16 SPEED_Z) // SPEED_XYZï¼šä¾æ¬¡ä¸º XYZ æ–¹å‘ä¸Šçš„é€Ÿåº¦ï¼Œå•ä½ cm/sã€‚
 {
 	int i;
 	u8 sumcheck = 0;
@@ -197,17 +197,17 @@ void ANO_TC_Send07(s16 SPEED_X, s16 SPEED_Y, s16 SPEED_Z) // SPEED_XYZ£ºÒÀ´ÎÎª X
 	u8 _cnt = 0;
 	u8 BUFF[100];
 
-	BUFF[_cnt++] = 0xAA;		   // Ö¡Í·
-	BUFF[_cnt++] = 0xFF;		   // Ä¿±êµØÖ·
-	BUFF[_cnt++] = 0X07;		   // ¹¦ÄÜÂë
-	BUFF[_cnt++] = 6;			   // Êý¾Ý³¤¶È
-	BUFF[_cnt++] = BYTE0(SPEED_X); // Êý¾ÝÄÚÈÝ,Ð¡¶ÎÄ£Ê½£¬µÍÎ»ÔÚÇ°
-	BUFF[_cnt++] = BYTE1(SPEED_X); // ÐèÒª½«×Ö½Ú½øÐÐ²ð·Ö£¬µ÷ÓÃÉÏÃæµÄºê¶¨Òå¼´¿É¡£
+	BUFF[_cnt++] = 0xAA;		   // å¸§å¤´
+	BUFF[_cnt++] = 0xFF;		   // ç›®æ ‡åœ°å€
+	BUFF[_cnt++] = 0X07;		   // åŠŸèƒ½ç 
+	BUFF[_cnt++] = 6;			   // æ•°æ®é•¿åº¦
+	BUFF[_cnt++] = BYTE0(SPEED_X); // æ•°æ®å†…å®¹,å°æ®µæ¨¡å¼ï¼Œä½Žä½åœ¨å‰
+	BUFF[_cnt++] = BYTE1(SPEED_X); // éœ€è¦å°†å­—èŠ‚è¿›è¡Œæ‹†åˆ†ï¼Œè°ƒç”¨ä¸Šé¢çš„å®å®šä¹‰å³å¯ã€‚
 	BUFF[_cnt++] = BYTE0(SPEED_Y);
 	BUFF[_cnt++] = BYTE1(SPEED_Y);
 	BUFF[_cnt++] = BYTE0(SPEED_Z);
 	BUFF[_cnt++] = BYTE1(SPEED_Z);
-	// SCºÍACµÄÐ£ÑéÖ±½Ó³­×îÉÏÃæÉÏÃæ¼ò½éµÄ¼´¿É
+	// SCå’ŒACçš„æ ¡éªŒç›´æŽ¥æŠ„æœ€ä¸Šé¢ä¸Šé¢ç®€ä»‹çš„å³å¯
 	for (i = 0; i < _cnt; i++)
 	{
 		sumcheck += BUFF[i];
@@ -217,10 +217,10 @@ void ANO_TC_Send07(s16 SPEED_X, s16 SPEED_Y, s16 SPEED_Z) // SPEED_XYZ£ºÒÀ´ÎÎª X
 	BUFF[_cnt++] = addcheck;
 
 	for (i = 0; i < _cnt; i++)
-		UsartSendByte(USART1, BUFF[i]); // ´®¿ÚÖð¸ö·¢ËÍÊý¾Ý
+		UsartSendByte(USART1, BUFF[i]); // ä¸²å£é€ä¸ªå‘é€æ•°æ®
 }
 
-void ANO_TC_Send08(s32 POS_X, s32 POS_Y) // POS_XY£ºÏà±ÈÆð·ÉµãµÄÎ»ÖÃÆ«ÒÆÁ¿£¬µ¥Î» cm¡£
+void ANO_TC_Send08(s32 POS_X, s32 POS_Y) // POS_XYï¼šç›¸æ¯”èµ·é£žç‚¹çš„ä½ç½®åç§»é‡ï¼Œå•ä½ cmã€‚
 {
 	int i;
 	u8 sumcheck = 0;
@@ -228,19 +228,19 @@ void ANO_TC_Send08(s32 POS_X, s32 POS_Y) // POS_XY£ºÏà±ÈÆð·ÉµãµÄÎ»ÖÃÆ«ÒÆÁ¿£¬µ¥Î»
 	u8 _cnt = 0;
 	u8 BUFF[100];
 
-	BUFF[_cnt++] = 0xAA;		 // Ö¡Í·
-	BUFF[_cnt++] = 0xFF;		 // Ä¿±êµØÖ·
-	BUFF[_cnt++] = 0X08;		 // ¹¦ÄÜÂë
-	BUFF[_cnt++] = 8;			 // Êý¾Ý³¤¶È
-	BUFF[_cnt++] = BYTE0(POS_X); // Êý¾ÝÄÚÈÝ,Ð¡¶ÎÄ£Ê½£¬µÍÎ»ÔÚÇ°
-	BUFF[_cnt++] = BYTE1(POS_X); // ÐèÒª½«×Ö½Ú½øÐÐ²ð·Ö£¬µ÷ÓÃÉÏÃæµÄºê¶¨Òå¼´¿É¡£
+	BUFF[_cnt++] = 0xAA;		 // å¸§å¤´
+	BUFF[_cnt++] = 0xFF;		 // ç›®æ ‡åœ°å€
+	BUFF[_cnt++] = 0X08;		 // åŠŸèƒ½ç 
+	BUFF[_cnt++] = 8;			 // æ•°æ®é•¿åº¦
+	BUFF[_cnt++] = BYTE0(POS_X); // æ•°æ®å†…å®¹,å°æ®µæ¨¡å¼ï¼Œä½Žä½åœ¨å‰
+	BUFF[_cnt++] = BYTE1(POS_X); // éœ€è¦å°†å­—èŠ‚è¿›è¡Œæ‹†åˆ†ï¼Œè°ƒç”¨ä¸Šé¢çš„å®å®šä¹‰å³å¯ã€‚
 	BUFF[_cnt++] = BYTE2(POS_X);
 	BUFF[_cnt++] = BYTE3(POS_X);
 	BUFF[_cnt++] = BYTE0(POS_Y);
 	BUFF[_cnt++] = BYTE1(POS_Y);
 	BUFF[_cnt++] = BYTE2(POS_Y);
 	BUFF[_cnt++] = BYTE3(POS_Y);
-	// SCºÍACµÄÐ£ÑéÖ±½Ó³­×îÉÏÃæÉÏÃæ¼ò½éµÄ¼´¿É
+	// SCå’ŒACçš„æ ¡éªŒç›´æŽ¥æŠ„æœ€ä¸Šé¢ä¸Šé¢ç®€ä»‹çš„å³å¯
 	for (i = 0; i < _cnt; i++)
 	{
 		sumcheck += BUFF[i];
@@ -250,10 +250,10 @@ void ANO_TC_Send08(s32 POS_X, s32 POS_Y) // POS_XY£ºÏà±ÈÆð·ÉµãµÄÎ»ÖÃÆ«ÒÆÁ¿£¬µ¥Î»
 	BUFF[_cnt++] = addcheck;
 
 	for (i = 0; i < _cnt; i++)
-		UsartSendByte(USART1, BUFF[i]); // ´®¿ÚÖð¸ö·¢ËÍÊý¾Ý
+		UsartSendByte(USART1, BUFF[i]); // ä¸²å£é€ä¸ªå‘é€æ•°æ®
 }
 
-void ANO_TC_Send0D(s16 VOTAGE, s16 CURRENT) // VOTAGE¡¢CURRENT£ºÒÀ´ÎÎªµçÑ¹¡¢µçÁ÷£¬´«ÊäÊ±À©´ó 100 ±¶¡£
+void ANO_TC_Send0D(s16 VOTAGE, s16 CURRENT) // VOTAGEã€CURRENTï¼šä¾æ¬¡ä¸ºç”µåŽ‹ã€ç”µæµï¼Œä¼ è¾“æ—¶æ‰©å¤§ 100 å€ã€‚
 {
 	int i;
 	u8 sumcheck = 0;
@@ -261,15 +261,15 @@ void ANO_TC_Send0D(s16 VOTAGE, s16 CURRENT) // VOTAGE¡¢CURRENT£ºÒÀ´ÎÎªµçÑ¹¡¢µçÁ÷
 	u8 _cnt = 0;
 	u8 BUFF[100];
 
-	BUFF[_cnt++] = 0xAA;		  // Ö¡Í·
-	BUFF[_cnt++] = 0xFF;		  // Ä¿±êµØÖ·
-	BUFF[_cnt++] = 0X0D;		  // ¹¦ÄÜÂë
-	BUFF[_cnt++] = 4;			  // Êý¾Ý³¤¶È
-	BUFF[_cnt++] = BYTE0(VOTAGE); // Êý¾ÝÄÚÈÝ,Ð¡¶ÎÄ£Ê½£¬µÍÎ»ÔÚÇ°
-	BUFF[_cnt++] = BYTE1(VOTAGE); // ÐèÒª½«×Ö½Ú½øÐÐ²ð·Ö£¬µ÷ÓÃÉÏÃæµÄºê¶¨Òå¼´¿É¡£
+	BUFF[_cnt++] = 0xAA;		  // å¸§å¤´
+	BUFF[_cnt++] = 0xFF;		  // ç›®æ ‡åœ°å€
+	BUFF[_cnt++] = 0X0D;		  // åŠŸèƒ½ç 
+	BUFF[_cnt++] = 4;			  // æ•°æ®é•¿åº¦
+	BUFF[_cnt++] = BYTE0(VOTAGE); // æ•°æ®å†…å®¹,å°æ®µæ¨¡å¼ï¼Œä½Žä½åœ¨å‰
+	BUFF[_cnt++] = BYTE1(VOTAGE); // éœ€è¦å°†å­—èŠ‚è¿›è¡Œæ‹†åˆ†ï¼Œè°ƒç”¨ä¸Šé¢çš„å®å®šä¹‰å³å¯ã€‚
 	BUFF[_cnt++] = BYTE0(CURRENT);
 	BUFF[_cnt++] = BYTE1(CURRENT);
-	// SCºÍACµÄÐ£ÑéÖ±½Ó³­×îÉÏÃæÉÏÃæ¼ò½éµÄ¼´¿É
+	// SCå’ŒACçš„æ ¡éªŒç›´æŽ¥æŠ„æœ€ä¸Šé¢ä¸Šé¢ç®€ä»‹çš„å³å¯
 	for (i = 0; i < _cnt; i++)
 	{
 		sumcheck += BUFF[i];
@@ -279,24 +279,24 @@ void ANO_TC_Send0D(s16 VOTAGE, s16 CURRENT) // VOTAGE¡¢CURRENT£ºÒÀ´ÎÎªµçÑ¹¡¢µçÁ÷
 	BUFF[_cnt++] = addcheck;
 
 	for (i = 0; i < _cnt; i++)
-		UsartSendByte(USART1, BUFF[i]); // ´®¿ÚÖð¸ö·¢ËÍÊý¾Ý
+		UsartSendByte(USART1, BUFF[i]); // ä¸²å£é€ä¸ªå‘é€æ•°æ®
 }
 
 // ANO_TC_Send30(1 ,11 ,stcLonLat.lLon ,stcLonLat.lLat,(float)stcGPSV.sGPSHeight/10,9,9,9,9,9,9);
 void ANO_TC_Send30(u8 FIX_STA, u8 S_NUM, s32 LNG, s32 LAT, s32 ALT_GPS, s16 N_SPE, s16 E_SPE, s16 D_SPE, u8 PDOP, u8 SACC, u8 VACC)
 {
 	int i;
-	u8 sumcheck = 0; // FIX_STA£º¶¨Î»×´Ì¬£¬UBX Ð­ÒéµÄ FIX_STA¡£PDOP£º¶¨Î»¾«¶È£¬£¬0-20000£¬20000 ±íÊ¾ GPS ÐÅÏ¢²»¿É¿¿£¬´«ÊäÊ±ËõÐ¡ 100 ±¶£¨0-200£©SACC¡¢VACC£ºÒÀ´ÎÎªËÙ¶È¾«¶È¡¢¸ß¶È¾«¶È£¬×î´óÖµ 20000£¨mm£©£¬´«ÊäÊ±³ýÒÔ 100¡£
-	u8 addcheck = 0; // S_NUM£ºÎÀÐÇÊýÁ¿  LNG¡¢LAT£ºÒÀ´ÎÎª¾­¶È¡¢Î³¶È,´«ÊäÊ±À©´ó 10000000 ±¶±ä³ÉÕûÊý´«Êä,Ê¹ÓÃÊ±³ýÒÔ 10000000 ¼´¿É¡£
-	u8 _cnt = 0;	 // ALT_GPS£ºGPS Ä£¿é½âËã³öµÄ¸ß¶È¡£N_SPE¡¢E_SPE¡¢D_SPE£ºNED ËÙ¶È£¨cm/s£©¡£
+	u8 sumcheck = 0; // FIX_STAï¼šå®šä½çŠ¶æ€ï¼ŒUBX åè®®çš„ FIX_STAã€‚PDOPï¼šå®šä½ç²¾åº¦ï¼Œï¼Œ0-20000ï¼Œ20000 è¡¨ç¤º GPS ä¿¡æ¯ä¸å¯é ï¼Œä¼ è¾“æ—¶ç¼©å° 100 å€ï¼ˆ0-200ï¼‰SACCã€VACCï¼šä¾æ¬¡ä¸ºé€Ÿåº¦ç²¾åº¦ã€é«˜åº¦ç²¾åº¦ï¼Œæœ€å¤§å€¼ 20000ï¼ˆmmï¼‰ï¼Œä¼ è¾“æ—¶é™¤ä»¥ 100ã€‚
+	u8 addcheck = 0; // S_NUMï¼šå«æ˜Ÿæ•°é‡  LNGã€LATï¼šä¾æ¬¡ä¸ºç»åº¦ã€çº¬åº¦,ä¼ è¾“æ—¶æ‰©å¤§ 10000000 å€å˜æˆæ•´æ•°ä¼ è¾“,ä½¿ç”¨æ—¶é™¤ä»¥ 10000000 å³å¯ã€‚
+	u8 _cnt = 0;	 // ALT_GPSï¼šGPS æ¨¡å—è§£ç®—å‡ºçš„é«˜åº¦ã€‚N_SPEã€E_SPEã€D_SPEï¼šNED é€Ÿåº¦ï¼ˆcm/sï¼‰ã€‚
 	u8 BUFF[100];
 
-	BUFF[_cnt++] = 0xAA; // Ö¡Í·
-	BUFF[_cnt++] = 0xFF; // Ä¿±êµØÖ·
-	BUFF[_cnt++] = 0X30; // ¹¦ÄÜÂë
-	BUFF[_cnt++] = 23;	 // Êý¾Ý³¤¶È
+	BUFF[_cnt++] = 0xAA; // å¸§å¤´
+	BUFF[_cnt++] = 0xFF; // ç›®æ ‡åœ°å€
+	BUFF[_cnt++] = 0X30; // åŠŸèƒ½ç 
+	BUFF[_cnt++] = 23;	 // æ•°æ®é•¿åº¦
 
-	BUFF[_cnt++] = BYTE0(FIX_STA); // Êý¾ÝÄÚÈÝ,Ð¡¶ÎÄ£Ê½£¬µÍÎ»ÔÚÇ°
+	BUFF[_cnt++] = BYTE0(FIX_STA); // æ•°æ®å†…å®¹,å°æ®µæ¨¡å¼ï¼Œä½Žä½åœ¨å‰
 
 	BUFF[_cnt++] = BYTE0(S_NUM);
 
@@ -327,7 +327,7 @@ void ANO_TC_Send30(u8 FIX_STA, u8 S_NUM, s32 LNG, s32 LAT, s32 ALT_GPS, s16 N_SP
 	BUFF[_cnt++] = BYTE0(PDOP);
 	BUFF[_cnt++] = BYTE0(SACC);
 	BUFF[_cnt++] = BYTE0(VACC);
-	// SCºÍACµÄÐ£ÑéÖ±½Ó³­×îÉÏÃæÉÏÃæ¼ò½éµÄ¼´¿É
+	// SCå’ŒACçš„æ ¡éªŒç›´æŽ¥æŠ„æœ€ä¸Šé¢ä¸Šé¢ç®€ä»‹çš„å³å¯
 	for (i = 0; i < _cnt; i++)
 	{
 		sumcheck += BUFF[i];
@@ -337,7 +337,7 @@ void ANO_TC_Send30(u8 FIX_STA, u8 S_NUM, s32 LNG, s32 LAT, s32 ALT_GPS, s16 N_SP
 	BUFF[_cnt++] = addcheck;
 
 	for (i = 0; i < _cnt; i++)
-		UsartSendByte(USART1, BUFF[i]); // ´®¿ÚÖð¸ö·¢ËÍÊý¾Ý
+		UsartSendByte(USART1, BUFF[i]); // ä¸²å£é€ä¸ªå‘é€æ•°æ®
 }
 
 void ANO_TC_Send32(u32 POS_X, u32 POS_Y, u32 POS_Z)
@@ -348,12 +348,12 @@ void ANO_TC_Send32(u32 POS_X, u32 POS_Y, u32 POS_Z)
 	u8 _cnt = 0;
 	u8 BUFF[100];
 
-	BUFF[_cnt++] = 0xAA;		 // Ö¡Í·
-	BUFF[_cnt++] = 0xFF;		 // Ä¿±êµØÖ·
-	BUFF[_cnt++] = 0X32;		 // ¹¦ÄÜÂë
-	BUFF[_cnt++] = 12;			 // Êý¾Ý³¤¶È
-	BUFF[_cnt++] = BYTE0(POS_X); // Êý¾ÝÄÚÈÝ,Ð¡¶ÎÄ£Ê½£¬µÍÎ»ÔÚÇ°
-	BUFF[_cnt++] = BYTE1(POS_X); // ÐèÒª½«×Ö½Ú½øÐÐ²ð·Ö£¬µ÷ÓÃÉÏÃæµÄºê¶¨Òå¼´¿É¡£
+	BUFF[_cnt++] = 0xAA;		 // å¸§å¤´
+	BUFF[_cnt++] = 0xFF;		 // ç›®æ ‡åœ°å€
+	BUFF[_cnt++] = 0X32;		 // åŠŸèƒ½ç 
+	BUFF[_cnt++] = 12;			 // æ•°æ®é•¿åº¦
+	BUFF[_cnt++] = BYTE0(POS_X); // æ•°æ®å†…å®¹,å°æ®µæ¨¡å¼ï¼Œä½Žä½åœ¨å‰
+	BUFF[_cnt++] = BYTE1(POS_X); // éœ€è¦å°†å­—èŠ‚è¿›è¡Œæ‹†åˆ†ï¼Œè°ƒç”¨ä¸Šé¢çš„å®å®šä¹‰å³å¯ã€‚
 	BUFF[_cnt++] = BYTE2(POS_X);
 	BUFF[_cnt++] = BYTE3(POS_X);
 	BUFF[_cnt++] = BYTE0(POS_Y);
@@ -364,7 +364,7 @@ void ANO_TC_Send32(u32 POS_X, u32 POS_Y, u32 POS_Z)
 	BUFF[_cnt++] = BYTE1(POS_Z);
 	BUFF[_cnt++] = BYTE2(POS_Z);
 	BUFF[_cnt++] = BYTE3(POS_Z);
-	// SCºÍACµÄÐ£ÑéÖ±½Ó³­×îÉÏÃæÉÏÃæ¼ò½éµÄ¼´¿É
+	// SCå’ŒACçš„æ ¡éªŒç›´æŽ¥æŠ„æœ€ä¸Šé¢ä¸Šé¢ç®€ä»‹çš„å³å¯
 	for (i = 0; i < _cnt; i++)
 	{
 		sumcheck += BUFF[i];
@@ -374,14 +374,14 @@ void ANO_TC_Send32(u32 POS_X, u32 POS_Y, u32 POS_Z)
 	BUFF[_cnt++] = addcheck;
 
 	for (i = 0; i < _cnt; i++)
-		UsartSendByte(USART1, BUFF[i]); // ´®¿ÚÖð¸ö·¢ËÍÊý¾Ý
+		UsartSendByte(USART1, BUFF[i]); // ä¸²å£é€ä¸ªå‘é€æ•°æ®
 }
 
 
 
 /*
 // static u8 AAAA = 1;
-// Openlog_Save(AAAA++, 'H', 'I', 'J'); // ÐÞ¸Ä±È½ÏÖµ£¬ÐÞ¸ÄÕ¼¿Õ±È
+// Openlog_Save(AAAA++, 'H', 'I', 'J'); // ä¿®æ”¹æ¯”è¾ƒå€¼ï¼Œä¿®æ”¹å ç©ºæ¯”
 
 // void Openlog_Save(u8 AAAA, u8 _accx, u8 _accy, u8 _accz)
 // {
@@ -399,7 +399,7 @@ void ANO_TC_Send32(u32 POS_X, u32 POS_Y, u32 POS_Z)
 // 	BUFF[_cnt++] = '\n';
 
 // 	for (i = 0; i < _cnt; i++)
-// 		UsartSendByte(USART1, BUFF[i]); // ´®¿ÚÖð¸ö·¢ËÍÊý¾Ý
+// 		UsartSendByte(USART1, BUFF[i]); // ä¸²å£é€ä¸ªå‘é€æ•°æ®
 // }
 */
 

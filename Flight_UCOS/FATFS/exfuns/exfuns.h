@@ -3,15 +3,15 @@
 #include <stm32f4xx.h>
 #include "ff.h"
 //////////////////////////////////////////////////////////////////////////////////	 
-//±¾³ÌĞòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßĞí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//ALIENTEK STM32F407¿ª·¢°å
-//FATFS À©Õ¹´úÂë	   
-//ÕıµãÔ­×Ó@ALIENTEK
-//¼¼ÊõÂÛÌ³:www.openedv.com
-//´´½¨ÈÕÆÚ:2014/5/15
-//°æ±¾£ºV1.0
-//°æÈ¨ËùÓĞ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾ 2014-2024
+//æœ¬ç¨‹åºåªä¾›å­¦ä¹ ä½¿ç”¨ï¼Œæœªç»ä½œè€…è®¸å¯ï¼Œä¸å¾—ç”¨äºå…¶å®ƒä»»ä½•ç”¨é€”
+//ALIENTEK STM32F407å¼€å‘æ¿
+//FATFS æ‰©å±•ä»£ç 	   
+//æ­£ç‚¹åŸå­@ALIENTEK
+//æŠ€æœ¯è®ºå›:www.openedv.com
+//åˆ›å»ºæ—¥æœŸ:2014/5/15
+//ç‰ˆæœ¬ï¼šV1.0
+//ç‰ˆæƒæ‰€æœ‰ï¼Œç›—ç‰ˆå¿…ç©¶ã€‚
+//Copyright(C) å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸ 2014-2024
 //All rights reserved									  
 ////////////////////////////////////////////////////////////////////////////////// 	
 
@@ -21,38 +21,38 @@ extern FIL *ftemp;
 extern UINT br,bw;
 extern FILINFO fileinfo;
 extern DIR dir;
-extern u8 *fatbuf;//SD¿¨Êı¾İ»º´æÇø
+extern u8 *fatbuf;//SDå¡æ•°æ®ç¼“å­˜åŒº
 
 
 
 
-//f_typetell·µ»ØµÄÀàĞÍ¶¨Òå
-//¸ù¾İ±íFILE_TYPE_TBL»ñµÃ.ÔÚexfuns.cÀïÃæ¶¨Òå
-#define T_BIN		0X00	//binÎÄ¼ş
-#define T_LRC		0X10	//lrcÎÄ¼ş
-#define T_NES		0X20	//nesÎÄ¼ş
+//f_typetellè¿”å›çš„ç±»å‹å®šä¹‰
+//æ ¹æ®è¡¨FILE_TYPE_TBLè·å¾—.åœ¨exfuns.cé‡Œé¢å®šä¹‰
+#define T_BIN		0X00	//binæ–‡ä»¶
+#define T_LRC		0X10	//lrcæ–‡ä»¶
+#define T_NES		0X20	//nesæ–‡ä»¶
 
-#define T_TEXT		0X30	//.txtÎÄ¼ş
-#define T_C			0X31	//.cÎÄ¼ş
-#define T_H			0X32    //.hÎÄ¼ş
+#define T_TEXT		0X30	//.txtæ–‡ä»¶
+#define T_C			0X31	//.cæ–‡ä»¶
+#define T_H			0X32    //.hæ–‡ä»¶
 
-#define T_WAV		0X40	//WAVÎÄ¼ş
-#define T_MP3		0X41	//MP3ÎÄ¼ş 
-#define T_APE		0X42	//APEÎÄ¼ş
-#define T_FLAC		0X43	//FLACÎÄ¼ş
+#define T_WAV		0X40	//WAVæ–‡ä»¶
+#define T_MP3		0X41	//MP3æ–‡ä»¶ 
+#define T_APE		0X42	//APEæ–‡ä»¶
+#define T_FLAC		0X43	//FLACæ–‡ä»¶
 
-#define T_BMP		0X50	//bmpÎÄ¼ş
-#define T_JPG		0X51	//jpgÎÄ¼ş
-#define T_JPEG		0X52	//jpegÎÄ¼ş		 
-#define T_GIF		0X53	//gifÎÄ¼ş   
+#define T_BMP		0X50	//bmpæ–‡ä»¶
+#define T_JPG		0X51	//jpgæ–‡ä»¶
+#define T_JPEG		0X52	//jpegæ–‡ä»¶		 
+#define T_GIF		0X53	//gifæ–‡ä»¶   
 
-#define T_AVI		0X60	//aviÎÄ¼ş  
+#define T_AVI		0X60	//aviæ–‡ä»¶  
 
  
-u8 exfuns_init(void);							//ÉêÇëÄÚ´æ
-u8 f_typetell(u8 *fname);						//Ê¶±ğÎÄ¼şÀàĞÍ
-u8 exf_getfree(u8 *drv,u32 *total,u32 *free);	//µÃµ½´ÅÅÌ×ÜÈİÁ¿ºÍÊ£ÓàÈİÁ¿
-u32 exf_fdsize(u8 *fdname);						//µÃµ½ÎÄ¼ş¼Ğ´óĞ¡			 																		   
+u8 exfuns_init(void);							//ç”³è¯·å†…å­˜
+u8 f_typetell(u8 *fname);						//è¯†åˆ«æ–‡ä»¶ç±»å‹
+u8 exf_getfree(u8 *drv,u32 *total,u32 *free);	//å¾—åˆ°ç£ç›˜æ€»å®¹é‡å’Œå‰©ä½™å®¹é‡
+u32 exf_fdsize(u8 *fdname);						//å¾—åˆ°æ–‡ä»¶å¤¹å¤§å°			 																		   
 #endif
 
 

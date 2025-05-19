@@ -1,7 +1,7 @@
 #include "sys.h"
 #include "delay.h"
 #include "usart.h"
-#include "includes.h"					//ucos Ê¹ÓÃ	  
+#include "includes.h"					//ucos ä½¿ç”¨	  
 
 #include "ANO_TC.h"
 #include "control.h"
@@ -24,9 +24,9 @@
 
 
 //************************************************************************************************//
-//****************************************³õÊ¼»¯UCOS±äÁ¿******************************************//
+//****************************************åˆå§‹åŒ–UCOSå˜é‡******************************************//
 //***********************************************************************************************//
-OS_TCB Task_TCB_init;		//³õÊ¼»¯ÈÎÎñ¿ØÖÆ¿é
+OS_TCB Task_TCB_init;		//åˆå§‹åŒ–ä»»åŠ¡æ§åˆ¶å—
 OS_TCB Task_TCB_height;
 OS_TCB Task_TCB_sd;
 OS_TCB Task_TCB_arhs;
@@ -38,10 +38,10 @@ void task_sd(void *parg);
 void task_arhs(void *parg);
 void task_pid(void *parg);
 
-CPU_STK task_stk_init[128];			//³õÊ¼»¯ÈÎÎñµÄÈÎÎñ¶ÑÕ»£¬´óĞ¡Îª128×Ö£¬Ò²¾ÍÊÇ512×Ö½Ú   32Î»ÏµÍ³: 1×Ö = 4×Ö½Ú
-CPU_STK task_stk_height[128];		//OSTaskCreateÀï¼ÇµÃ¸ÄÕâ¸öÊı£¬¶ÔÓ¦ÉÏ£¬²»È»³öÏÖÏµÍ³±ÀÀ££¬¿´ÃÅ¹·ÖØÆô
+CPU_STK task_stk_init[128];			//åˆå§‹åŒ–ä»»åŠ¡çš„ä»»åŠ¡å †æ ˆï¼Œå¤§å°ä¸º128å­—ï¼Œä¹Ÿå°±æ˜¯512å­—èŠ‚   32ä½ç³»ç»Ÿ: 1å­— = 4å­—èŠ‚
+CPU_STK task_stk_height[128];		//OSTaskCreateé‡Œè®°å¾—æ”¹è¿™ä¸ªæ•°ï¼Œå¯¹åº”ä¸Šï¼Œä¸ç„¶å‡ºç°ç³»ç»Ÿå´©æºƒï¼Œçœ‹é—¨ç‹—é‡å¯
 CPU_STK task_stk_sd[128];	// 
-CPU_STK task_stk_arhs[512];	// ×ËÌ¬½âËãº¯ÊıÀïĞèÒªµÄ±äÁ¿±È½Ï¶à
+CPU_STK task_stk_arhs[512];	// å§¿æ€è§£ç®—å‡½æ•°é‡Œéœ€è¦çš„å˜é‡æ¯”è¾ƒå¤š
 CPU_STK task_stk_pid[128];	
 
 
@@ -52,195 +52,195 @@ OS_MUTEX    g_mutex_usart;
 
 
 //************************************************************************************************//
-//****************************************³õÊ¼»¯È«¾Ö±äÁ¿******************************************//
-//********************************* ¾¡Á¿²»ÒªÊ¹ÓÃdouble ¾¡Á¿Ê¹ÓÃfloat *****************************//
+//****************************************åˆå§‹åŒ–å…¨å±€å˜é‡******************************************//
+//********************************* å°½é‡ä¸è¦ä½¿ç”¨double å°½é‡ä½¿ç”¨float *****************************//
 //***********************************************************************************************//
-float Rad_to_Deg = 180.0f / PI;		// ½Ç¶ÈºÍ»¡¶ÈµÄ×ª»»
+float Rad_to_Deg = 180.0f / PI;		// è§’åº¦å’Œå¼§åº¦çš„è½¬æ¢
 float Deg_to_Rad = PI / 180.0f;
 
 KalmanAlt 		kf_alt;
-float spl_presure; // ÎÂ¶È²¹³¥ºóµÄÆøÑ¹Öµ µ¥Î»par ÅÁ		//IIC½ÓÊÕµÄÆøÑ¹¼ÆÊı¾İ
-float spl_height;  // ½âËãºóµÄÆøÑ¹¸ß¶ÈÖµ£¬µ¥Î»m Ã×
-float battery_voltage; //ADC¼ì²âµ½µÄµç³ØµçÑ¹ µ¥Î»V ·ü
+float spl_presure; // æ¸©åº¦è¡¥å¿åçš„æ°”å‹å€¼ å•ä½par å¸•		//IICæ¥æ”¶çš„æ°”å‹è®¡æ•°æ®
+float spl_height;  // è§£ç®—åçš„æ°”å‹é«˜åº¦å€¼ï¼Œå•ä½m ç±³
+float battery_voltage; //ADCæ£€æµ‹åˆ°çš„ç”µæ± ç”µå‹ å•ä½V ä¼
 
-float acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z,mag_x, mag_y, mag_z;		// ´«¸ĞÆ÷¼ÓËÙ¶È¼ÆºÍÍÓÂİÒÇµÄÔ­Ê¼Êı¾İ
+float acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z,mag_x, mag_y, mag_z;		// ä¼ æ„Ÿå™¨åŠ é€Ÿåº¦è®¡å’Œé™€èºä»ªçš„åŸå§‹æ•°æ®
 float imu_T, imu_P,imu_PT;
 uint64_t imu_Timestamp; 
 
-float ACCX_n, ACCY_n, ACCZ_n;			//×ª»»µ½µØÀí×ø±êÏµÉÏµÄ¼ÓËÙ¶È
-float roll_deg, pitch_deg, yaw_deg;										// ×ËÌ¬½âËãºóµÃµ½µÄ½Ç¶ÈÖµ
+float ACCX_n, ACCY_n, ACCZ_n;			//è½¬æ¢åˆ°åœ°ç†åæ ‡ç³»ä¸Šçš„åŠ é€Ÿåº¦
+float roll_deg, pitch_deg, yaw_deg;										// å§¿æ€è§£ç®—åå¾—åˆ°çš„è§’åº¦å€¼
 float target_roll, target_pitch, target_yaw;
 float throttle;
 float Moto_PWM1, Moto_PWM2, Moto_PWM3, Moto_PWM4;
 
-char sd_buf[256];	  	// SD¿¨´æ´¢  SD¿¨µÄ·¢ËÍ»º³åÇø
-char sd_filename[20];	// Ğ´ÈëSD¿¨µÄ£¬ÎÄ¼şÃû
+char sd_buf[256];	  	// SDå¡å­˜å‚¨  SDå¡çš„å‘é€ç¼“å†²åŒº
+char sd_filename[20];	// å†™å…¥SDå¡çš„ï¼Œæ–‡ä»¶å
 
 float server_target, server_measure;
 
 
 
 //************************************************************************************************//
-//****************************************³õÊ¼»¯ÓÃµ½µÄº¯Êı*****************************************//
+//****************************************åˆå§‹åŒ–ç”¨åˆ°çš„å‡½æ•°*****************************************//
 //************************************************************************************************//
-void led_init(void);		//Ó²¼ş³õÊ¼»¯º¯Êı
+void led_init(void);		//ç¡¬ä»¶åˆå§‹åŒ–å‡½æ•°
 void pwm_init(void);
 void spl06_init(void);
 void sd_init(void);
 void kalman_alt_init(void);
 
-void wireless_uart_Config(void);		//ÅäÖÃº¯Êı
+void wireless_uart_Config(void);		//é…ç½®å‡½æ•°
 void fdisystem_Config(void);
 
 
 
 
 
-//Ö÷º¯Êı
+//ä¸»å‡½æ•°
 int main(void)
 {
 	OS_ERR err;
-	systick_init();  													//Ê±ÖÓ³õÊ¼»¯
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);						//ÖĞ¶Ï·Ö×éÅäÖÃ
-	usart_init(115200);  				 									//´®¿Ú³õÊ¼»¯ 115200 9600
+	systick_init();  													//æ—¶é’Ÿåˆå§‹åŒ–
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);						//ä¸­æ–­åˆ†ç»„é…ç½®
+	usart_init(115200);  				 									//ä¸²å£åˆå§‹åŒ– 115200 9600
 
-	//OS³õÊ¼»¯£¬ËüÊÇµÚÒ»¸öÔËĞĞµÄº¯Êı,³õÊ¼»¯¸÷ÖÖµÄÈ«¾Ö±äÁ¿£¬ÀıÈçÖĞ¶ÏÇ¶Ì×¼ÆÊıÆ÷¡¢ÓÅÏÈ¼¶¡¢´æ´¢Æ÷
+	//OSåˆå§‹åŒ–ï¼Œå®ƒæ˜¯ç¬¬ä¸€ä¸ªè¿è¡Œçš„å‡½æ•°,åˆå§‹åŒ–å„ç§çš„å…¨å±€å˜é‡ï¼Œä¾‹å¦‚ä¸­æ–­åµŒå¥—è®¡æ•°å™¨ã€ä¼˜å…ˆçº§ã€å­˜å‚¨å™¨
 	OSInit(&err);
 	
-	//´´½¨³õÊ¼»¯ÈÎÎñ
-	//°ÑËùÓĞ³õÊ¼»¯ÄÚÈİ·ÅÔÚtask_init£¬Æô¶¯OS½øĞĞÈÎÎñµ÷¶Èºó²ÅÄÜÖ´ĞĞ£¬ÒÔ·ÀÌáÇ°ÔËĞĞµ½ÓĞ¹ØOSµÄµ¼ÖÂ±ÀÀ£
-	OSTaskCreate(	(OS_TCB *)&Task_TCB_init,								//ÈÎÎñ¿ØÖÆ¿é
-					(CPU_CHAR *)"Task_init",								//ÈÎÎñµÄÃû×Ö
-					(OS_TASK_PTR)task_init,									//ÈÎÎñº¯Êı
-					(void *)0,												//´«µİ²ÎÊı
-					(OS_PRIO)5,											 	//ÈÎÎñµÄÓÅÏÈ¼¶	
-					(CPU_STK *)task_stk_init,								//ÈÎÎñ¶ÑÕ»»ùµØÖ·
-					(CPU_STK_SIZE)128/10,									//ÈÎÎñ¶ÑÕ»Éî¶ÈÏŞÎ»£¬ÓÃµ½Õâ¸öÎ»ÖÃ£¬ÈÎÎñ²»ÄÜÔÙ¼ÌĞøÊ¹ÓÃ
-					(CPU_STK_SIZE)128,										//ÈÎÎñ¶ÑÕ»´óĞ¡			
-					(OS_MSG_QTY)0,											//½ûÖ¹ÈÎÎñÏûÏ¢¶ÓÁĞ
-					(OS_TICK)0,												//Ä¬ÈÏÊ±¼äÆ¬³¤¶È																
-					(void  *)0,												//²»ĞèÒª²¹³äÓÃ»§´æ´¢Çø
-					(OS_OPT)OS_OPT_TASK_NONE,								//Ã»ÓĞÈÎºÎÑ¡Ïî
-					&err													//·µ»ØµÄ´íÎóÂë
+	//åˆ›å»ºåˆå§‹åŒ–ä»»åŠ¡
+	//æŠŠæ‰€æœ‰åˆå§‹åŒ–å†…å®¹æ”¾åœ¨task_initï¼Œå¯åŠ¨OSè¿›è¡Œä»»åŠ¡è°ƒåº¦åæ‰èƒ½æ‰§è¡Œï¼Œä»¥é˜²æå‰è¿è¡Œåˆ°æœ‰å…³OSçš„å¯¼è‡´å´©æºƒ
+	OSTaskCreate(	(OS_TCB *)&Task_TCB_init,								//ä»»åŠ¡æ§åˆ¶å—
+					(CPU_CHAR *)"Task_init",								//ä»»åŠ¡çš„åå­—
+					(OS_TASK_PTR)task_init,									//ä»»åŠ¡å‡½æ•°
+					(void *)0,												//ä¼ é€’å‚æ•°
+					(OS_PRIO)5,											 	//ä»»åŠ¡çš„ä¼˜å…ˆçº§	
+					(CPU_STK *)task_stk_init,								//ä»»åŠ¡å †æ ˆåŸºåœ°å€
+					(CPU_STK_SIZE)128/10,									//ä»»åŠ¡å †æ ˆæ·±åº¦é™ä½ï¼Œç”¨åˆ°è¿™ä¸ªä½ç½®ï¼Œä»»åŠ¡ä¸èƒ½å†ç»§ç»­ä½¿ç”¨
+					(CPU_STK_SIZE)128,										//ä»»åŠ¡å †æ ˆå¤§å°			
+					(OS_MSG_QTY)0,											//ç¦æ­¢ä»»åŠ¡æ¶ˆæ¯é˜Ÿåˆ—
+					(OS_TICK)0,												//é»˜è®¤æ—¶é—´ç‰‡é•¿åº¦																
+					(void  *)0,												//ä¸éœ€è¦è¡¥å……ç”¨æˆ·å­˜å‚¨åŒº
+					(OS_OPT)OS_OPT_TASK_NONE,								//æ²¡æœ‰ä»»ä½•é€‰é¡¹
+					&err													//è¿”å›çš„é”™è¯¯ç 
 				);
 	
 
-	//´´½¨ĞÅºÅÁ¿
-	OSSemCreate(&g_sem_sd, "g_sem_sd", 0, &err);    // µÚÈı¸ö²ÎÊı²»Îª0£¬²»È»Ò»¿ªÊ¼ÓÃµÈ²»µ½ĞÅºÅÁ¿£¬Îª0Ò»°ã¶¼ÓÃÓÚÈÎÎñÍ¬²½Ê¹ÓÃ
+	//åˆ›å»ºä¿¡å·é‡
+	OSSemCreate(&g_sem_sd, "g_sem_sd", 0, &err);    // ç¬¬ä¸‰ä¸ªå‚æ•°ä¸ä¸º0ï¼Œä¸ç„¶ä¸€å¼€å§‹ç”¨ç­‰ä¸åˆ°ä¿¡å·é‡ï¼Œä¸º0ä¸€èˆ¬éƒ½ç”¨äºä»»åŠ¡åŒæ­¥ä½¿ç”¨
 	OSMutexCreate(&g_mutex_usart, "g_mutex_usart", &err);
-//	OSQCreate(&g_queue_sd, "g_queue_sd", 16, &err); 	//´´½¨ÏûÏ¢¶ÓÁĞ£¬Ö§³Ö16ÌõÏûÏ¢
+//	OSQCreate(&g_queue_sd, "g_queue_sd", 16, &err); 	//åˆ›å»ºæ¶ˆæ¯é˜Ÿåˆ—ï¼Œæ”¯æŒ16æ¡æ¶ˆæ¯
 	
 					
-	//Æô¶¯OS£¬½øĞĞÈÎÎñµ÷¶È
+	//å¯åŠ¨OSï¼Œè¿›è¡Œä»»åŠ¡è°ƒåº¦
 	OSStart(&err);
 	while(1);
 }
 
 
 /**************************************************************************************/
-/***********************************UCOSÈÎÎñº¯Êı***************************************/
+/***********************************UCOSä»»åŠ¡å‡½æ•°***************************************/
 /**************************************************************************************/
 void task_init(void *parg)
 {
 	int wdg_i;
 	OS_ERR err;
-	CPU_SR_ALLOC();		// Èç¹ûÊ¹ÓÃCPU_CRITICAL_ENTER();¾Í±ØĞëÒªCPU_SR_ALLOC();
+	CPU_SR_ALLOC();		// å¦‚æœä½¿ç”¨CPU_CRITICAL_ENTER();å°±å¿…é¡»è¦CPU_SR_ALLOC();
 	
 	
-//	wireless_uart_Config();	// ÅäÖÃÎŞÏßÊı´«µÄ²¨ÌØÂÊ  //½öĞèÅäÖÃÒ»´Î£¬ÅäÖÃÍê¼ÇµÃ×¢ÊÍÁË£¬¶øÇÒÁíÒ»¸öÊı´«£¨µçÄÔ¶Ë£©Ò²ĞèÒªÏàÍ¬µÄÅäÖÃ
+//	wireless_uart_Config();	// é…ç½®æ— çº¿æ•°ä¼ çš„æ³¢ç‰¹ç‡  //ä»…éœ€é…ç½®ä¸€æ¬¡ï¼Œé…ç½®å®Œè®°å¾—æ³¨é‡Šäº†ï¼Œè€Œä¸”å¦ä¸€ä¸ªæ•°ä¼ ï¼ˆç”µè„‘ç«¯ï¼‰ä¹Ÿéœ€è¦ç›¸åŒçš„é…ç½®
 	led_init();
-	IIC_Init(); // I2C½Ó¿Ú¹¦ÄÜ³õÊ¼»¯   Õâ¸ö±ØĞëÏÈ³õÊ¼»¯²ÅÄÜ³õÊ¼»¯¶ÔÓ¦µÄÓĞ¹ØÓ²¼ş
+	IIC_Init(); // I2Cæ¥å£åŠŸèƒ½åˆå§‹åŒ–   è¿™ä¸ªå¿…é¡»å…ˆåˆå§‹åŒ–æ‰èƒ½åˆå§‹åŒ–å¯¹åº”çš„æœ‰å…³ç¡¬ä»¶
 	spl06_init();
 	sd_init();
-    pwm_init(); // TIM3 TIM4 ×Ü¹²°Ë¸öPWM³õÊ¼»¯
+    pwm_init(); // TIM3 TIM4 æ€»å…±å…«ä¸ªPWMåˆå§‹åŒ–
 	Adc_Init();
 	
-//	Initial_UART2(420000);	// ³õÊ¼»¯ELRS´®¿Ú  //Èç¹ûÒ£¿ØÆ÷Á¬½Ó²»ÉÏ,¿´ÃÅ¹·»áÊ§Ğ§£¬À´²»¼°Î¹¹·
-	Initial_UART3(921600);	// ³õÊ¼»¯IMU´®¿Ú
-	Initial_UART4(38400);	// ³õÊ¼»¯GNSS´®¿Ú
+//	Initial_UART2(420000);	// åˆå§‹åŒ–ELRSä¸²å£  //å¦‚æœé¥æ§å™¨è¿æ¥ä¸ä¸Š,çœ‹é—¨ç‹—ä¼šå¤±æ•ˆï¼Œæ¥ä¸åŠå–‚ç‹—
+	Initial_UART3(921600);	// åˆå§‹åŒ–IMUä¸²å£
+	Initial_UART4(38400);	// åˆå§‹åŒ–GNSSä¸²å£
 	
-	//ÎŞ·¨½øÈëÅäÖÃÄ£Ê½µÄÔ­Òò¿ÉÄÜÊÇ¼¶¼äÅÅÏß½Ó´¥²»Á¼ //ĞèÒªfdiSetReboot²ÅÄÜ 
-	//ÅäÖÃÍêÖØÆôºóÎŞĞ§¿ÉÄÜÊÇÒòÎªÑÓÊ±µÄÊ±¼ä²»¹»
-	//ÅäÖÃÍê¼ÇµÃÔÚUSART3_IRQHandlerÀï×¢ÊÍµô»Ø´«µ½uart1µÄ´úÂë
+	//æ— æ³•è¿›å…¥é…ç½®æ¨¡å¼çš„åŸå› å¯èƒ½æ˜¯çº§é—´æ’çº¿æ¥è§¦ä¸è‰¯ //éœ€è¦fdiSetRebootæ‰èƒ½ 
+	//é…ç½®å®Œé‡å¯åæ— æ•ˆå¯èƒ½æ˜¯å› ä¸ºå»¶æ—¶çš„æ—¶é—´ä¸å¤Ÿ
+	//é…ç½®å®Œè®°å¾—åœ¨USART3_IRQHandleré‡Œæ³¨é‡Šæ‰å›ä¼ åˆ°uart1çš„ä»£ç 
 //	fdisystem_Config();
 
 	PID_Param_Init();
 	kalman_alt_init();
 	
-	//´´½¨ÈÎÎñ1
-	OSTaskCreate(	(OS_TCB *)&Task_TCB_height,								//ÈÎÎñ¿ØÖÆ¿é£¬µÈÍ¬ÓÚÏß³Ìid
-					(CPU_CHAR *)"Task_height",								//ÈÎÎñµÄÃû×Ö£¬Ãû×Ö¿ÉÒÔ×Ô¶¨ÒåµÄ
-					(OS_TASK_PTR)task_height,								//ÈÎÎñº¯Êı£¬µÈÍ¬ÓÚÏß³Ìº¯Êı
-					(void *)0,												//´«µİ²ÎÊı£¬µÈÍ¬ÓÚÏß³ÌµÄ´«µİ²ÎÊı
-					(OS_PRIO)6,											 	//ÈÎÎñµÄÓÅÏÈ¼¶6		
-					(CPU_STK *)task_stk_height,									//ÈÎÎñ¶ÑÕ»»ùµØÖ·
-					(CPU_STK_SIZE)128/10,									//ÈÎÎñ¶ÑÕ»Éî¶ÈÏŞÎ»£¬ÓÃµ½Õâ¸öÎ»ÖÃ£¬ÈÎÎñ²»ÄÜÔÙ¼ÌĞøÊ¹ÓÃ
-					(CPU_STK_SIZE)128,										//ÈÎÎñ¶ÑÕ»´óĞ¡			
-					(OS_MSG_QTY)0,											//½ûÖ¹ÈÎÎñÏûÏ¢¶ÓÁĞ
-					(OS_TICK)0,												//Ä¬ÈÏÊ±¼äÆ¬³¤¶È																
-					(void  *)0,												//²»ĞèÒª²¹³äÓÃ»§´æ´¢Çø
-					(OS_OPT)OS_OPT_TASK_NONE,								//Ã»ÓĞÈÎºÎÑ¡Ïî
-					&err													//·µ»ØµÄ´íÎóÂë
+	//åˆ›å»ºä»»åŠ¡1
+	OSTaskCreate(	(OS_TCB *)&Task_TCB_height,								//ä»»åŠ¡æ§åˆ¶å—ï¼Œç­‰åŒäºçº¿ç¨‹id
+					(CPU_CHAR *)"Task_height",								//ä»»åŠ¡çš„åå­—ï¼Œåå­—å¯ä»¥è‡ªå®šä¹‰çš„
+					(OS_TASK_PTR)task_height,								//ä»»åŠ¡å‡½æ•°ï¼Œç­‰åŒäºçº¿ç¨‹å‡½æ•°
+					(void *)0,												//ä¼ é€’å‚æ•°ï¼Œç­‰åŒäºçº¿ç¨‹çš„ä¼ é€’å‚æ•°
+					(OS_PRIO)6,											 	//ä»»åŠ¡çš„ä¼˜å…ˆçº§6		
+					(CPU_STK *)task_stk_height,									//ä»»åŠ¡å †æ ˆåŸºåœ°å€
+					(CPU_STK_SIZE)128/10,									//ä»»åŠ¡å †æ ˆæ·±åº¦é™ä½ï¼Œç”¨åˆ°è¿™ä¸ªä½ç½®ï¼Œä»»åŠ¡ä¸èƒ½å†ç»§ç»­ä½¿ç”¨
+					(CPU_STK_SIZE)128,										//ä»»åŠ¡å †æ ˆå¤§å°			
+					(OS_MSG_QTY)0,											//ç¦æ­¢ä»»åŠ¡æ¶ˆæ¯é˜Ÿåˆ—
+					(OS_TICK)0,												//é»˜è®¤æ—¶é—´ç‰‡é•¿åº¦																
+					(void  *)0,												//ä¸éœ€è¦è¡¥å……ç”¨æˆ·å­˜å‚¨åŒº
+					(OS_OPT)OS_OPT_TASK_NONE,								//æ²¡æœ‰ä»»ä½•é€‰é¡¹
+					&err													//è¿”å›çš„é”™è¯¯ç 
 				);
 
-	//´´½¨ÈÎÎñ2
-	OSTaskCreate(	(OS_TCB *)&Task_TCB_sd,									//ÈÎÎñ¿ØÖÆ¿é
-					(CPU_CHAR *)"Task_sd",									//ÈÎÎñµÄÃû×Ö
-					(OS_TASK_PTR)task_sd,									//ÈÎÎñº¯Êı
-					(void *)0,												//´«µİ²ÎÊı
-					(OS_PRIO)6,											 	//ÈÎÎñµÄÓÅÏÈ¼¶7		
-					(CPU_STK *)task_stk_sd,									//ÈÎÎñ¶ÑÕ»»ùµØÖ·
-					(CPU_STK_SIZE)128/10,									//ÈÎÎñ¶ÑÕ»Éî¶ÈÏŞÎ»£¬ÓÃµ½Õâ¸öÎ»ÖÃ£¬ÈÎÎñ²»ÄÜÔÙ¼ÌĞøÊ¹ÓÃ
-					(CPU_STK_SIZE)128,										//ÈÎÎñ¶ÑÕ»´óĞ¡			
-					(OS_MSG_QTY)0,											//½ûÖ¹ÈÎÎñÏûÏ¢¶ÓÁĞ
-					(OS_TICK)0,												//Ä¬ÈÏÊ±¼äÆ¬³¤¶È																
-					(void  *)0,												//²»ĞèÒª²¹³äÓÃ»§´æ´¢Çø
-					(OS_OPT)OS_OPT_TASK_NONE,								//Ã»ÓĞÈÎºÎÑ¡Ïî
-					&err													//·µ»ØµÄ´íÎóÂë
+	//åˆ›å»ºä»»åŠ¡2
+	OSTaskCreate(	(OS_TCB *)&Task_TCB_sd,									//ä»»åŠ¡æ§åˆ¶å—
+					(CPU_CHAR *)"Task_sd",									//ä»»åŠ¡çš„åå­—
+					(OS_TASK_PTR)task_sd,									//ä»»åŠ¡å‡½æ•°
+					(void *)0,												//ä¼ é€’å‚æ•°
+					(OS_PRIO)6,											 	//ä»»åŠ¡çš„ä¼˜å…ˆçº§7		
+					(CPU_STK *)task_stk_sd,									//ä»»åŠ¡å †æ ˆåŸºåœ°å€
+					(CPU_STK_SIZE)128/10,									//ä»»åŠ¡å †æ ˆæ·±åº¦é™ä½ï¼Œç”¨åˆ°è¿™ä¸ªä½ç½®ï¼Œä»»åŠ¡ä¸èƒ½å†ç»§ç»­ä½¿ç”¨
+					(CPU_STK_SIZE)128,										//ä»»åŠ¡å †æ ˆå¤§å°			
+					(OS_MSG_QTY)0,											//ç¦æ­¢ä»»åŠ¡æ¶ˆæ¯é˜Ÿåˆ—
+					(OS_TICK)0,												//é»˜è®¤æ—¶é—´ç‰‡é•¿åº¦																
+					(void  *)0,												//ä¸éœ€è¦è¡¥å……ç”¨æˆ·å­˜å‚¨åŒº
+					(OS_OPT)OS_OPT_TASK_NONE,								//æ²¡æœ‰ä»»ä½•é€‰é¡¹
+					&err													//è¿”å›çš„é”™è¯¯ç 
 				);
 	
-	//´´½¨ÈÎÎñ3
-	OSTaskCreate(	(OS_TCB *)&Task_TCB_arhs,								//ÈÎÎñ¿ØÖÆ¿é
-					(CPU_CHAR *)"Task_arhs",								//ÈÎÎñµÄÃû×Ö
-					(OS_TASK_PTR)task_arhs,									//ÈÎÎñº¯Êı
-					(void *)0,												//´«µİ²ÎÊı
-					(OS_PRIO)6,											 	//ÈÎÎñµÄÓÅÏÈ¼¶7		
-					(CPU_STK *)task_stk_arhs,								//ÈÎÎñ¶ÑÕ»»ùµØÖ·
-					(CPU_STK_SIZE)512/10,									//ÈÎÎñ¶ÑÕ»Éî¶ÈÏŞÎ»£¬ÓÃµ½Õâ¸öÎ»ÖÃ£¬ÈÎÎñ²»ÄÜÔÙ¼ÌĞøÊ¹ÓÃ
-					(CPU_STK_SIZE)512,										//ÈÎÎñ¶ÑÕ»´óĞ¡			
-					(OS_MSG_QTY)0,											//½ûÖ¹ÈÎÎñÏûÏ¢¶ÓÁĞ
-					(OS_TICK)0,												//Ä¬ÈÏÊ±¼äÆ¬³¤¶È																
-					(void  *)0,												//²»ĞèÒª²¹³äÓÃ»§´æ´¢Çø
-					(OS_OPT)OS_OPT_TASK_NONE,								//Ã»ÓĞÈÎºÎÑ¡Ïî
-					&err													//·µ»ØµÄ´íÎóÂë
+	//åˆ›å»ºä»»åŠ¡3
+	OSTaskCreate(	(OS_TCB *)&Task_TCB_arhs,								//ä»»åŠ¡æ§åˆ¶å—
+					(CPU_CHAR *)"Task_arhs",								//ä»»åŠ¡çš„åå­—
+					(OS_TASK_PTR)task_arhs,									//ä»»åŠ¡å‡½æ•°
+					(void *)0,												//ä¼ é€’å‚æ•°
+					(OS_PRIO)6,											 	//ä»»åŠ¡çš„ä¼˜å…ˆçº§7		
+					(CPU_STK *)task_stk_arhs,								//ä»»åŠ¡å †æ ˆåŸºåœ°å€
+					(CPU_STK_SIZE)512/10,									//ä»»åŠ¡å †æ ˆæ·±åº¦é™ä½ï¼Œç”¨åˆ°è¿™ä¸ªä½ç½®ï¼Œä»»åŠ¡ä¸èƒ½å†ç»§ç»­ä½¿ç”¨
+					(CPU_STK_SIZE)512,										//ä»»åŠ¡å †æ ˆå¤§å°			
+					(OS_MSG_QTY)0,											//ç¦æ­¢ä»»åŠ¡æ¶ˆæ¯é˜Ÿåˆ—
+					(OS_TICK)0,												//é»˜è®¤æ—¶é—´ç‰‡é•¿åº¦																
+					(void  *)0,												//ä¸éœ€è¦è¡¥å……ç”¨æˆ·å­˜å‚¨åŒº
+					(OS_OPT)OS_OPT_TASK_NONE,								//æ²¡æœ‰ä»»ä½•é€‰é¡¹
+					&err													//è¿”å›çš„é”™è¯¯ç 
 				);
 					
-	//´´½¨ÈÎÎñ4
-	OSTaskCreate(	(OS_TCB *)&Task_TCB_pid,								//ÈÎÎñ¿ØÖÆ¿é
-					(CPU_CHAR *)"Task_pid",									//ÈÎÎñµÄÃû×Ö
-					(OS_TASK_PTR)task_pid,									//ÈÎÎñº¯Êı
-					(void *)0,												//´«µİ²ÎÊı
-					(OS_PRIO)6,											 	//ÈÎÎñµÄÓÅÏÈ¼¶7		
-					(CPU_STK *)task_stk_pid,								//ÈÎÎñ¶ÑÕ»»ùµØÖ·
-					(CPU_STK_SIZE)128/10,									//ÈÎÎñ¶ÑÕ»Éî¶ÈÏŞÎ»£¬ÓÃµ½Õâ¸öÎ»ÖÃ£¬ÈÎÎñ²»ÄÜÔÙ¼ÌĞøÊ¹ÓÃ
-					(CPU_STK_SIZE)128,										//ÈÎÎñ¶ÑÕ»´óĞ¡			
-					(OS_MSG_QTY)0,											//½ûÖ¹ÈÎÎñÏûÏ¢¶ÓÁĞ
-					(OS_TICK)0,												//Ä¬ÈÏÊ±¼äÆ¬³¤¶È																
-					(void  *)0,												//²»ĞèÒª²¹³äÓÃ»§´æ´¢Çø
-					(OS_OPT)OS_OPT_TASK_NONE,								//Ã»ÓĞÈÎºÎÑ¡Ïî
-					&err													//·µ»ØµÄ´íÎóÂë
+	//åˆ›å»ºä»»åŠ¡4
+	OSTaskCreate(	(OS_TCB *)&Task_TCB_pid,								//ä»»åŠ¡æ§åˆ¶å—
+					(CPU_CHAR *)"Task_pid",									//ä»»åŠ¡çš„åå­—
+					(OS_TASK_PTR)task_pid,									//ä»»åŠ¡å‡½æ•°
+					(void *)0,												//ä¼ é€’å‚æ•°
+					(OS_PRIO)6,											 	//ä»»åŠ¡çš„ä¼˜å…ˆçº§7		
+					(CPU_STK *)task_stk_pid,								//ä»»åŠ¡å †æ ˆåŸºåœ°å€
+					(CPU_STK_SIZE)128/10,									//ä»»åŠ¡å †æ ˆæ·±åº¦é™ä½ï¼Œç”¨åˆ°è¿™ä¸ªä½ç½®ï¼Œä»»åŠ¡ä¸èƒ½å†ç»§ç»­ä½¿ç”¨
+					(CPU_STK_SIZE)128,										//ä»»åŠ¡å †æ ˆå¤§å°			
+					(OS_MSG_QTY)0,											//ç¦æ­¢ä»»åŠ¡æ¶ˆæ¯é˜Ÿåˆ—
+					(OS_TICK)0,												//é»˜è®¤æ—¶é—´ç‰‡é•¿åº¦																
+					(void  *)0,												//ä¸éœ€è¦è¡¥å……ç”¨æˆ·å­˜å‚¨åŒº
+					(OS_OPT)OS_OPT_TASK_NONE,								//æ²¡æœ‰ä»»ä½•é€‰é¡¹
+					&err													//è¿”å›çš„é”™è¯¯ç 
 				);
 					
-	IWDG_Init(4, 1000);// IWDG_Feed(); // Î¹¹·// ·ÖÆµÊıÎª4*2^4=64,32kHz/64,ÖØÔØÖµÎª500,Òç³öÊ±¼äÎª1s//Ê±¼ä¼ÆËã(´ó¸Å):Tout=((4*2^prer)*rlr)/32 (ms)
+	IWDG_Init(4, 1000);// IWDG_Feed(); // å–‚ç‹—// åˆ†é¢‘æ•°ä¸º4*2^4=64,32kHz/64,é‡è½½å€¼ä¸º500,æº¢å‡ºæ—¶é—´ä¸º1s//æ—¶é—´è®¡ç®—(å¤§æ¦‚):Tout=((4*2^prer)*rlr)/32 (ms)
 	
 	while(1)
 	{
 		for(wdg_i = 0; wdg_i < 9; wdg_i++) {
 			delay_ms(100);
 			
-			CPU_CRITICAL_ENTER();   // OS_CFG_ISR_POST_DEFERRED_EN Îª1¾Í²»¹ØÖĞ¶Ï
-			IWDG_Feed(); 	// Î¹¹·
-			CPU_CRITICAL_EXIT();     //Á¢¼´ÍË³öÁÙ½çÇø
+			CPU_CRITICAL_ENTER();   // OS_CFG_ISR_POST_DEFERRED_EN ä¸º1å°±ä¸å…³ä¸­æ–­
+			IWDG_Feed(); 	// å–‚ç‹—
+			CPU_CRITICAL_EXIT();     //ç«‹å³é€€å‡ºä¸´ç•ŒåŒº
 		}
 		
         delay_ms(50);
@@ -248,9 +248,9 @@ void task_init(void *parg)
         delay_ms(50);
         LED_PC13 = !LED_PC13;
 		
-		CPU_CRITICAL_ENTER();   // OS_CFG_ISR_POST_DEFERRED_EN Îª1¾Í²»¹ØÖĞ¶Ï
-		IWDG_Feed(); 	// Î¹¹·
-		CPU_CRITICAL_EXIT();     //Á¢¼´ÍË³öÁÙ½çÇø
+		CPU_CRITICAL_ENTER();   // OS_CFG_ISR_POST_DEFERRED_EN ä¸º1å°±ä¸å…³ä¸­æ–­
+		IWDG_Feed(); 	// å–‚ç‹—
+		CPU_CRITICAL_EXIT();     //ç«‹å³é€€å‡ºä¸´ç•ŒåŒº
 	}
 }
 
@@ -259,11 +259,11 @@ void task_init(void *parg)
 
 
 //		OSTaskSuspend(&Task_TCB_1, &err);
-//		OSSemPend(&g_sem, 0, OS_OPT_PEND_BLOCKING, NULL, &err);		//×èÈûµÈ´ıĞÅºÅÁ¿
+//		OSSemPend(&g_sem, 0, OS_OPT_PEND_BLOCKING, NULL, &err);		//é˜»å¡ç­‰å¾…ä¿¡å·é‡
 //		OSMutexPend(&g_mutex, 0, OS_OPT_PEND_BLOCKING, NULL, &err);
 //		printf("task2 is running ...\r\n");
 //		OSTaskResume(&Task_TCB_1, &err);
-//		OSSemPost(&g_sem, OS_OPT_POST_1, &err);		//ÊÍ·ÅĞÅºÅÁ¿
+//		OSSemPost(&g_sem, OS_OPT_POST_1, &err);		//é‡Šæ”¾ä¿¡å·é‡
 //		OSMutexPost(&g_mutex, OS_OPT_POST_NONE, &err);
 
 
@@ -277,44 +277,44 @@ void task_height(void *parg)
 
 	while(1)
 	{
-		if(count_spl_i < 500)		// µÈ×ËÌ¬½âËã½á¹ûÎÈ¶¨ÒÔºóÔÙ½øĞĞ¸ß¶ÈµÄÈÚºÏ 500 * 10ms = 5s
+		if(count_spl_i < 500)		// ç­‰å§¿æ€è§£ç®—ç»“æœç¨³å®šä»¥åå†è¿›è¡Œé«˜åº¦çš„èåˆ 500 * 10ms = 5s
 		{	
 			count_spl_i += 1;
 		}
 		else{
-			//SPL06ÆøÑ¹¼Æ¶ÁÈ¡
-			spl_presure = user_spl0601_get_presure(); 							// ÎÂ¶È²¹³¥ºóµÄÆøÑ¹Öµ µ¥Î»par ÅÁ
-			spl_height = 44300 * (1 - pow(spl_presure / 101325, 1 / 5.256f));   	// ½âËãºóµÄÆøÑ¹¸ß¶ÈÖµ£¬µ¥Î»m Ã×
+			//SPL06æ°”å‹è®¡è¯»å–
+			spl_presure = user_spl0601_get_presure(); 							// æ¸©åº¦è¡¥å¿åçš„æ°”å‹å€¼ å•ä½par å¸•
+			spl_height = 44300 * (1 - pow(spl_presure / 101325, 1 / 5.256f));   	// è§£ç®—åçš„æ°”å‹é«˜åº¦å€¼ï¼Œå•ä½m ç±³
 			
 			
-			//µç³ØµçÑ¹²âÁ¿Öµ
+			//ç”µæ± ç”µå‹æµ‹é‡å€¼
 			battery_voltage = 0;
 			for(volt_i = 0; volt_i < 6000; volt_i++) {
 				battery_voltage += ADC_Value_Buffer[volt_i] & 0x0FFF;
 			}
-			battery_voltage = battery_voltage / 6000 * (3.3f / 4096) * 10 ; // È¡Æ½¾ù£¬10ÊÇ±¶Êı£¨³ËÒÔ10²ÅÊÇÕæÕıµÄµçÑ¹£©
-			//battery_voltage = (float)Get_Adc_Average(ADC_Channel_7, 20) * (3.3 / 4096) * 10; // »ñÈ¡Í¨µÀ5µÄ×ª»»Öµ£¬20´ÎÈ¡Æ½¾ù£¬10ÊÇ±¶Êı£¨³ËÒÔ10²ÅÊÇÕæÕıµÄµçÑ¹£©
+			battery_voltage = battery_voltage / 6000 * (3.3f / 4096) * 10 ; // å–å¹³å‡ï¼Œ10æ˜¯å€æ•°ï¼ˆä¹˜ä»¥10æ‰æ˜¯çœŸæ­£çš„ç”µå‹ï¼‰
+			//battery_voltage = (float)Get_Adc_Average(ADC_Channel_7, 20) * (3.3 / 4096) * 10; // è·å–é€šé“5çš„è½¬æ¢å€¼ï¼Œ20æ¬¡å–å¹³å‡ï¼Œ10æ˜¯å€æ•°ï¼ˆä¹˜ä»¥10æ‰æ˜¯çœŸæ­£çš„ç”µå‹ï¼‰
 			
 			
 			
-			//¿¨¶ûÂüÂË²¨ÈÚºÏ£¨¼ÓËÙ¶È¼ÆºÍÆøÑ¹¼Æ£©
-			kalman_predict(&kf_alt, ACCZ_n - 9.72f);  // ÊäÈëÈ¥ÖØÖØÁ¦ºóµÄ¼ÓËÙ¶È
-			kalman_update(&kf_alt, spl_height);    // ÆøÑ¹¼Æ¸ß¶È   //printf("Step ¡ú ¸ß¶È=%.2f m, ËÙ¶È=%.2f m/s\n", kf_alt.x[0], kf_alt.x[1]);
+			//å¡å°”æ›¼æ»¤æ³¢èåˆï¼ˆåŠ é€Ÿåº¦è®¡å’Œæ°”å‹è®¡ï¼‰
+			kalman_predict(&kf_alt, ACCZ_n - 9.72f);  // è¾“å…¥å»é‡é‡åŠ›åçš„åŠ é€Ÿåº¦
+			kalman_update(&kf_alt, spl_height);    // æ°”å‹è®¡é«˜åº¦   //printf("Step â†’ é«˜åº¦=%.2f m, é€Ÿåº¦=%.2f m/s\n", kf_alt.x[0], kf_alt.x[1]);
 
 
 
-//			//**************************************ÏòÄäÃûÉÏÎ»»ú·¢ËÍÊı¾İ*****************************************//
-//			OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//×èÈûµÈ´ı»¥³âËø
+//			//**************************************å‘åŒ¿åä¸Šä½æœºå‘é€æ•°æ®*****************************************//
+//			OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//é˜»å¡ç­‰å¾…äº’æ–¥é”
 //			
-//			ANO_TC_Send02(mag_x, mag_y, mag_z, spl_height * 100, imu_T * 100, 1, 1); // ÂŞÅÌ¡¢ÆøÑ¹¡¢ÎÂ¶È´«¸ĞÆ÷Êı¾İ
-//			ANO_TC_Send05(kf_alt.x[0] * 100, 0, 1); 		// Ëã³öÀ´µÄ¸ß¶È			// µ¥Î»ÊÇÃ×, ±äÎªÀåÃ×·¢ËÍ
+//			ANO_TC_Send02(mag_x, mag_y, mag_z, spl_height * 100, imu_T * 100, 1, 1); // ç½—ç›˜ã€æ°”å‹ã€æ¸©åº¦ä¼ æ„Ÿå™¨æ•°æ®
+//			ANO_TC_Send05(kf_alt.x[0] * 100, 0, 1); 		// ç®—å‡ºæ¥çš„é«˜åº¦			// å•ä½æ˜¯ç±³, å˜ä¸ºå˜ç±³å‘é€
 //			ANO_TC_Send0D(battery_voltage * 100, 0);
 //			
-//			OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//ÊÍ·Å»¥³âËø
+//			OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//é‡Šæ”¾äº’æ–¥é”
 		}
 		
 
-//		printf("gnss_nmea0183: ¾­¶È£º%f\t Î¬¶È£º%f !\r\n", gnss_nmea0183.gpsData.location.lng, gnss_nmea0183.gpsData.location.lat);
+//		printf("gnss_nmea0183: ç»åº¦ï¼š%f\t ç»´åº¦ï¼š%f !\r\n", gnss_nmea0183.gpsData.location.lng, gnss_nmea0183.gpsData.location.lat);
 		delay_ms(10);
 	}
 }
@@ -325,7 +325,7 @@ void task_height(void *parg)
 void task_sd(void *parg)
 {
 	OS_ERR 			err;
-//	OS_MSG_SIZE		msg_size;	//ÏûÏ¢µÄ´óĞ¡
+//	OS_MSG_SIZE		msg_size;	//æ¶ˆæ¯çš„å¤§å°
 //	char *p = NULL;
 	FRESULT res;
 	static int sync_cnt = 0;
@@ -335,44 +335,44 @@ void task_sd(void *parg)
 	
 	while(1)
 	{
-//		//µÈ´ıÏûÏ¢¶ÓÁĞ
+//		//ç­‰å¾…æ¶ˆæ¯é˜Ÿåˆ—
 //		p = OSQPend(&g_queue_sd, 0, OS_OPT_PEND_BLOCKING, &msg_size, NULL, &err);
 //		
-//		//pÖ¸ÕëÓĞĞ§£¬ÇÒmsg_size>0
+//		//pæŒ‡é’ˆæœ‰æ•ˆï¼Œä¸”msg_size>0
 //		if(p && msg_size)
 //		{
-////			//*****************************************SD¿¨´æ´¢µÄ³ÌĞò*******************************************//
-////			f_lseek(file, file->fsize);			   // Ö¸ÕëÖ¸µ½ÎÄ¼şÎ²,×·¼Ó
-////			f_write(file, p, msg_size, &bw); // Ğ´ÈëÒ»ĞĞÊı¾İ			//f_write(file, "\r\n", 2, &bw); // Ğ´ÈëÒ»ĞĞÊı¾İ
+////			//*****************************************SDå¡å­˜å‚¨çš„ç¨‹åº*******************************************//
+////			f_lseek(file, file->fsize);			   // æŒ‡é’ˆæŒ‡åˆ°æ–‡ä»¶å°¾,è¿½åŠ 
+////			f_write(file, p, msg_size, &bw); // å†™å…¥ä¸€è¡Œæ•°æ®			//f_write(file, "\r\n", 2, &bw); // å†™å…¥ä¸€è¡Œæ•°æ®
 //			
-//			myfree(SRAMIN, p);	// ÊÍ·Å¶¯Ì¬ÄÚ´æ	//²»ÊÍ·Å»á³öÏÖ: Ğ´ÈëµÄ¶¼ÊÇ¿Õ°×Êı¾İ
+//			myfree(SRAMIN, p);	// é‡Šæ”¾åŠ¨æ€å†…å­˜	//ä¸é‡Šæ”¾ä¼šå‡ºç°: å†™å…¥çš„éƒ½æ˜¯ç©ºç™½æ•°æ®
 //		}
 		
-		OSSemPend(&g_sem_sd, 0, OS_OPT_PEND_BLOCKING, NULL, &err);		//×èÈûµÈ´ıĞÅºÅÁ¿
+		OSSemPend(&g_sem_sd, 0, OS_OPT_PEND_BLOCKING, NULL, &err);		//é˜»å¡ç­‰å¾…ä¿¡å·é‡
 
-		OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//×èÈûµÈ´ı»¥³âËø
+		OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//é˜»å¡ç­‰å¾…äº’æ–¥é”
 		ANO_TC_Send0D(sync_cnt * 100, 0);
-		OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//ÊÍ·Å»¥³âËø
+		OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//é‡Šæ”¾äº’æ–¥é”
 		
 		
-		//****************************SD¿¨Ğ´Èë²»ºÄÊ±£¬µ«´ò¿ª¡¢¹Ø±ÕºÍÍ¬²½²Ù×÷ÌØ±ğºÄÊ±******************************//
-		//******************Ğ´Èë£¨Èô100×Ö½ÚÊı¾İ£¬0.01-0.1ms£©£¬´ò¿ª£¨20ms£©£¬¹Ø±Õ£¨20ms£©£¬Í¬²½£¨5ms£©************//
-		// Ã¿100´ÎĞ´ÈëÍ¬²½Ò»´Î, ÒòÎªÍ¬²½·Ç³£ºÄÊ±¼ä£¨5ms£©
+		//****************************SDå¡å†™å…¥ä¸è€—æ—¶ï¼Œä½†æ‰“å¼€ã€å…³é—­å’ŒåŒæ­¥æ“ä½œç‰¹åˆ«è€—æ—¶******************************//
+		//******************å†™å…¥ï¼ˆè‹¥100å­—èŠ‚æ•°æ®ï¼Œ0.01-0.1msï¼‰ï¼Œæ‰“å¼€ï¼ˆ20msï¼‰ï¼Œå…³é—­ï¼ˆ20msï¼‰ï¼ŒåŒæ­¥ï¼ˆ5msï¼‰************//
+		// æ¯100æ¬¡å†™å…¥åŒæ­¥ä¸€æ¬¡, å› ä¸ºåŒæ­¥éå¸¸è€—æ—¶é—´ï¼ˆ5msï¼‰
 		if (++sync_cnt >= 100) {
-			res = f_sync(file);      	// È·±£»º³åÇøÄÚÈİĞ´ÈëÉÈÇø		// ²»ÓÃ¹Ø±Õ,¹Ø±ÕÌ«ºÄÊ±¼äÁË£¨20ms£©
+			res = f_sync(file);      	// ç¡®ä¿ç¼“å†²åŒºå†…å®¹å†™å…¥æ‰‡åŒº		// ä¸ç”¨å…³é—­,å…³é—­å¤ªè€—æ—¶é—´äº†ï¼ˆ20msï¼‰
 			
 			if (res != FR_OK) {
 			}
 			else
 			{
 
-//				//**************************************ÏòÄäÃûÉÏÎ»»ú·¢ËÍÊı¾İ*****************************************//
-//				OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//×èÈûµÈ´ı»¥³âËø
+//				//**************************************å‘åŒ¿åä¸Šä½æœºå‘é€æ•°æ®*****************************************//
+//				OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//é˜»å¡ç­‰å¾…äº’æ–¥é”
 //				
-//				ANO_TC_Send05(kf_alt.x[0] * 100, 0, 1); 		// Ëã³öÀ´µÄ¸ß¶È			// µ¥Î»ÊÇÃ×, ±äÎªÀåÃ×·¢ËÍ
+//				ANO_TC_Send05(kf_alt.x[0] * 100, 0, 1); 		// ç®—å‡ºæ¥çš„é«˜åº¦			// å•ä½æ˜¯ç±³, å˜ä¸ºå˜ç±³å‘é€
 //				ANO_TC_Send0D(battery_voltage * 100, 0);
 //				
-//				OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//ÊÍ·Å»¥³âËø
+//				OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//é‡Šæ”¾äº’æ–¥é”
 			
 			}
 			
@@ -386,7 +386,7 @@ void task_sd(void *parg)
 	}
 
 	
-//	f_close(file);		// ¹Ø±ÕÎÄ¼ş
+//	f_close(file);		// å…³é—­æ–‡ä»¶
 }
 
 
@@ -398,16 +398,16 @@ void task_arhs(void *parg)
 	FRESULT res;
 	
 	
-	f_open(file, sd_filename, FA_WRITE); // ÎÄ¼şÖ¸Õë+¾ø¶ÔÂ·¾¶+¶ÁĞ´·½Ê½,È«¶¼Òª¶Ô
+	f_open(file, sd_filename, FA_WRITE); // æ–‡ä»¶æŒ‡é’ˆ+ç»å¯¹è·¯å¾„+è¯»å†™æ–¹å¼,å…¨éƒ½è¦å¯¹
 	
 
 	while(1)
 	{
-		// ´«¸ĞÆ÷¼ÓËÙ¶È¼ÆºÍÍÓÂİÒÇ¡¢´ÅÁ¦¼ÆµÄÔ­Ê¼Êı¾İ
-		acc_x = -IMUData.Accelerometer_X;		// µ¥Î» m/s^2
-		acc_y = -IMUData.Accelerometer_Y;		//È¡¸ººÅ£¬½âËã³öÀ´µÄ²ÅÊÇÕı³£µÄ
+		// ä¼ æ„Ÿå™¨åŠ é€Ÿåº¦è®¡å’Œé™€èºä»ªã€ç£åŠ›è®¡çš„åŸå§‹æ•°æ®
+		acc_x = -IMUData.Accelerometer_X;		// å•ä½ m/s^2
+		acc_y = -IMUData.Accelerometer_Y;		//å–è´Ÿå·ï¼Œè§£ç®—å‡ºæ¥çš„æ‰æ˜¯æ­£å¸¸çš„
 		acc_z = -IMUData.Accelerometer_Z;
-		gyro_x = IMUData.Gyroscope_X;			// µ¥Î» rad/s
+		gyro_x = IMUData.Gyroscope_X;			// å•ä½ rad/s
 		gyro_y = IMUData.Gyroscope_Y;
 		gyro_z = IMUData.Gyroscope_Z;
 		mag_x = IMUData.Magnetometer_X;
@@ -418,53 +418,53 @@ void task_arhs(void *parg)
 		imu_PT = IMUData.Pressure_Temperature;
 		imu_Timestamp = IMUData.Timestamp;
 		
-		// ×ËÌ¬½âËã
+		// å§¿æ€è§£ç®—
 //		MahonyAHRSupdate(acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z, mag_x, mag_y, mag_z);
-		MahonyAHRSupdateIMU(acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z);		// ²»²ÉÓÃ´ÅÁ¦¼Æ½øĞĞ×ËÌ¬½âËã
-		// ×ËÌ¬½âËãºóµÃµ½µÄ½Ç¶ÈÖµ
-		roll_deg = AHRS_Roll;			// ½Ç¶È       // ´«¸ĞÆ÷²âÁ¿Öµ 
-		pitch_deg = AHRS_Pitc;			// µ¥Î» ¶È
+		MahonyAHRSupdateIMU(acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z);		// ä¸é‡‡ç”¨ç£åŠ›è®¡è¿›è¡Œå§¿æ€è§£ç®—
+		// å§¿æ€è§£ç®—åå¾—åˆ°çš„è§’åº¦å€¼
+		roll_deg = AHRS_Roll;			// è§’åº¦       // ä¼ æ„Ÿå™¨æµ‹é‡å€¼ 
+		pitch_deg = AHRS_Pitc;			// å•ä½ åº¦
 		yaw_deg = AHRS_Yawh;
 		
 		
-//		// ¶ÁÈ¡Ä£¿éµÄ½Ç¶ÈÖµ
-//		roll_deg = Euler_data.Roll * Rad_to_Deg;			// ½Ç¶È       // ´«¸ĞÆ÷²âÁ¿Öµ 
-//		pitch_deg = Euler_data.Pitch * Rad_to_Deg;			// µ¥Î» ¶È
+//		// è¯»å–æ¨¡å—çš„è§’åº¦å€¼
+//		roll_deg = Euler_data.Roll * Rad_to_Deg;			// è§’åº¦       // ä¼ æ„Ÿå™¨æµ‹é‡å€¼ 
+//		pitch_deg = Euler_data.Pitch * Rad_to_Deg;			// å•ä½ åº¦
 //		yaw_deg = Euler_data.Heading * Rad_to_Deg;
 		
 		
-		ACCX_n = C_nb_11 * acc_x + C_nb_12 * acc_y + C_nb_13 * acc_z; // ACCX_nÊÇÔÚµØÀí×ø±êÏµÉÏµÄ¼ÓËÙ¶È£¬axÊÇ»úÌå×ø±êÏµµÄ
-		ACCY_n = C_nb_21 * acc_x + C_nb_22 * acc_y + C_nb_23 * acc_z; // µ¥Î»ÊÇm/s^2
+		ACCX_n = C_nb_11 * acc_x + C_nb_12 * acc_y + C_nb_13 * acc_z; // ACCX_næ˜¯åœ¨åœ°ç†åæ ‡ç³»ä¸Šçš„åŠ é€Ÿåº¦ï¼Œaxæ˜¯æœºä½“åæ ‡ç³»çš„
+		ACCY_n = C_nb_21 * acc_x + C_nb_22 * acc_y + C_nb_23 * acc_z; // å•ä½æ˜¯m/s^2
 		ACCZ_n = C_nb_31 * acc_x + C_nb_32 * acc_y + C_nb_33 * acc_z;
 		
 	
-		//**************************************ÏòÄäÃûÉÏÎ»»ú·¢ËÍÊı¾İ*****************************************//
-		OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//×èÈûµÈ´ı»¥³âËø
+		//**************************************å‘åŒ¿åä¸Šä½æœºå‘é€æ•°æ®*****************************************//
+		OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//é˜»å¡ç­‰å¾…äº’æ–¥é”
 		ANO_TC_Send03(roll_deg * 100, pitch_deg * 100, yaw_deg * 100, 1);
 //		ANO_TC_Send01(ACCX_n * 1000, ACCY_n * 1000, ACCZ_n * 1000, gyro_x * 1000, gyro_y * 1000, gyro_z * 1000, 1); 
-//		ANO_TC_Send01(acc_x * 1000, acc_y * 1000, acc_z * 1000, gyro_x * 1000, gyro_y * 1000, gyro_z * 1000, 1);	// ¼ÓËÙ¶È(µ¥Î»m/s^2)£¬½ÇËÙ¶È(µ¥Î»¡ã/s) 
-//		ANO_TC_Send02((unsigned)stk_free, (unsigned)stk_used, 0, 0 * 100, 0 * 100, 1, 1); // ÂŞÅÌ¡¢ÆøÑ¹¡¢ÎÂ¶È´«¸ĞÆ÷Êı¾İ
+//		ANO_TC_Send01(acc_x * 1000, acc_y * 1000, acc_z * 1000, gyro_x * 1000, gyro_y * 1000, gyro_z * 1000, 1);	// åŠ é€Ÿåº¦(å•ä½m/s^2)ï¼Œè§’é€Ÿåº¦(å•ä½Â°/s) 
+//		ANO_TC_Send02((unsigned)stk_free, (unsigned)stk_used, 0, 0 * 100, 0 * 100, 1, 1); // ç½—ç›˜ã€æ°”å‹ã€æ¸©åº¦ä¼ æ„Ÿå™¨æ•°æ®
 //		ANO_TC_Send04(q[0] * 10000, q[1] * 10000, q[2] * 10000, q[3] * 10000, 1);
 //		ANO_TC_Send30(1, 0, 108.914937 * 10000000, 34.246872 * 10000000, 0 / 10, 0, 0, 0, 0 / 100, 0 / 100, 0 / 100);
-//		ANO_TC_Send32(position_x * 100, position_y * 100, position_z * 100);   //·¢ËÍxyzÎ»ÖÃĞÅÏ¢		// µ¥Î»ÊÇÃ×, ±äÎªÀåÃ×·¢ËÍ
-		OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//ÊÍ·Å»¥³âËø
+//		ANO_TC_Send32(position_x * 100, position_y * 100, position_z * 100);   //å‘é€xyzä½ç½®ä¿¡æ¯		// å•ä½æ˜¯ç±³, å˜ä¸ºå˜ç±³å‘é€
+		OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//é‡Šæ”¾äº’æ–¥é”
 		
 		
-		//*****************************************ÏòSD¿¨Ğ´ÈëÊı¾İ******************************************//
-		sprintf(sd_buf, "%.4f\t%.4f\t%.4f\r\n", (float)roll_deg, (float)pitch_deg, (float)yaw_deg);	  // ÏÈ°Ñ±äÁ¿×ª³É×Ö·û´®
-		//f_lseek(file, file->fsize);			   // Ö¸ÕëÖ¸µ½ÎÄ¼şÎ²,×·¼Ó
-		res = f_write(file, sd_buf, strlen(sd_buf), &bw); // Ğ´ÈëÒ»ĞĞÊı¾İ
+		//*****************************************å‘SDå¡å†™å…¥æ•°æ®******************************************//
+		sprintf(sd_buf, "%.4f\t%.4f\t%.4f\r\n", (float)roll_deg, (float)pitch_deg, (float)yaw_deg);	  // å…ˆæŠŠå˜é‡è½¬æˆå­—ç¬¦ä¸²
+		//f_lseek(file, file->fsize);			   // æŒ‡é’ˆæŒ‡åˆ°æ–‡ä»¶å°¾,è¿½åŠ 
+		res = f_write(file, sd_buf, strlen(sd_buf), &bw); // å†™å…¥ä¸€è¡Œæ•°æ®
 		
 //		if (res != FR_OK) {
-//			OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//×èÈûµÈ´ı»¥³âËø
-//			printf("\r\n\r\nĞ´ÈëÊ§°Ü£¬´íÎóÂë£º%d\r\n\r\n", res);
-//			OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//ÊÍ·Å»¥³âËø
+//			OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//é˜»å¡ç­‰å¾…äº’æ–¥é”
+//			printf("\r\n\r\nå†™å…¥å¤±è´¥ï¼Œé”™è¯¯ç ï¼š%d\r\n\r\n", res);
+//			OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//é‡Šæ”¾äº’æ–¥é”
 //		}
 		
-//		// ÏûÏ¢¶ÓÁĞ£¬Í¨ÖªÄÇ±ß£¬Í¨Öª¾ÍĞĞÁË£¬Ò»¶¨´ÎÊıºó»áÍ¬²½£¬Ö»ĞèÒªÄÇ±ßÍ¬²½£¬Èç¹û°ÑÏûÏ¢´«µ½ÄÇ±ßÔÙĞ´Èë£¬·´¶øÈİÒ×Ğ´Èë³öÎÊÌâ£¨Ğ´Èë²»È«£©
+//		// æ¶ˆæ¯é˜Ÿåˆ—ï¼Œé€šçŸ¥é‚£è¾¹ï¼Œé€šçŸ¥å°±è¡Œäº†ï¼Œä¸€å®šæ¬¡æ•°åä¼šåŒæ­¥ï¼Œåªéœ€è¦é‚£è¾¹åŒæ­¥ï¼Œå¦‚æœæŠŠæ¶ˆæ¯ä¼ åˆ°é‚£è¾¹å†å†™å…¥ï¼Œåè€Œå®¹æ˜“å†™å…¥å‡ºé—®é¢˜ï¼ˆå†™å…¥ä¸å…¨ï¼‰
 //		OSQPost(&g_queue_sd, (void *)sd_buf, strlen(sd_buf), OS_OPT_POST_FIFO, &err);		
 		
-		OSSemPost(&g_sem_sd, OS_OPT_POST_1, &err);		//ÊÍ·ÅĞÅºÅÁ¿
+		OSSemPost(&g_sem_sd, OS_OPT_POST_1, &err);		//é‡Šæ”¾ä¿¡å·é‡
 		
 		
 		
@@ -474,7 +474,7 @@ void task_arhs(void *parg)
 	}
 	
 
-//	f_close(file);	// ¹Ø±ÕÎÄ¼ş 
+//	f_close(file);	// å…³é—­æ–‡ä»¶ 
 }
 
 
@@ -485,25 +485,25 @@ void task_pid(void *parg)
 	while(1)
 	{
 		
-//		// Ò£¿ØÆ÷Ò¡¸Ë¡ª¡ª>Ò²¾ÍÊÇ Ä¿±ê½Ç¶ÈÖµ
-//		target_roll = ((double)ELRS_ch1 - 992) / 818.0 * 20;		// Ò£¿ØÆ÷Ä¿±ê½Ç¶ÈÖµ	    // Ô­Í¨µÀÖµ174¡ª1811
-//		target_pitch = ((double)ELRS_ch2 - 992) / 818.0 * 20;		// Á½±ß¸÷20¶È [-20, 20]
+//		// é¥æ§å™¨æ‘‡æ†â€”â€”>ä¹Ÿå°±æ˜¯ ç›®æ ‡è§’åº¦å€¼
+//		target_roll = ((double)ELRS_ch1 - 992) / 818.0 * 20;		// é¥æ§å™¨ç›®æ ‡è§’åº¦å€¼	    // åŸé€šé“å€¼174â€”1811
+//		target_pitch = ((double)ELRS_ch2 - 992) / 818.0 * 20;		// ä¸¤è¾¹å„20åº¦ [-20, 20]
 //		target_yaw = ((double)ELRS_ch4 - 992) / 818.0 * 20;
-//		throttle = ((double)ELRS_ch3 - 174) / 1637.0 * 1000 + 1000;	// µçµ÷µÄPWMÕ¼¿Õ±ÈÓ¦¸ÃÊÇ1000-2000Ö®¼ä
+//		throttle = ((double)ELRS_ch3 - 174) / 1637.0 * 1000 + 1000;	// ç”µè°ƒçš„PWMå ç©ºæ¯”åº”è¯¥æ˜¯1000-2000ä¹‹é—´
 
 
-//		// PID½Ç¶È»·    					// PID¿ØÖÆ 
-//		PID_Position_Cal(&PID_ROL_Angle, target_roll, roll_deg);			// ÊäÈë½Ç¶È Êä³ö½ÇËÙ¶È
+//		// PIDè§’åº¦ç¯    					// PIDæ§åˆ¶ 
+//		PID_Position_Cal(&PID_ROL_Angle, target_roll, roll_deg);			// è¾“å…¥è§’åº¦ è¾“å‡ºè§’é€Ÿåº¦
 //		PID_Position_Cal(&PID_PIT_Angle, target_pitch, pitch_deg);
 //		// PID_Position_Cal(&PID_YAW_Angle, target_yaw, yaw_deg);
 //		
-//		// PID½ÇËÙ¶È»·    
-//		PID_Position_Cal(&PID_ROL_Rate, PID_ROL_Angle.OutPut, gyro_x * Rad_to_Deg);	// ÊäÈë½Ç¶È»·µÄÊä³ö£¬Êä³öµç»ú¿ØÖÆÁ¿
+//		// PIDè§’é€Ÿåº¦ç¯    
+//		PID_Position_Cal(&PID_ROL_Rate, PID_ROL_Angle.OutPut, gyro_x * Rad_to_Deg);	// è¾“å…¥è§’åº¦ç¯çš„è¾“å‡ºï¼Œè¾“å‡ºç”µæœºæ§åˆ¶é‡
 //		PID_Position_Cal(&PID_PIT_Rate, PID_PIT_Angle.OutPut, gyro_y * Rad_to_Deg);
 //		PID_Position_Cal(&PID_YAW_Rate, target_yaw * PID_YAW_Angle.P, gyro_z * Rad_to_Deg);
 //		
 //		
-//		// µç»ú¶¯Á¦·ÖÅä    
+//		// ç”µæœºåŠ¨åŠ›åˆ†é…    
 //		if(aircraft_take_off == 1)
 //		{
 //			Moto_PWM1 = throttle + PID_ROL_Rate.OutPut - PID_PIT_Rate.OutPut - PID_YAW_Rate.OutPut;
@@ -522,20 +522,20 @@ void task_pid(void *parg)
 
 //		printf("PID_ROL_Angle.OutPut:%f\ttarget_roll:%f\troll_deg:%f\t\r\n", (float)PID_ROL_Angle.OutPut, (float)target_roll, (float) roll_deg);
 
-		// PWM¿ØÖÆ¶æ»ú
+		// PWMæ§åˆ¶èˆµæœº
 //		TIM_SetCompare1(TIM3, 500 + ((float)ELRS_ch1 - 174) / 1637 * 2000); 	// PB0
-//		TIM_SetCompare2(TIM3, 500 + ((float)ELRS_ch2 - 174) / 1637 * 2000);	// Öµ¶¼ÊÇ174µ½1811Ö®¼ä(²îÖµ: 1637)
-//		TIM_SetCompare3(TIM3, 500 + ((float)ELRS_ch3 - 174) / 1637 * 2000);	// PWM1¡ª¡ªPWM8
+//		TIM_SetCompare2(TIM3, 500 + ((float)ELRS_ch2 - 174) / 1637 * 2000);	// å€¼éƒ½æ˜¯174åˆ°1811ä¹‹é—´(å·®å€¼: 1637)
+//		TIM_SetCompare3(TIM3, 500 + ((float)ELRS_ch3 - 174) / 1637 * 2000);	// PWM1â€”â€”PWM8
 //		TIM_SetCompare4(TIM3, 500 + ((float)ELRS_ch4 - 174) / 1637 * 2000);
 //		TIM_SetCompare1(TIM1, 500 + ((float)ELRS_ch5 - 174) / 1637 * 2000);
 //		TIM_SetCompare2(TIM1, 500 + ((float)ELRS_ch6 - 174) / 1637 * 2000);
 //		TIM_SetCompare3(TIM1, 500 + ((float)ELRS_ch7 - 174) / 1637 * 2000);
 //		TIM_SetCompare4(TIM1, 500 + ((float)ELRS_ch8 - 174) / 1637 * 2000);
 
-//		server_target = ((double)ELRS_ch3 - 174) / 1637.0 * 2000 + 500;				//Ä¿±êÖµ¾ÍÊÇÒ¡¸ËĞÅºÅÖµ				
-//		PID_Posi_Server_Cal(&PID_Server_Posi, server_target, server_measure);		//²âÁ¿Öµ¾ÍÊÇµ±Ç°Êä³öÖµ
+//		server_target = ((double)ELRS_ch3 - 174) / 1637.0 * 2000 + 500;				//ç›®æ ‡å€¼å°±æ˜¯æ‘‡æ†ä¿¡å·å€¼				
+//		PID_Posi_Server_Cal(&PID_Server_Posi, server_target, server_measure);		//æµ‹é‡å€¼å°±æ˜¯å½“å‰è¾“å‡ºå€¼
 //		server_measure += PID_Server_Posi.OutPut;
-//		if (server_measure < 500){server_measure = 500;}		// Êä³öÏŞ·ù
+//		if (server_measure < 500){server_measure = 500;}		// è¾“å‡ºé™å¹…
 //		else if (server_measure > 2500){server_measure = 2500;}
 //		TIM_SetCompare4(TIM1, server_measure);
 //		ANO_TC_Send05(server_target * 100,0, 1);
@@ -552,14 +552,14 @@ void task_pid(void *parg)
 
 
 /**************************************************************************************/
-/***********************************Ó²¼şÖ´ĞĞµÄº¯Êı**************************************/
+/***********************************ç¡¬ä»¶æ‰§è¡Œçš„å‡½æ•°**************************************/
 /**************************************************************************************/
 void led_init(void)
 {
 	u16 i = 0;
     LED_Init();
 //    EXTI11_Init();
-    for (i = 0; i < 20; i++) // ¾ÃÒ»µã,µÈÊÖÀëÔ¶Ò»µã
+    for (i = 0; i < 20; i++) // ä¹…ä¸€ç‚¹,ç­‰æ‰‹ç¦»è¿œä¸€ç‚¹
     {
         delay_ms(100);
         LED_PC13 = !LED_PC13;
@@ -577,19 +577,19 @@ void led_init(void)
 
 void pwm_init(void)
 { 
-	// 84Mhz,¼ÆÊıÆµÂÊÎª84Mhz/84,¼ÆÊı1000000ÔòÎª1s£¬ÖØ×°ÔØÖµ20000£¬ËùÒÔPWMÆµÂÊÎª 50hz.
-	// ¼ÆÊı1000000ÔòÎª1s£¬¼ÆÊı1ÔòÎª1us£¬¶æ»úµÄÂö¿íÔÚ0.5msºÍ2.5msÖ®¼ä£¬ËùÒÔĞèÒª¿ØÖÆÔÚ500-2500Ö®¼ä
+	// 84Mhz,è®¡æ•°é¢‘ç‡ä¸º84Mhz/84,è®¡æ•°1000000åˆ™ä¸º1sï¼Œé‡è£…è½½å€¼20000ï¼Œæ‰€ä»¥PWMé¢‘ç‡ä¸º 50hz.
+	// è®¡æ•°1000000åˆ™ä¸º1sï¼Œè®¡æ•°1åˆ™ä¸º1usï¼Œèˆµæœºçš„è„‰å®½åœ¨0.5mså’Œ2.5msä¹‹é—´ï¼Œæ‰€ä»¥éœ€è¦æ§åˆ¶åœ¨500-2500ä¹‹é—´
     TIM3_PWM_Init(1000000 / 50 - 1, 84 - 1);
 	
 	
-	// ¸ß¼¶¶¨Ê±Æ÷£¬ÆµÂÊÊÇÉÏÃæµÄÁ½±¶
-	// 84 * 2 Mhz,¼ÆÊıÆµÂÊÎª(84 * 2)Mhz/(84 * 2),¼ÆÊı1000000ÔòÎª1s£¬ÖØ×°ÔØÖµ20000£¬ËùÒÔPWMÆµÂÊÎª50hz.
-	// ¼ÆÊı1000000ÔòÎª1s£¬¼ÆÊı1ÔòÎª1us£¬µçµ÷µÄÂö¿íÔÚ1000usºÍ2000usÖ®¼ä£¬ËùÒÔĞèÒª¿ØÖÆÔÚ1000-2000Ö®¼ä
+	// é«˜çº§å®šæ—¶å™¨ï¼Œé¢‘ç‡æ˜¯ä¸Šé¢çš„ä¸¤å€
+	// 84 * 2 Mhz,è®¡æ•°é¢‘ç‡ä¸º(84 * 2)Mhz/(84 * 2),è®¡æ•°1000000åˆ™ä¸º1sï¼Œé‡è£…è½½å€¼20000ï¼Œæ‰€ä»¥PWMé¢‘ç‡ä¸º50hz.
+	// è®¡æ•°1000000åˆ™ä¸º1sï¼Œè®¡æ•°1åˆ™ä¸º1usï¼Œç”µè°ƒçš„è„‰å®½åœ¨1000uså’Œ2000usä¹‹é—´ï¼Œæ‰€ä»¥éœ€è¦æ§åˆ¶åœ¨1000-2000ä¹‹é—´
     TIM1_PWM_Init(1000000 / 50 - 1, 84 * 2 - 1);
 	
 	
-//	TIM2_Getsample_Init(100000 / 50 - 1, 840 - 1); // (1)Òª×îºó³õÊ¼»¯,Ì«Ôç²ÉÑùµÄÖµÊÇÒì³£µÄ  (2)²»ÄÜÌ«´óµ½100,²»È»¶ÁÊı¾İÓĞÎÊÌâ
-//  TIM4_PWM_Init(100000 / 50 - 1, 840 - 1);	// ÔİÊ±£¬Ö÷¿Ø°åÉÏÃ»ÓĞÉèÖÃÓĞÁ¬Ïß
+//	TIM2_Getsample_Init(100000 / 50 - 1, 840 - 1); // (1)è¦æœ€ååˆå§‹åŒ–,å¤ªæ—©é‡‡æ ·çš„å€¼æ˜¯å¼‚å¸¸çš„  (2)ä¸èƒ½å¤ªå¤§åˆ°100,ä¸ç„¶è¯»æ•°æ®æœ‰é—®é¢˜
+//  TIM4_PWM_Init(100000 / 50 - 1, 840 - 1);	// æš‚æ—¶ï¼Œä¸»æ§æ¿ä¸Šæ²¡æœ‰è®¾ç½®æœ‰è¿çº¿
 	printf("pwm_init successful!!!!!!\r\n");
 }
 
@@ -597,9 +597,9 @@ void pwm_init(void)
 
 void spl06_init(void)
 {
-    if (spl0601_init() != 0) // SPL06³õÊ¼»¯
+    if (spl0601_init() != 0) // SPL06åˆå§‹åŒ–
     {
-        printf("SPL06³õÊ¼»¯Ê§°Ü!\r\n\r\n");
+        printf("SPL06åˆå§‹åŒ–å¤±è´¥!\r\n\r\n");
     }
 	else
 	{
@@ -609,71 +609,71 @@ void spl06_init(void)
 
 void sd_init(void)
 {
-    // char buf1[512]; Õâ¸öÊı×éµÄ´óĞ¡¹ØÏµµ½ÄÜ²»ÄÜ³õÊ¼»¯³É¹¦
-	//ÄÚ´æÎÊÌâ¼ÇµÃ¸Ämalloc.h  #define MEM1_MAX_SIZE	  80*1024  //×î´ó¹ÜÀíÄÚ´æ 100K  //  Ô­À´ÊÇ100*1024
+    // char buf1[512]; è¿™ä¸ªæ•°ç»„çš„å¤§å°å…³ç³»åˆ°èƒ½ä¸èƒ½åˆå§‹åŒ–æˆåŠŸ
+	//å†…å­˜é—®é¢˜è®°å¾—æ”¹malloc.h  #define MEM1_MAX_SIZE	  80*1024  //æœ€å¤§ç®¡ç†å†…å­˜ 100K  //  åŸæ¥æ˜¯100*1024
     u32 total, free;
     int res;
 	DIR dir;               /* Directory object */
 	FILINFO fno;           /* File information */
 	char *ext;
 	UINT txt_count = 0;
-	int scan_counter = 0;		// ±ÜÃâÏİÈëËÀÑ­»·
+	int scan_counter = 0;		// é¿å…é™·å…¥æ­»å¾ªç¯
 	
 	
     res = SD_Init();
     LED_PD13 = 1;
-    while (res) // ¼ì²â²»µ½SD¿¨
+    while (res) // æ£€æµ‹ä¸åˆ°SDå¡
     {
         printf("SD Card Init Error: %d !\r\n", res);
         res = SD_Init();
     }
-    //show_sdcard_info();                                                // ´òÓ¡SD¿¨Ïà¹ØĞÅÏ¢
-    printf("SD       Size:  %d   MB\r\n", (int)(SDCardInfo.CardCapacity >> 20)); // ÏÔÊ¾SD¿¨ÈİÁ¿
-    my_mem_init(SRAMIN);                                               // ³õÊ¼»¯ÄÚ²¿ÄÚ´æ³Ø
-    my_mem_init(SRAMCCM);                                              // ³õÊ¼»¯CCMÄÚ´æ³Ø
-    exfuns_init();                                                     // ÎªfatfsÏà¹Ø±äÁ¿ÉêÇëÄÚ´æ
-    f_mount(fs[0], "0:", 1);                                           // ¹ÒÔØSD¿¨
-    while (exf_getfree("0", &total, &free))                            // µÃµ½SD¿¨µÄ×ÜÈİÁ¿ºÍÊ£ÓàÈİÁ¿
+    //show_sdcard_info();                                                // æ‰“å°SDå¡ç›¸å…³ä¿¡æ¯
+    printf("SD       Size:  %d   MB\r\n", (int)(SDCardInfo.CardCapacity >> 20)); // æ˜¾ç¤ºSDå¡å®¹é‡
+    my_mem_init(SRAMIN);                                               // åˆå§‹åŒ–å†…éƒ¨å†…å­˜æ± 
+    my_mem_init(SRAMCCM);                                              // åˆå§‹åŒ–CCMå†…å­˜æ± 
+    exfuns_init();                                                     // ä¸ºfatfsç›¸å…³å˜é‡ç”³è¯·å†…å­˜
+    f_mount(fs[0], "0:", 1);                                           // æŒ‚è½½SDå¡
+    while (exf_getfree("0", &total, &free))                            // å¾—åˆ°SDå¡çš„æ€»å®¹é‡å’Œå‰©ä½™å®¹é‡
     {
         printf("SD Card Fatfs Error!\r\n");
         delay_ms(200);
     }
-    printf("SD Total Size:  %d   MB\r\n", total >> 10); // ÏÔÊ¾SD¿¨×ÜÈİÁ¿ MB
-    printf("SD  Free Size:  %d   MB\r\n", free >> 10);  // ÏÔÊ¾SD¿¨Ê£ÓàÈİÁ¿ MB
+    printf("SD Total Size:  %d   MB\r\n", total >> 10); // æ˜¾ç¤ºSDå¡æ€»å®¹é‡ MB
+    printf("SD  Free Size:  %d   MB\r\n", free >> 10);  // æ˜¾ç¤ºSDå¡å‰©ä½™å®¹é‡ MB
 
 	
-	// Í³¼ÆSD¿¨ÎÄ¼ş¼ĞÏÂµÄtxtÎÄ¼şÊıÁ¿£¬ÒÔÃüÃûĞÂµÄtxtÎÄ¼ş
-    /* 1. ´ò¿ª¸ùÄ¿Â¼ */
+	// ç»Ÿè®¡SDå¡æ–‡ä»¶å¤¹ä¸‹çš„txtæ–‡ä»¶æ•°é‡ï¼Œä»¥å‘½åæ–°çš„txtæ–‡ä»¶
+    /* 1. æ‰“å¼€æ ¹ç›®å½• */
     res = f_opendir(&dir, "0:/");
     if (res != FR_OK) {
-        /* ´ò¿ªÊ§°Ü£¬ÊÓĞèÒª·µ»Ø´íÎóÂë»ò´òÓ¡ÈÕÖ¾ */
+        /* æ‰“å¼€å¤±è´¥ï¼Œè§†éœ€è¦è¿”å›é”™è¯¯ç æˆ–æ‰“å°æ—¥å¿— */
 		printf("SD f_opendir != FR_OK\r\n");
     }
-    /* 2. ±éÀúÄ¿Â¼ */
+    /* 2. éå†ç›®å½• */
     for (;;) {
-        res = f_readdir(&dir, &fno);    /* ¶ÁÈ¡ÏÂÒ»¸öÌõÄ¿ */
-        if (res != FR_OK || fno.fname[0] == 0 || scan_counter++ >= 1000) break;  /* ½áÊø»ò³ö´í */
+        res = f_readdir(&dir, &fno);    /* è¯»å–ä¸‹ä¸€ä¸ªæ¡ç›® */
+        if (res != FR_OK || fno.fname[0] == 0 || scan_counter++ >= 1000) break;  /* ç»“æŸæˆ–å‡ºé”™ */
 
-        /* 3. Ö»Í³¼ÆÆÕÍ¨ÎÄ¼ş */
+        /* 3. åªç»Ÿè®¡æ™®é€šæ–‡ä»¶ */
         if (!(fno.fattrib & AM_DIR)) {
-            /* ²éÕÒÀ©Õ¹Ãû */
+            /* æŸ¥æ‰¾æ‰©å±•å */
             ext = strrchr(fno.fname, '.');
             if (ext) {
-                /* ºöÂÔ´óĞ¡Ğ´±È½Ï .txt */
+                /* å¿½ç•¥å¤§å°å†™æ¯”è¾ƒ .txt */
                 if (strcasecmp(ext, ".txt") == 0) {
                     txt_count++;
                 }
             }
         }
     }
-    /* 4. ¹Ø±ÕÄ¿Â¼ */
+    /* 4. å…³é—­ç›®å½• */
     f_closedir(&dir);
 	printf("SD txt_count = %d\r\n", txt_count);
 //	printf("SD scan_counter = %d\r\n", scan_counter);
 
-	// ¸ù¾İÍ³¼ÆµÄtxtÎÄ¼şÊıÁ¿£¬´´½¨²¢ÃüÃûĞÂµÄtxtÎÄ¼ş
+	// æ ¹æ®ç»Ÿè®¡çš„txtæ–‡ä»¶æ•°é‡ï¼Œåˆ›å»ºå¹¶å‘½åæ–°çš„txtæ–‡ä»¶
 	sprintf(sd_filename, "0:/test_%d.txt", txt_count + 1);
-    f_open(file, sd_filename, FA_CREATE_ALWAYS | FA_WRITE | FA_READ); // ´´½¨ÎÄ¼ş//ÎÄ¼şÖ¸Õë+¾ø¶ÔÂ·¾¶+¶ÁĞ´·½Ê½,È«¶¼Òª¶Ô
+    f_open(file, sd_filename, FA_CREATE_ALWAYS | FA_WRITE | FA_READ); // åˆ›å»ºæ–‡ä»¶//æ–‡ä»¶æŒ‡é’ˆ+ç»å¯¹è·¯å¾„+è¯»å†™æ–¹å¼,å…¨éƒ½è¦å¯¹
     f_close(file);
     LED_PD13 = 0;
 	printf("SD filename = %s\r\n", sd_filename);
@@ -685,36 +685,36 @@ void sd_init(void)
 
 void kalman_alt_init(void)
 {
-    kalman_init(&kf_alt, 0.029, 0.9, 0.10);	// ·Ö±ğÊÇ dt = 0.02; var_accel=0.1, var_alt=1.0  Ğ­·½²îÔ½´ó£¬¾ÍÔ½²»ĞÅÈÎÕâ¸öÊı¾İ£¬·´Ö®ÔòÔ½ĞÅÈÎ
-	//SPL06ÆøÑ¹¼Æ¶ÁÈ¡
-	spl_presure = user_spl0601_get_presure(); 							// ÎÂ¶È²¹³¥ºóµÄÆøÑ¹Öµ µ¥Î»par ÅÁ
-	spl_height = 44300 * (1 - pow(spl_presure / 101325, 1 / 5.256));   	// ½âËãºóµÄÆøÑ¹¸ß¶ÈÖµ£¬µ¥Î»m Ã×
+    kalman_init(&kf_alt, 0.029, 0.9, 0.10);	// åˆ†åˆ«æ˜¯ dt = 0.02; var_accel=0.1, var_alt=1.0  åæ–¹å·®è¶Šå¤§ï¼Œå°±è¶Šä¸ä¿¡ä»»è¿™ä¸ªæ•°æ®ï¼Œåä¹‹åˆ™è¶Šä¿¡ä»»
+	//SPL06æ°”å‹è®¡è¯»å–
+	spl_presure = user_spl0601_get_presure(); 							// æ¸©åº¦è¡¥å¿åçš„æ°”å‹å€¼ å•ä½par å¸•
+	spl_height = 44300 * (1 - pow(spl_presure / 101325, 1 / 5.256));   	// è§£ç®—åçš„æ°”å‹é«˜åº¦å€¼ï¼Œå•ä½m ç±³
 	kf_alt.x[0] = spl_height;
 }
 
 
 void wireless_uart_Config(void)
 {
-	/***************************** ÅäÖÃÎŞÏßÊı´«µÄ²¨ÌØÂÊ *********************************/
+	/***************************** é…ç½®æ— çº¿æ•°ä¼ çš„æ³¢ç‰¹ç‡ *********************************/
 	int i=0;
-	char uart_set_cmd[] = {0xC0, 0x00, 0x00, 0x38, 0x00, 0x40};	 //ÅäÖÃ115200²¨ÌØÂÊ£¬¼´0x38£¬Ä¬ÈÏµÄ9600²¨ÌØÂÊÊÇ0x18
-	usart_init(9600); // PA9ºÍPA10µÄUSART1³õÊ¼»¯
+	char uart_set_cmd[] = {0xC0, 0x00, 0x00, 0x38, 0x00, 0x40};	 //é…ç½®115200æ³¢ç‰¹ç‡ï¼Œå³0x38ï¼Œé»˜è®¤çš„9600æ³¢ç‰¹ç‡æ˜¯0x18
+	usart_init(9600); // PA9å’ŒPA10çš„USART1åˆå§‹åŒ–
 	
-	GPIO_SetBits(GPIOA, GPIO_Pin_11);				// MDO MD1  ÅäÖÃÄ£Ê½
+	GPIO_SetBits(GPIOA, GPIO_Pin_11);				// MDO MD1  é…ç½®æ¨¡å¼
 	GPIO_SetBits(GPIOA, GPIO_Pin_12);
 	delay_ms(500);
 	
 	for (i = 0; i < 6; i++)
-		UsartSendByte(USART1, uart_set_cmd[i]); 	// ·¢ËÍÉèÖÃµÄ²ÎÊı
-	delay_ms(500);	//ÑÓ³ÙºÜÖØÒª£¡£¡£¡£¡£¡£¡£¡£¡£¡
+		UsartSendByte(USART1, uart_set_cmd[i]); 	// å‘é€è®¾ç½®çš„å‚æ•°
+	delay_ms(500);	//å»¶è¿Ÿå¾ˆé‡è¦ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼
 	
 	for (i = 0; i < 3; i++)
-		UsartSendByte(USART1, 0xC3); 				// ·¢ËÍ¸´Î»Ö¸Áî
+		UsartSendByte(USART1, 0xC3); 				// å‘é€å¤ä½æŒ‡ä»¤
 	delay_ms(500);
 	
 	usart_init(115200);
 //	while(1){
-//		//ÅäÖÃÍêÒÔºóËÀÑ­»·£¬Ö»ĞèÒªÅäÖÃÒ»´Î£¬Õı³£Ê¹ÓÃÇé¿öÏÂ£¬Õâ¸öº¯Êı²»ĞèÒªÖ´ĞĞ£¬×¢ÊÍµô£¬¶øÇÒÁíÒ»¸öÊı´«£¨µçÄÔ¶Ë£©Ò²ĞèÒªÏàÍ¬µÄÅäÖÃ
+//		//é…ç½®å®Œä»¥åæ­»å¾ªç¯ï¼Œåªéœ€è¦é…ç½®ä¸€æ¬¡ï¼Œæ­£å¸¸ä½¿ç”¨æƒ…å†µä¸‹ï¼Œè¿™ä¸ªå‡½æ•°ä¸éœ€è¦æ‰§è¡Œï¼Œæ³¨é‡Šæ‰ï¼Œè€Œä¸”å¦ä¸€ä¸ªæ•°ä¼ ï¼ˆç”µè„‘ç«¯ï¼‰ä¹Ÿéœ€è¦ç›¸åŒçš„é…ç½®
 //		delay_ms(100);
 //		LED_PC13 = !LED_PC13;
 //	}
@@ -723,8 +723,8 @@ void wireless_uart_Config(void)
 
 void fdisystem_Config(void)
 {
-	/***************************** ÅäÖÃIMUÊä³öÄÚÈİ *********************************/
-	fdiComSetConfig();		//Á½¸ö *#OK
+	/***************************** é…ç½®IMUè¾“å‡ºå†…å®¹ *********************************/
+	fdiComSetConfig();		//ä¸¤ä¸ª *#OK
 	
 //			You can choose the frequency you want from the following options
 //			0   :No output
@@ -738,7 +738,7 @@ void fdisystem_Config(void)
 //			200 :200Hz
 //			400 :400Hz (IMU data only)
 	 
-	//ÅäÖÃ·¢ËÍµÄÊı¾İ°üÄÚÈİ¼°ÆµÂÊ			//(1.ĞèÒªÊı¾İ°üÄÚÈİ£¬2.ÆµÂÊ)
+	//é…ç½®å‘é€çš„æ•°æ®åŒ…å†…å®¹åŠé¢‘ç‡			//(1.éœ€è¦æ•°æ®åŒ…å†…å®¹ï¼Œ2.é¢‘ç‡)
 //	fdiComSetConfigPacketSentMsg(VERSIONDATA, 0);	
 	fdiComSetConfigPacketSentMsg(MSG_IMU, 200);	
 //	fdiComSetConfigPacketSentMsg(MSG_AHRS, 0);	
@@ -797,16 +797,16 @@ void fdisystem_Config(void)
 //	fdiComSetConfigPacketSentMsg(MSG_DUAL_ANT, 0);
 //	fdiComSetConfigMsg();
 	
-	//²éÑ¯Êı¾İ
+	//æŸ¥è¯¢æ•°æ®
 //	fdiComGetParam("MSG_RAW_SENSORS");
 //	fdiComGetParam("MSG_RAW_GNSS");
 	
-	//ÅäÖÃ±£´æ
+	//é…ç½®ä¿å­˜
 	fdiSetSave();
-	//ÍË³öÅäÖÃ
-//	fdiSetDeconfig();	//¿´ÓÃ»§ÊÖ²á£¬ÍË³öÅäÖÃºÍÅäÖÃÖØÆô²»ÄÜÍ¬Ê±ÓÃ£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡
-	//ÅäÖÃÖØÆô
-	fdiSetReboot();		//Á½¸ö *#OK
+	//é€€å‡ºé…ç½®
+//	fdiSetDeconfig();	//çœ‹ç”¨æˆ·æ‰‹å†Œï¼Œé€€å‡ºé…ç½®å’Œé…ç½®é‡å¯ä¸èƒ½åŒæ—¶ç”¨ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼
+	//é…ç½®é‡å¯
+	fdiSetReboot();		//ä¸¤ä¸ª *#OK
 }
 	
 //***********************************************************
@@ -814,11 +814,11 @@ void fdisystem_Config(void)
 
 
 
-		// ´«¸ĞÆ÷¼ÓËÙ¶È¼ÆºÍÍÓÂİÒÇ¡¢´ÅÁ¦¼ÆµÄÔ­Ê¼Êı¾İ
-//		acc_x = -Raw_Sensor_data.Accelerometer_X;		// µ¥Î» m/s^2
-//		acc_y = -Raw_Sensor_data.Accelerometer_Y;		//È¡¸ººÅ£¬½âËã³öÀ´µÄ²ÅÊÇÕı³£µÄ
+		// ä¼ æ„Ÿå™¨åŠ é€Ÿåº¦è®¡å’Œé™€èºä»ªã€ç£åŠ›è®¡çš„åŸå§‹æ•°æ®
+//		acc_x = -Raw_Sensor_data.Accelerometer_X;		// å•ä½ m/s^2
+//		acc_y = -Raw_Sensor_data.Accelerometer_Y;		//å–è´Ÿå·ï¼Œè§£ç®—å‡ºæ¥çš„æ‰æ˜¯æ­£å¸¸çš„
 //		acc_z = -Raw_Sensor_data.Accelerometer_Z;
-//		gyro_x = Raw_Sensor_data.Gyroscope_X;			// µ¥Î» rad/s
+//		gyro_x = Raw_Sensor_data.Gyroscope_X;			// å•ä½ rad/s
 //		gyro_y = Raw_Sensor_data.Gyroscope_Y;
 //		gyro_z = Raw_Sensor_data.Gyroscope_Z;
 //		mag_x = Raw_Sensor_data.Magnetometer_X;

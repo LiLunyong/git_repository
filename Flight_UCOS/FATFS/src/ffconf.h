@@ -57,7 +57,7 @@
 / Locale and Namespace Configurations
 /---------------------------------------------------------------------------*/
 
-#define _CODE_PAGE	936		//²ÉÓÃÖĞÎÄGBK±àÂë
+#define _CODE_PAGE	936		//é‡‡ç”¨ä¸­æ–‡GBKç¼–ç 
 /* The _CODE_PAGE specifies the OEM code page to be used on the target system.
 /  Incorrect setting of the code page can cause a file open failure.
 /
@@ -133,7 +133,7 @@
 / Drive/Volume Configurations
 /---------------------------------------------------------------------------*/
 
-#define _VOLUMES	3 	//Ö§³Ö3¸ö´ÅÅÌ
+#define _VOLUMES	3 	//æ”¯æŒ3ä¸ªç£ç›˜
 /* Number of volumes (logical drives) to be used. */
 
 

@@ -2,15 +2,15 @@
 #include  <bsp.h>
 
 
-#define  BSP_REG_DEM_CR                           (*(CPU_REG32 *)0xE000EDFC)	//DEMCR�Ĵ���
-#define  BSP_REG_DWT_CR                           (*(CPU_REG32 *)0xE0001000)  	//DWT���ƼĴ���
-#define  BSP_REG_DWT_CYCCNT                       (*(CPU_REG32 *)0xE0001004)	//DWTʱ�Ӽ����Ĵ���	
+#define  BSP_REG_DEM_CR                           (*(CPU_REG32 *)0xE000EDFC)	//DEMCR寄存器
+#define  BSP_REG_DWT_CR                           (*(CPU_REG32 *)0xE0001000)  	//DWT控制寄存器
+#define  BSP_REG_DWT_CYCCNT                       (*(CPU_REG32 *)0xE0001004)	//DWT时钟计数寄存器	
 #define  BSP_REG_DBGMCU_CR                        (*(CPU_REG32 *)0xE0042004)
  
-//DEMCR�Ĵ����ĵ�24λ,���Ҫʹ��DWT ETM ITM��TPIU�Ļ�DEMCR�Ĵ����ĵ�24λ��1
+//DEMCR寄存器的第24位,如果要使用DWT ETM ITM和TPIU的话DEMCR寄存器的第24位置1
 #define  BSP_BIT_DEM_CR_TRCENA                    DEF_BIT_24			
 
-//DWTCR�Ĵ����ĵ�0λ,��Ϊ1��ʱ��ʹ��CYCCNT������,ʹ��CYCCNT֮ǰӦ���ȳ�ʼ��
+//DWTCR寄存器的第0位,当为1的时候使能CYCCNT计数器,使用CYCCNT之前应当先初始化
 #define  BSP_BIT_DWT_CR_CYCCNTENA                 DEF_BIT_00
 
 /*
@@ -28,9 +28,9 @@ CPU_INT32U  BSP_CPU_ClkFreq (void)
 {
     RCC_ClocksTypeDef  rcc_clocks;
 
-    RCC_GetClocksFreq(&rcc_clocks);		//��ȡ����ʱ��Ƶ��
+    RCC_GetClocksFreq(&rcc_clocks);		//获取各个时钟频率
 
-    return ((CPU_INT32U)rcc_clocks.HCLK_Frequency);  //����HCLKʱ��Ƶ��
+    return ((CPU_INT32U)rcc_clocks.HCLK_Frequency);  //返回HCLK时钟频率
 }
 
 
@@ -81,9 +81,9 @@ void  CPU_TS_TmrInit (void)
 
     fclk_freq = BSP_CPU_ClkFreq();
 
-    BSP_REG_DEM_CR     |= (CPU_INT32U)BSP_BIT_DEM_CR_TRCENA; //ʹ��DWT  /* Enable Cortex-M4's DWT CYCCNT reg.                   */
-    BSP_REG_DWT_CYCCNT  = (CPU_INT32U)0u;					 //��ʼ��CYCCNT�Ĵ���
-    BSP_REG_DWT_CR     |= (CPU_INT32U)BSP_BIT_DWT_CR_CYCCNTENA;//����CYCCNT
+    BSP_REG_DEM_CR     |= (CPU_INT32U)BSP_BIT_DEM_CR_TRCENA; //使用DWT  /* Enable Cortex-M4's DWT CYCCNT reg.                   */
+    BSP_REG_DWT_CYCCNT  = (CPU_INT32U)0u;					 //初始化CYCCNT寄存器
+    BSP_REG_DWT_CR     |= (CPU_INT32U)BSP_BIT_DWT_CR_CYCCNTENA;//开启CYCCNT
 
     CPU_TS_TmrFreqSet((CPU_TS_TMR_FREQ)fclk_freq);
 }
