@@ -47,7 +47,6 @@ CPU_STK task_stk_pid[128];
 
 OS_SEM		g_sem_sd;
 OS_MUTEX    g_mutex_usart;
-//OS_Q    	g_queue_sd;
 
 
 
@@ -92,7 +91,6 @@ void kalman_alt_init(void);
 void wireless_uart_Config(void);		//配置函数
 void fdisystem_Config(void);
 
-//66666
 
 
 
@@ -128,7 +126,6 @@ int main(void)
 	//创建信号量
 	OSSemCreate(&g_sem_sd, "g_sem_sd", 0, &err);    // 第三个参数不为0，不然一开始用等不到信号量，为0一般都用于任务同步使用
 	OSMutexCreate(&g_mutex_usart, "g_mutex_usart", &err);
-//	OSQCreate(&g_queue_sd, "g_queue_sd", 16, &err); 	//创建消息队列，支持16条消息
 	
 					
 	//启动OS，进行任务调度
@@ -173,7 +170,7 @@ void task_init(void *parg)
 					(OS_TASK_PTR)task_height,								//任务函数，等同于线程函数
 					(void *)0,												//传递参数，等同于线程的传递参数
 					(OS_PRIO)6,											 	//任务的优先级6		
-					(CPU_STK *)task_stk_height,									//任务堆栈基地址
+					(CPU_STK *)task_stk_height,								//任务堆栈基地址
 					(CPU_STK_SIZE)128/10,									//任务堆栈深度限位，用到这个位置，任务不能再继续使用
 					(CPU_STK_SIZE)128,										//任务堆栈大小			
 					(OS_MSG_QTY)0,											//禁止任务消息队列
@@ -188,7 +185,7 @@ void task_init(void *parg)
 					(CPU_CHAR *)"Task_sd",									//任务的名字
 					(OS_TASK_PTR)task_sd,									//任务函数
 					(void *)0,												//传递参数
-					(OS_PRIO)6,											 	//任务的优先级7		
+					(OS_PRIO)5,											 	//任务的优先级7		
 					(CPU_STK *)task_stk_sd,									//任务堆栈基地址
 					(CPU_STK_SIZE)128/10,									//任务堆栈深度限位，用到这个位置，任务不能再继续使用
 					(CPU_STK_SIZE)128,										//任务堆栈大小			
@@ -258,22 +255,13 @@ void task_init(void *parg)
 
 
 
-//		OSTaskSuspend(&Task_TCB_1, &err);
-//		OSSemPend(&g_sem, 0, OS_OPT_PEND_BLOCKING, NULL, &err);		//阻塞等待信号量
-//		OSMutexPend(&g_mutex, 0, OS_OPT_PEND_BLOCKING, NULL, &err);
-//		printf("task2 is running ...\r\n");
-//		OSTaskResume(&Task_TCB_1, &err);
-//		OSSemPost(&g_sem, OS_OPT_POST_1, &err);		//释放信号量
-//		OSMutexPost(&g_mutex, OS_OPT_POST_NONE, &err);
-
-
-
 
 void task_height(void *parg)
 {
-	uint16_t volt_i;
-	uint16_t count_spl_i = 0;
-	OS_ERR err;
+	uint16_t 	volt_i;
+	uint16_t 	count_spl_i = 0;
+	OS_ERR 		err;
+
 
 	while(1)
 	{
@@ -305,14 +293,11 @@ void task_height(void *parg)
 
 //			//**************************************向匿名上位机发送数据*****************************************//
 //			OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//阻塞等待互斥锁
-//			
 //			ANO_TC_Send02(mag_x, mag_y, mag_z, spl_height * 100, imu_T * 100, 1, 1); // 罗盘、气压、温度传感器数据
 //			ANO_TC_Send05(kf_alt.x[0] * 100, 0, 1); 		// 算出来的高度			// 单位是米, 变为厘米发送
 //			ANO_TC_Send0D(battery_voltage * 100, 0);
-//			
 //			OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//释放互斥锁
 		}
-		
 
 //		printf("gnss_nmea0183: 经度：%f\t 维度：%f !\r\n", gnss_nmea0183.gpsData.location.lng, gnss_nmea0183.gpsData.location.lat);
 		delay_ms(10);
@@ -324,69 +309,31 @@ void task_height(void *parg)
 
 void task_sd(void *parg)
 {
-	OS_ERR 			err;
-//	OS_MSG_SIZE		msg_size;	//消息的大小
-//	char *p = NULL;
-	FRESULT res;
-	static int sync_cnt = 0;
+	OS_ERR 		err;
+	FRESULT 	res;
+	static int 	sync_cnt = 0;
 	
-//	delay_ms(100);
-
 	
 	while(1)
 	{
-//		//等待消息队列
-//		p = OSQPend(&g_queue_sd, 0, OS_OPT_PEND_BLOCKING, &msg_size, NULL, &err);
-//		
-//		//p指针有效，且msg_size>0
-//		if(p && msg_size)
-//		{
-////			//*****************************************SD卡存储的程序*******************************************//
-////			f_lseek(file, file->fsize);			   // 指针指到文件尾,追加
-////			f_write(file, p, msg_size, &bw); // 写入一行数据			//f_write(file, "\r\n", 2, &bw); // 写入一行数据
-//			
-//			myfree(SRAMIN, p);	// 释放动态内存	//不释放会出现: 写入的都是空白数据
-//		}
+		// 等待那边给信号才往下执行
+		OSSemPend(&g_sem_sd, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	// 阻塞等待信号量 
 		
-		OSSemPend(&g_sem_sd, 0, OS_OPT_PEND_BLOCKING, NULL, &err);		//阻塞等待信号量
-
+		// 上位机显示  显示这个任务正在运行中	// 即电压显示0-99
 		OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//阻塞等待互斥锁
 		ANO_TC_Send0D(sync_cnt * 100, 0);
 		OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//释放互斥锁
 		
-		
-		//****************************SD卡写入不耗时，但打开、关闭和同步操作特别耗时******************************//
+		//*********SD卡的同步操作f_sync(file)不能被其他任务打断，设置优先级高一点，不然容易卡住出不来************//
+		//****************************SD卡写入不耗时，但打开、关闭和同步操作特别耗时***************************//
 		//******************写入（若100字节数据，0.01-0.1ms），打开（20ms），关闭（20ms），同步（5ms）************//
-		// 每100次写入同步一次, 因为同步非常耗时间（5ms）
+		// 每100次写入就同步一次, 因为同步非常耗时间（5ms）
 		if (++sync_cnt >= 100) {
-			res = f_sync(file);      	// 确保缓冲区内容写入扇区		// 不用关闭,关闭太耗时间了（20ms）
-			
-			if (res != FR_OK) {
-			}
-			else
-			{
-
-//				//**************************************向匿名上位机发送数据*****************************************//
-//				OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//阻塞等待互斥锁
-//				
-//				ANO_TC_Send05(kf_alt.x[0] * 100, 0, 1); 		// 算出来的高度			// 单位是米, 变为厘米发送
-//				ANO_TC_Send0D(battery_voltage * 100, 0);
-//				
-//				OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//释放互斥锁
-			
-			}
-			
-			sync_cnt = 0;
+			res = f_sync(file);      		// 确保缓冲区内容写入扇区		// 不用关闭操作,关闭太耗时间了（20ms）
+			if (res != FR_OK) { } else { }	// 返回值不作处理
+			sync_cnt = 0;		// 清零		// 每100次写入就同步一次
 		}
-		
-		
-		
-		
-//		delay_ms(1);
 	}
-
-	
-//	f_close(file);		// 关闭文件
 }
 
 
@@ -394,11 +341,10 @@ void task_sd(void *parg)
 
 void task_arhs(void *parg)
 {
-	OS_ERR err;
-	FRESULT res;
+	OS_ERR 		err;
 	
-	
-	f_open(file, sd_filename, FA_WRITE); // 文件指针+绝对路径+读写方式,全都要对
+	// 打开文件
+	f_open(file, sd_filename, FA_WRITE); 	// 文件指针+绝对路径+读写方式,全都要对
 	
 
 	while(1)
@@ -452,28 +398,17 @@ void task_arhs(void *parg)
 		
 		//*****************************************向SD卡写入数据******************************************//
 		sprintf(sd_buf, "%.4f\t%.4f\t%.4f\r\n", (float)roll_deg, (float)pitch_deg, (float)yaw_deg);	  // 先把变量转成字符串
-		//f_lseek(file, file->fsize);			   // 指针指到文件尾,追加
-		res = f_write(file, sd_buf, strlen(sd_buf), &bw); // 写入一行数据
+		//f_lseek(file, file->fsize);		// 指针指到文件尾，追加，如果不是关闭重新打开，就不用这个语句f_lseek
+		f_write(file, sd_buf, strlen(sd_buf), &bw); // 写入一行数据
+			
 		
-//		if (res != FR_OK) {
-//			OSMutexPend(&g_mutex_usart, 0, OS_OPT_PEND_BLOCKING, NULL, &err);	//阻塞等待互斥锁
-//			printf("\r\n\r\n写入失败，错误码：%d\r\n\r\n", res);
-//			OSMutexPost(&g_mutex_usart, OS_OPT_POST_NONE, &err);				//释放互斥锁
-//		}
-		
-//		// 消息队列，通知那边，通知就行了，一定次数后会同步，只需要那边同步，如果把消息传到那边再写入，反而容易写入出问题（写入不全）
-//		OSQPost(&g_queue_sd, (void *)sd_buf, strlen(sd_buf), OS_OPT_POST_FIFO, &err);		
-		
+		// 通知那边，通知就行了，一定次数后会同步，只需要那边同步
+		// 如果用消息队列，把消息传到那边再写入，反而容易写入出问题（写入不全）
 		OSSemPost(&g_sem_sd, OS_OPT_POST_1, &err);		//释放信号量
-		
-		
-		
 		
 		
 		delay_ms(10);
 	}
-	
-
 //	f_close(file);	// 关闭文件 
 }
 
@@ -721,6 +656,7 @@ void wireless_uart_Config(void)
 
 }
 
+
 void fdisystem_Config(void)
 {
 	/***************************** 配置IMU输出内容 *********************************/
@@ -808,8 +744,45 @@ void fdisystem_Config(void)
 	//配置重启
 	fdiSetReboot();		//两个 *#OK
 }
-	
+
+
+
+
+
+
+
+
+
+
+
 //***********************************************************
+
+
+
+
+//		OSTaskSuspend(&Task_TCB_1, &err);
+//		OSSemPend(&g_sem, 0, OS_OPT_PEND_BLOCKING, NULL, &err);		//阻塞等待信号量
+//		OSMutexPend(&g_mutex, 0, OS_OPT_PEND_BLOCKING, NULL, &err);
+
+//		printf("task2 is running ...\r\n");
+
+//		OSTaskResume(&Task_TCB_1, &err);
+//		OSSemPost(&g_sem, OS_OPT_POST_1, &err);		//释放信号量
+//		OSMutexPost(&g_mutex, OS_OPT_POST_NONE, &err);
+
+
+//OS_Q    	g_queue_sd;
+//	OSQCreate(&g_queue_sd, "g_queue_sd", 16, &err); 	//创建消息队列，支持16条消息
+//		// 消息队列发送
+//		OSQPost(&g_queue_sd, (void *)sd_buf, strlen(sd_buf), OS_OPT_POST_FIFO, &err);	
+//	OS_MSG_SIZE		msg_size;	//消息的大小
+//	char *p = NULL;
+//		p = OSQPend(&g_queue_sd, 0, OS_OPT_PEND_BLOCKING, &msg_size, NULL, &err);		//等待消息队列
+//		if(p && msg_size)		//p指针有效，且msg_size>0
+//		{
+//			myfree(SRAMIN, p);	// 释放动态内存	//不释放会出现: 写入的都是空白数据
+//		}
+
 
 
 
