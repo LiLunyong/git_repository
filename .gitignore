@@ -1,5 +1,12 @@
-Flight_UCOS/USER/DebugConfig/
-Flight_UCOS/USER/.vscode/
-Flight_UCOS/OBJ/
-
 .vscode/
+
+
+Flight_Control/USER/DebugConfig/
+Flight_Control/USER/.vscode/
+Flight_Control/OBJ/
+
+
+SD_Log_Plot/*.txt
+
+
+
